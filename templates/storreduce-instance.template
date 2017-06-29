@@ -27,20 +27,23 @@
         "LocalSubnet" : {
             "Description" : "The subnet to which this instance will belong",
             "Type": "AWS::EC2::Subnet"
+        },
+        "AvailabilityZone" : {
+            "Description" : "The availability zone in which to place the EC2 instance",
+            "Type": "AWS::EC2::AvailabilityZone::Name"
+        },
+        "SecurityGroupIds": {
+            "Description": "The security group associated with the instance",
+            "Type": "List<AWS::EC2::SecurityGroup::Id>"
         }
     },
     "Rules": {},
     "Conditions": {},
     "Resources": {
-        "Ec2Instance1": {
+        "Ec2Instance": {
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
+                "AvailabilityZone": { 
+                    "Ref" : "AvailabilityZone"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -52,7 +55,7 @@
                         ]},
                 "InstanceType": { "Ref" : "InstanceType" },
                 "KeyName": { "Ref": "KeyPairName" },
-                "SecurityGroupIds": [ {"Fn::GetAtt": ["VPC", "DefaultSecurityGroup"]} ],
+                "SecurityGroupIds": { "Ref": "SecurityGroupIds" },
                 "SubnetId": { "Ref": "LocalSubnet" },
                 "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
                     "#!/bin/bash -xe\n",

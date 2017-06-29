@@ -47,6 +47,15 @@
                     "Parameters": [
                         "NATInstanceType"
                     ]
+                },
+                {
+                    "Label": {
+                        "default": "AWS Quick Start Configuration"
+                    },
+                    "Parameters": [
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
+                    ]
                 }
             ],
             "ParameterLabels": {
@@ -89,6 +98,12 @@
                 "PublicSubnet4CIDR": {
                     "default": "Public subnet 4 CIDR"
                 },
+                "QSS3BucketName": {
+                    "default": "Quick Start S3 Bucket Name"
+                },
+                "QSS3KeyPrefix": {
+                    "default": "Quick Start S3 Key Prefix"
+                },
                 "VPCCIDR": {
                     "default": "VPC CIDR"
                 }
@@ -96,6 +111,13 @@
         }
     },
     "Parameters": {
+        "QSS3KeyPrefix": {
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Default": "",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Type": "String"
+        },      
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
@@ -1478,7 +1500,7 @@
             }
         },
         "Ec2Instance1": {
-            "DependsOn": "VPCStack",
+            "DependsOn": "VPC",
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "TemplateURL": {
@@ -1500,7 +1522,8 @@
                     "InstanceType": { "Ref" : "InstanceType" },
                     "BucketName": { "Ref" : "BucketName" },
                     "VPC": { "Ref" : "VPC" },
-                    "LocalSubnet": { "Ref" : "PrivateSubnet1A" }
+                    "LocalSubnet": { "Ref" : "PrivateSubnet1A" },
+                    "SecurityGroupIds": [ {"Fn::GetAtt": ["VPC", "DefaultSecurityGroup"]} ]
                 }
             }
         }

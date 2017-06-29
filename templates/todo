@@ -9,3 +9,5 @@ Specify AllowedPattern, MinLength, MaxLength for bucket name
 // Define PrivateIpAddress
 
 // Make template referencing appropriate - currently testing out of gong-cf-templates
+
+https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template

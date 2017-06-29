@@ -521,9 +521,6 @@
                     "PublicSubnet4CIDR": {
                         "Ref": "PublicSubnet4CIDR"
                     },
-                    "PublicSubnet2CIDR": {
-                        "Ref": "PublicSubnet2CIDR"
-                    },
                     "VPCCIDR": {
                         "Ref": "VPCCIDR"
                     },

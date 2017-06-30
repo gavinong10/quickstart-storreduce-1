@@ -187,9 +187,9 @@
             "Description": "ID of the public subnet 2 you want to provision the second bastion into (e.g., subnet-e3246d8e)",
             "Type": "AWS::EC2::Subnet::Id"
         },
-        "PublicSubnet3ID": { # TODO - add conditionals based on if they exist
+        "PublicSubnet3ID": {
             "Description": "ID of the public subnet 3 that you want to provision the first bastion into (e.g., subnet-a0246dcd)",
-            "Type": "AWS::EC2::Subnet::Id",
+            "Type": "AWS::EC2::Subnet::Id"
         },
         "PublicSubnet4ID": {
             "Description": "ID of the public subnet 4 that you want to provision the first bastion into (e.g., subnet-a0246dcd)",
@@ -594,8 +594,7 @@
                         "Fn::If": ["HasPublicSubnet3ID", {"Ref": "PublicSubnet3ID"}, {"Ref": "AWS::NoValue"}] 
                     },
                     { 
-                        "Fn::If": ["HasPublicSubnet4ID", {"Ref": "PublicSubnet4ID"}, {"Ref": "AWS::NoValue"}] 
-                    }
+                        "Fn::If": ["HasPublicSubnet4ID", {"Ref": "PublicSubnet4ID"}, {"Ref": "AWS::NoValue"}] }
                 ],
                 "MinSize": {
                     "Ref": "NumBastionHosts"

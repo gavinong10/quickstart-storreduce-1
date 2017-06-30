@@ -253,7 +253,7 @@
         },
         "AWSAMIRegion" : {
             "us-west-2" : {
-                "AMI" : "ami-1b637562"
+                "AMI" : "ami-e7527ed7"
             }
         }
     },
@@ -1500,12 +1500,12 @@
             }
         },
         "Ec2Instance1": {
-            "DependsOn": "VPC",
+            "DependsOn": ["VPC", "PrivateSubnet1A"],
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/linux-bastion.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/storreduce-instance.template",
                         {
                             "QSS3Region": {
                                 "Fn::If": [
@@ -1521,9 +1521,23 @@
                     "KeyPairName": { "Ref" : "KeyPairName" },
                     "InstanceType": { "Ref" : "InstanceType" },
                     "BucketName": { "Ref" : "BucketName" },
-                    "VPC": { "Ref" : "VPC" },
                     "LocalSubnet": { "Ref" : "PrivateSubnet1A" },
-                    "SecurityGroupIds": [ {"Fn::GetAtt": ["VPC", "DefaultSecurityGroup"]} ]
+                    "SecurityGroupIds": {
+                            "Fn::Join": [
+                            ",",
+                            [
+                                {"Fn::GetAtt": ["VPC", "DefaultSecurityGroup"]}
+                            ]
+                        ]
+                    },
+                    "AvailabilityZone": {
+                        "Fn::Select": [
+                            "0",
+                            {
+                                "Ref": "AvailabilityZones"
+                            }
+                        ]
+                    }             
                 }
             }
         }

@@ -20,13 +20,9 @@
             "ConstraintDescription" : "must be a valid S3 bucket name.",
             "Type" : "String"
         },
-        "VPC" : {
-            "Description" : "The VPC to which this instance will belong",
-            "Type": "AWS::EC2::VPC"
-        },
         "LocalSubnet" : {
             "Description" : "The subnet to which this instance will belong",
-            "Type": "AWS::EC2::Subnet"
+            "Type": "AWS::EC2::Subnet::Id"
         },
         "AvailabilityZone" : {
             "Description" : "The availability zone in which to place the EC2 instance",
@@ -90,7 +86,7 @@
     "Mappings" : {
         "AWSAMIRegion" : {
             "us-west-2" : {
-                "AMI" : "ami-1b637562"
+                "AMI" : "ami-e7527ed7"
             }
         }
     },

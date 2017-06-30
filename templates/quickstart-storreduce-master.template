@@ -39,8 +39,6 @@
                         "default": "Amazon EC2 Configuration"
                     },
                     "Parameters": [
-                        "BastionAMIOS",
-                        "BastionInstanceType",
                         "NATInstanceType"
                     ]
                 },
@@ -49,7 +47,9 @@
                         "default": "Linux Bastion Configuration"
                     },
                     "Parameters": [
-                        "NumBastionHosts"
+                        "NumBastionHosts",
+                        "BastionAMIOS",
+                        "BastionInstanceType"
                     ]
                 },
                 {

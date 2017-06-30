@@ -10,4 +10,11 @@ Specify AllowedPattern, MinLength, MaxLength for bucket name
 
 // Make template referencing appropriate - currently testing out of gong-cf-templates
 
+// Combine mappings into master?
+
+https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-master.template
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template
+
+
+
+	AWS::CloudFormation::Stack	kajsdflkasjdfkl-VPCStack-15YN6CRSQZZKW-Ec2Instance1-3OHIOH9AKXDN	Parameter validation failed: parameter type AWS::EC2::Subnet for parameter name LocalSubnet does not exist, parameter type AWS::EC2::VPC for parameter name VPC does not exist

@@ -1,0 +1,602 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "VPC StorReduce",
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "StorReduce Configuration"
+                    },
+                    "Parameters": [
+                        "KeyPairName",
+                        "InstanceType",
+                        "BucketName"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Network Configuration"
+                    },
+                    "Parameters": [
+                        "NumberOfAZs",
+                        "AvailabilityZones",
+                        "VPCCIDR",
+                        "CreatePrivateSubnets",
+                        "PrivateSubnet1ACIDR",
+                        "PrivateSubnet2ACIDR",
+                        "PrivateSubnet3ACIDR",
+                        "PrivateSubnet4ACIDR",
+                        "PublicSubnet1CIDR",
+                        "PublicSubnet2CIDR",
+                        "PublicSubnet3CIDR",
+                        "PublicSubnet4CIDR",
+                        "RemoteAccessCIDR"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Amazon EC2 Configuration"
+                    },
+                    "Parameters": [
+                        "NATInstanceType"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Linux Bastion Configuration"
+                    },
+                    "Parameters": [
+                        "NumBastionHosts",
+                        "BastionAMIOS",
+                        "BastionInstanceType"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "AWS Quick Start Configuration"
+                    },
+                    "Parameters": [
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "AvailabilityZones": {
+                    "default": "Availability Zones"
+                },
+                "CreatePrivateSubnets": {
+                    "default": "Create private subnets"
+                },
+                "BastionAMIOS": {
+                    "default": "Bastion AMI Operating System"
+                },
+                "BastionInstanceType": {
+                    "default": "Bastion Instance Type"
+                },
+                "KeyPairName": {
+                    "default": "Key Pair Name"
+                },
+                "NumBastionHosts": {
+                    "default": "Number of Bastion Hosts"
+                },
+                "PrivateSubnet1ACIDR": {
+                    "default": "Private Subnet 1 CIDR"
+                },
+                "PrivateSubnet2ACIDR": {
+                    "default": "Private Subnet 2 CIDR"
+                },
+                "PrivateSubnet3ACIDR": {
+                    "default": "Private Subnet 3 CIDR"
+                },
+                "PrivateSubnet4ACIDR": {
+                    "default": "Private Subnet 4 CIDR"
+                },
+                "PublicSubnet1CIDR": {
+                    "default": "Public Subnet 1 CIDR"
+                },
+                "PublicSubnet2CIDR": {
+                    "default": "Public Subnet 2 CIDR"
+                },
+                "PublicSubnet3CIDR": {
+                    "default": "Public Subnet 3 CIDR"
+                },
+                "PublicSubnet4CIDR": {
+                    "default": "Public Subnet 4 CIDR"
+                },
+                "QSS3BucketName": {
+                    "default": "Quick Start S3 Bucket Name"
+                },
+                "QSS3KeyPrefix": {
+                    "default": "Quick Start S3 Key Prefix"
+                },
+                "RemoteAccessCIDR": {
+                    "default": "Allowed Bastion External Access CIDR"
+                },
+                "VPCCIDR": {
+                    "default": "VPC CIDR"
+                }
+            }
+        }
+    },
+    "Parameters": {
+        "InstanceType" : {
+            "Description" : "EC2 instance type",
+            "Type" : "String",
+            "Default" : "c3.large",
+            "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
+            "ConstraintDescription" : "must be a valid EC2 instance type."
+        },
+        "BucketName" : {
+            "Description" : "The bucket to which StorReduce will store data",
+            "ConstraintDescription" : "must be a valid S3 bucket name.",
+            "Type" : "String"
+        },
+        "AvailabilityZones": {
+            "Description": "List of Availability Zones to use for the subnets in the VPC. Note: The logical order is preserved and only 2 AZs are used for this deployment.",
+            "Type": "List<AWS::EC2::AvailabilityZone::Name>"
+        },
+        "CreatePrivateSubnets": {
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "Default": "true",
+            "Description": "Set to false to create only public subnets. If false, the CIDR parameters for ALL private subnets will be ignored.",
+            "Type": "String"
+        },
+        "BastionAMIOS": {
+            "AllowedValues": [
+                "Amazon-Linux-HVM",
+                "CentOS-7-HVM",
+                "Ubuntu-Server-14.04-LTS-HVM",
+                "Ubuntu-Server-16.04-LTS-HVM"
+            ],
+            "Default": "Amazon-Linux-HVM",
+            "Description": "The Linux distribution for the AMI to be used for the bastion instances",
+            "Type": "String"
+        },
+        "BastionInstanceType": {
+            "Description": "Amazon EC2 instance type for the bastion instances",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues": [
+                "t2.nano",
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
+                "t2.large",
+                "m3.large",
+                "m3.xlarge",
+                "m3.2xlarge",
+                "m4.large",
+                "m4.xlarge",
+                "m4.2xlarge",
+                "m4.4xlarge"
+            ]
+        },
+        "KeyPairName": {
+            "Description": "Public/private key pairs allow you to securely connect to your instance after it launches",
+            "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "NumBastionHosts": {
+            "AllowedValues": [
+                "1",
+                "2"
+            ],
+            "Default": "1",
+            "Description": "Enter the number of bastion hosts to create",
+            "Type": "String"
+        },
+        "QSS3BucketName": {
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Default": "gong-cf-templates",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Type": "String"
+        },
+        "QSS3KeyPrefix": {
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Default": "",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Type": "String"
+        },
+        "RemoteAccessCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
+            "Description": "Allowed CIDR block for external SSH access to the bastions",
+            "Type": "String"
+        },
+        "VPCCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.0.0/16",
+            "Description": "CIDR Block for the VPC",
+            "Type": "String"
+        },
+        "NATInstanceType": {
+            "AllowedValues": [
+                "t2.nano",
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
+                "t2.large",
+                "m3.medium",
+                "m3.large",
+                "m4.large"
+            ],
+            "Default": "t2.small",
+            "Description": "Amazon EC2 instance type for the NAT instances. This is used only if the region does not support NAT gateways.",
+            "Type": "String"
+        },
+        "NumberOfAZs": {
+            "AllowedValues": [
+                "3",
+                "4"
+            ],
+            "Default": "3",
+            "Description": "Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter.",
+            "Type": "String"
+        },
+        "PrivateSubnet1ACIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.0.0/19",
+            "Description": "CIDR block for private subnet 1A located in Availability Zone 1",
+            "Type": "String"
+        },
+        "PrivateSubnet2ACIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.32.0/19",
+            "Description": "CIDR block for private subnet 2A located in Availability Zone 2",
+            "Type": "String"
+        },
+        "PrivateSubnet3ACIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.64.0/19",
+            "Description": "CIDR block for private subnet 3A located in Availability Zone 3",
+            "Type": "String"
+        },
+        "PrivateSubnet4ACIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.96.0/19",
+            "Description": "CIDR block for private subnet 4A located in Availability Zone 4",
+            "Type": "String"
+        },
+        "PublicSubnet1CIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.128.0/20",
+            "Description": "CIDR block for the public DMZ subnet 1 located in Availability Zone 1",
+            "Type": "String"
+        },
+        "PublicSubnet2CIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.144.0/20",
+            "Description": "CIDR block for the public DMZ subnet 2 located in Availability Zone 2",
+            "Type": "String"
+        },
+        "PublicSubnet3CIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.160.0/20",
+            "Description": "CIDR block for the public DMZ subnet 3 located in Availability Zone 3",
+            "Type": "String"
+        },
+        "PublicSubnet4CIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.176.0/20",
+            "Description": "CIDR block for the public DMZ subnet 4 located in Availability Zone 4",
+            "Type": "String"
+        }
+    },
+    "Rules": {},
+    "Conditions": {
+        "3AZCondition": {
+            "Fn::Or": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "NumberOfAZs"
+                        },
+                        "3"
+                    ]
+                },
+                {
+                    "Condition": "4AZCondition"
+                }
+            ]
+        },
+        "4AZCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "NumberOfAZs"
+                },
+                "4"
+            ]
+        },
+        "GovCloudCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AWS::Region"
+                },
+                "us-gov-west-1"
+            ]
+        },
+        "NATInstanceCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "PrivateSubnetsCondition"
+                },
+                {
+                    "Condition": "GovCloudCondition"
+                }
+            ]
+        },
+        "NATGatewayCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "PrivateSubnetsCondition"
+                },
+                {
+                    "Fn::Not": [
+                        {
+                            "Condition": "GovCloudCondition"
+                        }
+                    ]
+                }
+            ]
+        },
+        "NATInstance&3AZCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "NATInstanceCondition"
+                },
+                {
+                    "Condition": "3AZCondition"
+                }
+            ]
+        },
+        "NATInstance&4AZCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "NATInstanceCondition"
+                },
+                {
+                    "Condition": "4AZCondition"
+                }
+            ]
+        },
+        "NATGateway&3AZCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "NATGatewayCondition"
+                },
+                {
+                    "Condition": "3AZCondition"
+                }
+            ]
+        },
+        "NATGateway&4AZCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "NATGatewayCondition"
+                },
+                {
+                    "Condition": "4AZCondition"
+                }
+            ]
+        },
+        "NVirginiaRegionCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AWS::Region"
+                },
+                "us-east-1"
+            ]
+        },
+        "PrivateSubnetsCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "CreatePrivateSubnets"
+                },
+                "true"
+            ]
+        },
+        "PrivateSubnets&3AZCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "PrivateSubnetsCondition"
+                },
+                {
+                    "Condition": "3AZCondition"
+                }
+            ]
+        },
+        "PrivateSubnets&4AZCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "PrivateSubnetsCondition"
+                },
+                {
+                    "Condition": "4AZCondition"
+                }
+            ]
+        },
+        "S3VPCEndpointCondition": {
+            "Fn::And": [
+                {
+                    "Condition": "PrivateSubnetsCondition"
+                },
+                {
+                    "Fn::Not": [
+                        {
+                            "Fn::Or": [
+                                {
+                                    "Fn::Equals": [
+                                        {
+                                            "Ref": "AWS::Region"
+                                        },
+                                        "us-gov-west-1"
+                                    ]
+                                },
+                                {
+                                    "Fn::Equals": [
+                                        {
+                                            "Ref": "AWS::Region"
+                                        },
+                                        "cn-north-1"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "Resources": {
+        "VPCStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-storreduce-vpc.template",
+                        {
+                            "QSS3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "AvailabilityZones": {
+                        "Fn::Join": [
+                            ",",
+                            {
+                                "Ref": "AvailabilityZones"
+                            }
+                        ]
+                    },
+                    "KeyPairName": {
+                        "Ref": "KeyPairName"
+                    },
+                    "NumberOfAZs": {
+                        "Ref": "NumberOfAZs"
+                    },
+                    "PrivateSubnet1ACIDR": {
+                        "Ref": "PrivateSubnet1ACIDR"
+                    },
+                    "PrivateSubnet2ACIDR": {
+                        "Ref": "PrivateSubnet2ACIDR"
+                    },
+                    "PrivateSubnet3ACIDR": {
+                        "Ref": "PrivateSubnet3ACIDR"
+                    },
+                    "PrivateSubnet4ACIDR": {
+                        "Ref": "PrivateSubnet4ACIDR"
+                    },
+                    "PublicSubnet1CIDR": {
+                        "Ref": "PublicSubnet1CIDR"
+                    },
+                    "PublicSubnet2CIDR": {
+                        "Ref": "PublicSubnet2CIDR"
+                    },
+                    "PublicSubnet3CIDR": {
+                        "Ref": "PublicSubnet3CIDR"
+                    },
+                    "PublicSubnet4CIDR": {
+                        "Ref": "PublicSubnet4CIDR"
+                    },
+                    "VPCCIDR": {
+                        "Ref": "VPCCIDR"
+                    },
+                    "NATInstanceType": {
+                        "Ref": "NATInstanceType"
+                    },
+                    "InstanceType": {
+                        "Ref": "InstanceType"
+                    },
+                    "BucketName": {
+                        "Ref": "BucketName"
+                    },
+                    "CreatePrivateSubnets": {
+                        "Ref": "CreatePrivateSubnets"
+                    },
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
+                    },
+                    "QSS3KeyPrefix":{
+                        "Ref": "QSS3KeyPrefix"   
+                    }
+                }
+            }
+        }
+    },
+    "Mappings": {
+        "AWSInfoRegionMap": {
+            "ap-northeast-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "ap-northeast-2": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "ap-south-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "ap-southeast-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "ap-southeast-2": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "eu-central-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "eu-west-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "sa-east-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "us-east-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "us-east-2": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "us-west-1": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            },
+            "us-west-2": {
+                "Partition": "aws",
+                "QuickStartS3URL": "https://s3.amazonaws.com"
+            }
+        }
+    },
+    "Outputs": {
+       
+    }
+}

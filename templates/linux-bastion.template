@@ -171,9 +171,7 @@
         "NumBastionHosts": {
             "AllowedValues": [
                 "1",
-                "2",
-                "3",
-                "4"
+                "2"
             ],
             "Default": "1",
             "Description": "Enter the number of bastion hosts to create",
@@ -185,14 +183,6 @@
         },
         "PublicSubnet2ID": {
             "Description": "ID of the public subnet 2 you want to provision the second bastion into (e.g., subnet-e3246d8e)",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "PublicSubnet3ID": {
-            "Description": "ID of the public subnet 3 that you want to provision the first bastion into (e.g., subnet-a0246dcd)",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "PublicSubnet4ID": {
-            "Description": "ID of the public subnet 4 that you want to provision the first bastion into (e.g., subnet-a0246dcd)",
             "Type": "AWS::EC2::Subnet::Id"
         },
         "QSS3BucketName": {
@@ -351,10 +341,7 @@
         }
     },
     "Conditions": {
-        "HasPublicSubnet3ID": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "PublicSubnet3ID"}]}]},
-        "HasPublicSubnet4ID": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "PublicSubnet4ID"}]}]},
-
-        "2BastionCondition": {
+      "2BastionCondition": {
             "Fn::Or": [
                 {
                     "Fn::Equals": [
@@ -563,20 +550,6 @@
                 "Domain": "vpc"
             }
         },
-        "EIP3": {
-            "Type": "AWS::EC2::EIP",
-            "Condition": "3BastionCondition",
-            "Properties": {
-                "Domain": "vpc"
-            }
-        },
-        "EIP4": {
-            "Type": "AWS::EC2::EIP",
-            "Condition": "4BastionCondition",
-            "Properties": {
-                "Domain": "vpc"
-            }
-        },
         "BastionAutoScalingGroup": {
             "Type": "AWS::AutoScaling::AutoScalingGroup",
             "Properties": {
@@ -589,12 +562,7 @@
                     },
                     {
                         "Ref": "PublicSubnet2ID"
-                    },
-                    { 
-                        "Fn::If": ["HasPublicSubnet3ID", {"Ref": "PublicSubnet3ID"}, {"Ref": "AWS::NoValue"}] 
-                    },
-                    { 
-                        "Fn::If": ["HasPublicSubnet4ID", {"Ref": "PublicSubnet4ID"}, {"Ref": "AWS::NoValue"}] }
+                    }
                 ],
                 "MinSize": {
                     "Ref": "NumBastionHosts"
@@ -757,25 +725,6 @@
                                     ]
                                 },
                                 ",",
-                                {
-                                    "Fn::If": [
-                                        "3BastionCondition",
-                                        {
-                                            "Ref": "EIP3"
-                                        },
-                                        "Null"
-                                    ]
-                                },
-                                ",",
-                                {
-                                    "Fn::If": [
-                                        "4BastionCondition",
-                                        {
-                                            "Ref": "EIP4"
-                                        },
-                                        "Null"
-                                    ]
-                                },
                                 "\"\n",
                                 "CLOUDWATCHGROUP=",
                                 {
@@ -852,20 +801,6 @@
             "Description": "Elastic IP 2 for Bastion",
             "Value": {
                 "Ref": "EIP2"
-            }
-        },
-        "EIP3": {
-            "Condition": "3BastionCondition",
-            "Description": "Elastic IP 3 for Bastion",
-            "Value": {
-                "Ref": "EIP3"
-            }
-        },
-        "EIP4": {
-            "Condition": "4BastionCondition",
-            "Description": "Elastic IP 4 for Bastion",
-            "Value": {
-                "Ref": "EIP4"
             }
         },
         "CloudWatchLogs": {

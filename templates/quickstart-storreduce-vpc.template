@@ -11,7 +11,8 @@
                     "Parameters": [
                         "KeyPairName",
                         "InstanceType",
-                        "BucketName"
+                        "BucketName",
+                        "NumSrrHosts"
                     ]
                 },
                 {
@@ -240,6 +241,12 @@
             "Default": "10.0.0.0/16",
             "Description": "CIDR block for the VPC",
             "Type": "String"
+        },
+        "NumSrrHosts": {
+            "Description": "The number of StorReduce hosts",
+            "Type" : "Number",
+            "MinValue" : 3,
+            "MaxValue" : 10
         }
     },
     "Mappings": {
@@ -253,7 +260,33 @@
         },
         "AWSAMIRegion" : {
             "us-west-2" : {
-                "AMI" : "ami-e7527ed7"
+                "AMI" : "ami-f7a4b78e"
+            }
+        },
+        "NumAutoScaleHosts" : {
+            "3": {
+                "value": "2"
+            },
+            "4": {
+                "value": "3"
+            },
+            "5": {
+                "value": "4"
+            },
+            "6": {
+                "value": "5"
+            },
+            "7": {
+                "value": "6"
+            },
+            "8": {
+                "value": "7"
+            },
+            "9": {
+                "value": "8"
+            },
+            "10": {
+                "value": "9"
             }
         }
     },
@@ -1499,8 +1532,121 @@
                 }
             }
         },
-        "Ec2Instance1": {
-            "DependsOn": ["VPC", "PrivateSubnet1A"],
+        "AllInternalAccessSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enables all TCP access from within the VPC (TODO - refine for SSH to bastion hosts only and storreduce TCP ports from within VPC)",
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 0,
+                        "ToPort": 65535,
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "StorReduceHostRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Policies": [
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:ListBucket",
+                                        "s3:ListBucketMultipartUploads"
+                                    ],
+                                    "Resource": [
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:s3:::",
+                                                {
+                                                    "Ref": "BucketName"
+                                                }                                            ]
+                                            ]
+                                    ],
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "srr-quick-start-s3-policy-bucket"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "s3:DeleteObject",
+                                        "s3:ListMultipartUploadParts",
+                                        "s3:AbortMultipartUpload"
+                                    ],
+                                    "Resource": [
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:s3:::",
+                                                {
+                                                    "Ref": "BucketName"
+                                                },
+                                                "/*"
+                                            ]
+                                        ]
+                                    ],
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "srr-quick-start-s3-policy-objects"
+                    }
+                ],
+                "Path": "/",
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            },
+                            "Effect": "Allow"
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                }
+            }
+        },
+        "StorReduceHostProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Roles": [
+                    {
+                        "Ref": "StorReduceHostRole"
+                    }
+                ],
+                "Path": "/"
+            }
+        },
+        "SrrBucket": {
+            "Type" : "AWS::S3::Bucket",
+            "Properties" : {
+                "BucketName" : { "Ref" : "BucketName" }
+            }
+        },
+        "SrrInstance1": {
+            "DependsOn": ["VPC", "PrivateSubnet1A", "StorReduceHostProfile"],
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "TemplateURL": {
@@ -1518,6 +1664,7 @@
                     ]
                 },
                 "Parameters": {
+                    "HostProfile": { "Ref": "StorReduceHostProfile" },
                     "KeyPairName": { "Ref" : "KeyPairName" },
                     "InstanceType": { "Ref" : "InstanceType" },
                     "BucketName": { "Ref" : "BucketName" },
@@ -1526,7 +1673,7 @@
                             "Fn::Join": [
                             ",",
                             [
-                                {"Fn::GetAtt": ["VPC", "DefaultSecurityGroup"]}
+                                { "Ref": "AllInternalAccessSecurityGroup" }
                             ]
                         ]
                     },
@@ -1538,6 +1685,69 @@
                             }
                         ]
                     }             
+                }
+            }
+        },
+        "SrrAutoScalingGroup": {
+            "DependsOn": "SrrInstance1",
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-storreduce-autoscale.template",
+                        {
+                            "QSS3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "HostProfile": { "Ref": "StorReduceHostProfile" },
+                    "KeyPairName": { "Ref" : "KeyPairName" },
+                    "InstanceType": { "Ref" : "InstanceType" },
+                    "SecurityGroupIds": {
+                            "Fn::Join": [
+                            ",",
+                            [
+                                { "Ref": "AllInternalAccessSecurityGroup" }
+                            ]
+                        ]
+                    },
+                    "FirstClusterPrivateDNS": {
+                        "Fn::GetAtt" : [ "SrrInstance1", "Outputs.PrivateDnsName" ],
+                    },
+                    "PrivateSubnetsToSpan": {
+                        "Fn::Join": [
+                                ",",
+                                [
+                                    { "Ref": "PrivateSubnet1A" },
+                                    { "Ref": "PrivateSubnet2A" },
+                                    { "Fn::If": [
+                                            "3AZCondition",
+                                            { "Ref": "PrivateSubnet3A" },
+                                            { "Ref" : "AWS::NoValue" }
+                                    ]},
+                                    { "Fn::If": [
+                                            "4AZCondition",
+                                            { "Ref": "PrivateSubnet4A" },
+                                            { "Ref" : "AWS::NoValue" }
+                                    ]}
+                                ]
+                            ]
+                    },
+                    "NumAutoScaleHosts": {
+                        "Fn::FindInMap": [
+                        "NumAutoScaleHosts",
+                            {
+                                "Ref": "NumSrrHosts"
+                            },
+                            "value"
+                    ]}
                 }
             }
         }

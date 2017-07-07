@@ -11,7 +11,8 @@
                     "Parameters": [
                         "KeyPairName",
                         "InstanceType",
-                        "BucketName"
+                        "BucketName",
+                        "NumSrrHosts"
                     ]
                 },
                 {
@@ -63,6 +64,9 @@
                 }
             ],
             "ParameterLabels": {
+                "NumSrrHosts": {
+                    "default": "Number of StorReduce servers"
+                },
                 "AvailabilityZones": {
                     "default": "Availability Zones"
                 },
@@ -297,6 +301,12 @@
             "Default": "10.0.176.0/20",
             "Description": "CIDR block for the public DMZ subnet 4 located in Availability Zone 4",
             "Type": "String"
+        },
+        "NumSrrHosts": {
+            "Description": "The number of StorReduce hosts",
+            "Type" : "Number",
+            "MinValue" : 3,
+            "MaxValue" : 10
         }
     },
     "Rules": {},
@@ -491,6 +501,9 @@
                             }
                         ]
                     },
+                    "NumSrrHosts": {
+                        "Ref": "NumSrrHosts"
+                    },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
@@ -589,20 +602,6 @@
                         "Fn::GetAtt": [
                             "VPCStack",
                             "Outputs.PublicSubnet2ID"
-                        ]
-                    },
-                    "PublicSubnet3ID": {
-                        "Condition": "3AZCondition",
-                        "Fn::GetAtt": [
-                            "VPCStack",
-                            "Outputs.PublicSubnet3ID"
-                        ]
-                    },
-                    "PublicSubnet4ID": {
-                        "Condition": "4AZCondition",
-                        "Fn::GetAtt": [
-                            "VPCStack",
-                            "Outputs.PublicSubnet4ID"
                         ]
                     },
                     "QSS3BucketName": {

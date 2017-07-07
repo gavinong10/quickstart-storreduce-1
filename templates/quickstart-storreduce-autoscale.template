@@ -1,8 +1,12 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Create an EC2 instance running the latest StorReduce AMI",
+    "Description": "StorReduce AutoScaling",
     "Metadata": {},
     "Parameters": {
+        "FirstClusterPrivateDNS": {
+            "Description" : "The private DNS name of the first cluster host that is fully configured",
+            "Type": "String"
+        },
         "HostProfile": {
             "Description" : "The host profile to associate with the StorReduce instance(s)",
             "Type": "String"
@@ -12,42 +16,87 @@
             "Type": "AWS::EC2::KeyPair::KeyName",
             "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
         },
+        "PrivateSubnetsToSpan": {
+            "Description": "The VPC private subnets to span",
+            "Type": "List<AWS::EC2::Subnet::Id>"
+        },
+        "NumAutoScaleHosts": {
+            "Description": "The number of StorReduce hosts",
+            "Type" : "Number",
+            "MinValue" : 2,
+            "MaxValue" : 9
+        },
+        "SecurityGroupIds": {
+            "Description": "The security group associated with the instance",
+            "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        },
         "InstanceType" : {
             "Description" : "EC2 instance type",
             "Type" : "String",
             "Default" : "c3.large",
             "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
             "ConstraintDescription" : "must be a valid EC2 instance type."
-        },
-        "BucketName" : {
-            "Description" : "The bucket to which StorReduce will store data",
-            "ConstraintDescription" : "must be a valid S3 bucket name.",
-            "Type" : "String"
-        },
-        "LocalSubnet" : {
-            "Description" : "The subnet to which this instance will belong",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "AvailabilityZone" : {
-            "Description" : "The availability zone in which to place the EC2 instance",
-            "Type": "AWS::EC2::AvailabilityZone::Name"
-        },
-        "SecurityGroupIds": {
-            "Description": "The security group associated with the instance",
-            "Type": "List<AWS::EC2::SecurityGroup::Id>"
         }
     },
     "Rules": {},
+    "Mappings" : {
+        "AWSAMIRegion" : {
+            "us-west-2" : {
+                "AMI" : "ami-f7a4b78e"
+            }
+        }
+    },
     "Conditions": {},
     "Resources": {
-        "Ec2Instance": {
+        "StorReduceAutoScalingGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "LaunchConfigurationName": {
+                    "Ref": "StorReduceServerLaunchConfiguration"
+                },
+                "VPCZoneIdentifier": {
+                    "Ref": "PrivateSubnetsToSpan"
+                },
+                "MinSize": {
+                   "Ref": "NumAutoScaleHosts"
+                },
+                "MaxSize": {
+                    "Ref": "NumAutoScaleHosts"
+                },
+                "Cooldown": "300",
+                "DesiredCapacity": {
+                    "Ref": "NumAutoScaleHosts"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "SrrHost",
+                        "PropagateAtLaunch": "true"
+                    }
+                ]
+            }
+        },
+        "StorReduceServerLaunchConfiguration": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Metadata": {
                 "AWS::CloudFormation::Init": {
                     "config": {
                         "files": {
-                            "/home/ec2-user/init-srr.sh": {
+                            "/home/ec2-user/connect-srr.sh": {
                                 "content": { "Fn::Join" : ["", [
                                     "#!\/bin\/bash -xe\n",
+                                    "\n",
+                                    "# Define inputs here\n",
+                                    "first_server_private_ip=", { "Ref": "FirstClusterPrivateDNS" }, "\n",
+                                    "\n",
+                                    "# Reformed inputs\n",
+                                    "first_server_public_sr_api=\"https:\/\/${first_server_private_ip}:8080\/api\"\n",
+                                    "\n",
+                                    "# the password is server_public_ip.\n",
+                                    "#-> Create a password input to the autoscaling group\n",
+                                    "#-> Pull the public ip from the first instance and send to autoscaling group\n",
+                                    "#-> Get each instance to poll for the cluster token \n",
+                                    "#-> configure_server_amazon\n",
                                     "\n",
                                     "CURL_ARGS=\"--fail --insecure --retry 10 --retry-delay 30\"\n",
                                     "COOKIE_FILE=\"\/tmp\/cookie.txt\"\n",
@@ -90,8 +139,7 @@
                                     "        --cluster_listen_interface=${ip}",
                                     "        ${cluster_token}\n",
                                     "\n",
-                                    "    put \"https://$ip:8080/api/srr/settings\" '{\"hostname\":\"$local_hostname,$ip\", \"bucket\":\"$bucket_name\"}'\n",
-                                    "    sudo storreducectl server restart\n",
+                                    "    put \"https:\/\/$ip:8080\/api\/srr\/settings\" '{\"hostname\":\"$local_hostname,$ip\"}'\n",
                                     "}\n",
                                     "\n",
                                     "get_local_srr_password () { # server_public_ip\n",
@@ -102,7 +150,7 @@
                                     "\n",
                                     "cluster_token=$(get_cluster_discovery_token \"${first_server_public_sr_api}\")\n",
                                     "\n",
-                                    "configure_server"
+                                    "configure_server $cluster_token"
                                     ]]},    
                                 "mode": "000550",
                                 "owner": "root",
@@ -111,67 +159,49 @@
                         },
                         "commands": {
                             "connect-srr": {
-                                "command": "echo test > /home/ec2-user/test.txt && /home/ec2-user/init-srr.sh"
+                                "command": "echo test > /home/ec2-user/test.txt && echo /home/ec2-user/connect-srr.sh"
                             }
                         }
                     }
                 }
             },
             "Properties": {
-                "IamInstanceProfile": {
-                    "Ref": "HostProfile"
-                },
-                "AvailabilityZone": { 
-                    "Ref" : "AvailabilityZone"
+                "KeyName": {
+                    "Ref": "KeyPairName"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
                         "AWSAMIRegion",
                             {
-                                        "Ref": "AWS::Region"
+                                "Ref": "AWS::Region"
                             },
                             "AMI"
                         ]},
-                "InstanceType": { "Ref" : "InstanceType" },
-                "KeyName": { "Ref": "KeyPairName" },
-                "SecurityGroupIds": { "Ref": "SecurityGroupIds" },
-                "SubnetId": { "Ref": "LocalSubnet" },
-                "UserData" : { "Fn::Base64" :
-                    { "Fn::Join" : ["", [
-                        "#!/bin/bash -xe\n",
-                        "/opt/aws/bin/cfn-init -v ",
-                        "         --stack ", { "Ref" : "AWS::StackName" },
-                        "         --resource Ec2Instance ",
-                        "         --region ", { "Ref" : "AWS::Region" }, "\n"
-                    ]]}
+                "SecurityGroups": 
+                {
+                    "Ref": "SecurityGroupIds"
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrBaseHost"
+                "InstanceType": { "Ref" : "InstanceType" },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+                                "/opt/aws/bin/cfn-init -v ",
+                                "         --stack ", { "Ref" : "AWS::StackName" },
+                                "         --resource StorReduceServerLaunchConfiguration ",
+                                "         --region ", { "Ref" : "AWS::Region" }, "\n"
+                            ]
+                        ]
                     }
-                ]
-            },
-            "Type": "AWS::EC2::Instance"
-        }
-    },
-    "Mappings" : {
-        "AWSAMIRegion" : {
-            "us-west-2" : {
-                "AMI" : "ami-f7a4b78e"
+                },
+                "IamInstanceProfile": {
+                    "Ref": "HostProfile"
+                }
             }
-        }
+        }        
     },
-    "Outputs": {
-        "InstanceId": {
-            "Description": "The InstanceId of the newly created EC2 Instance",
-            "Value": {
-                "Ref": "Ec2Instance"
-            }
-        },
-          "PrivateDnsName" : {
-            "Description": "The Private DNS name of the StorReduce server",  
-            "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PrivateDnsName" ]}
-        }
-    }
+    "Outputs": {}
 }
+

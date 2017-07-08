@@ -1,0 +1,153 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Create an EC2 instance running the latest StorReduce AMI",
+    "Metadata": {},
+    "Parameters": {
+        "KeyPairName": {
+            "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+        },
+        "InstanceType" : {
+            "Description" : "EC2 instance type",
+            "Type" : "String",
+            "Default" : "c3.large",
+            "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
+            "ConstraintDescription" : "must be a valid EC2 instance type."
+        },
+        "BucketName" : {
+            "Description" : "The bucket to which StorReduce will store data",
+            "ConstraintDescription" : "must be a valid S3 bucket name.",
+            "Type" : "String"
+        }
+    },
+    "Rules": {},
+    "Conditions": {},
+    "Resources": {
+        "Ec2Instance": {
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSAMIRegion",
+                            {
+                                        "Ref": "AWS::Region"
+                            },
+                            "AMI"
+                        ]},
+                "InstanceType": { "Ref" : "InstanceType" },
+                "KeyName": { "Ref": "KeyPairName" },
+                "SecurityGroups": [ {"Ref" : "InstanceSecurityGroup" } ],
+                "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+                    "#!/bin/bash -xe\n",
+                    "# Install the files and packages from the metadata\n",
+                    "/opt/aws/bin/cfn-init -v ",
+                    "         --stack ", { "Ref" : "AWS::StackName" },
+                    "         --resource Ec2Instance ",
+                    "         --region ", { "Ref" : "AWS::Region" }, "\n"
+                ]]}}
+            },
+            "Type": "AWS::EC2::Instance",
+            "Metadata": {
+                "Comment1" : "Configure StorReduce",
+                "AWS::CloudFormation::Init" : {
+                    "config" : {
+                        "commands" : {
+                            "test" : {
+                                "command" : { "Fn::Join" : ["", ["echo \"hello ", { "Fn::GetAtt": ["Ec2Instance", "PublicDnsName"]}, "\" > test.txt"]] }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "SrrBucket": {
+            "Type" : "AWS::S3::Bucket",
+            "Properties" : {
+                "BucketName" : { "Ref" : "BucketName" }
+            }
+        },
+        "InstanceSecurityGroup" : {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable default ports for StorReduce",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "443",
+                        "ToPort": "443",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8080",
+                        "ToPort": "8080",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8095",
+                        "ToPort": "8095",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8096",
+                        "ToPort": "8096",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8097",
+                        "ToPort": "8097",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8098",
+                        "ToPort": "8098",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "2379",
+                        "ToPort": "2379",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "2380",
+                        "ToPort": "2380",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        }
+    },
+    "Mappings" : {
+        "AWSAMIRegion" : {
+            "us-west-2" : {
+                "AMI" : "ami-007b6879"
+            }
+        }
+    },
+    "Outputs": {
+        "InstanceId": {
+            "Description": "The InstanceId of the newly created EC2 Instance",
+            "Value": {
+                "Ref": "Ec2Instance"
+            }
+        }
+    }
+}

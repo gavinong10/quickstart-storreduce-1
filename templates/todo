@@ -1,6 +1,8 @@
 Add access control to bucket and/or specify existing bucket
 Specify AllowedPattern, MinLength, MaxLength for bucket name
 
+Rebalance and restart cluster
+
 "command" : "storreducectl server init --server-ip="127.0.0.1" --cluster-listen-port=8095 --etcd-client-port=2379 --etcd-peer-port=2380 --http-port=80 --https-port=443 --admin-port=8080 --shard-count=20 --replica-count=1 --force"
 
 
@@ -19,6 +21,8 @@ https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.t
 
 	AWS::CloudFormation::Stack	kajsdflkasjdfkl-VPCStack-15YN6CRSQZZKW-Ec2Instance1-3OHIOH9AKXDN	Parameter validation failed: parameter type AWS::EC2::Subnet for parameter name LocalSubnet does not exist, parameter type AWS::EC2::VPC for parameter name VPC does not exist
     https://s3.amazonaws.com/quickstart-reference/linux/bastion/latest/templates/linux-bastion-master.template
+
+-> Add cfn-signal success
 
 Questions to ask:
 - UserData vs AWS::CloudFormation::Init
@@ -48,3 +52,6 @@ Questions to ask:
                     "#TODO: Make n_shard_replicas configurable\n",
                     "#10.0.5.107\n"
                 ]]}},
+
+Example of single host seed
+IAM profile for S3 public 

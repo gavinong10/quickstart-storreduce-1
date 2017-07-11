@@ -7,6 +7,10 @@
             "Description" : "The private DNS name of the first cluster host that is fully configured",
             "Type": "String"
         },
+        "FirstServerInstanceID": {
+            "Description" : "The Instance ID of the first StorReduce server",
+            "Type": "String"
+        },
         "HostProfile": {
             "Description" : "The host profile to associate with the StorReduce instance(s)",
             "Type": "String"
@@ -36,18 +40,46 @@
             "Default" : "c3.large",
             "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
             "ConstraintDescription" : "must be a valid EC2 instance type."
+        },
+        "AvailabilityZones": {
+            "Description": "List of Availability Zones to use for the subnets in the ELB. Note: The logical order is preserved.",
+            "Type": "List<AWS::EC2::AvailabilityZone::Name>"
         }
     },
     "Rules": {},
     "Mappings" : {
         "AWSAMIRegion" : {
             "us-west-2" : {
-                "AMI" : "ami-f7a4b78e"
+                "AMI" : "ami-11203d68"
             }
         }
     },
     "Conditions": {},
     "Resources": {
+         "ElasticLoadBalancer" : {
+            "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Properties" : {
+                "AvailabilityZones" : { "Ref": "AvailabilityZones" },
+                "CrossZone" : "true",
+                "Listeners" : [ {
+                    "LoadBalancerPort" : "80",
+                    "InstancePort" : "80",
+                    "Protocol" : "HTTP"
+                },
+                {
+                    "LoadBalancerPort" : "443",
+                    "InstancePort" : "43",
+                    "Protocol" : "HTTPS"
+                } ],
+                "HealthCheck" : {
+                "Target" : "HTTP:80/health_check",
+                    "HealthyThreshold" : "3",
+                    "UnhealthyThreshold" : "5",
+                    "Interval" : "30",
+                    "Timeout" : "5"
+                }
+            }
+        },
         "StorReduceAutoScalingGroup": {
             "Type": "AWS::AutoScaling::AutoScalingGroup",
             "Properties": {
@@ -63,6 +95,7 @@
                 "MaxSize": {
                     "Ref": "NumAutoScaleHosts"
                 },
+                "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ],
                 "Cooldown": "300",
                 "DesiredCapacity": {
                     "Ref": "NumAutoScaleHosts"
@@ -84,13 +117,14 @@
                         "files": {
                             "/home/ec2-user/connect-srr.sh": {
                                 "content": { "Fn::Join" : ["", [
-                                    "#!\/bin\/bash -xe\n",
+                                    "#!/bin/bash -xe\n",
                                     "\n",
                                     "# Define inputs here\n",
                                     "first_server_private_ip=", { "Ref": "FirstClusterPrivateDNS" }, "\n",
+                                    "first_server_instance_id=", { "Ref": "FirstServerInstanceID" }, "\n",
                                     "\n",
                                     "# Reformed inputs\n",
-                                    "first_server_public_sr_api=\"https:\/\/${first_server_private_ip}:8080\/api\"\n",
+                                    "first_server_public_sr_api=\"https://${first_server_private_ip}:8080/api\"\n",
                                     "\n",
                                     "# the password is server_public_ip.\n",
                                     "#-> Create a password input to the autoscaling group\n",
@@ -99,58 +133,50 @@
                                     "#-> configure_server_amazon\n",
                                     "\n",
                                     "CURL_ARGS=\"--fail --insecure --retry 10 --retry-delay 30\"\n",
-                                    "COOKIE_FILE=\"\/tmp\/cookie.txt\"\n",
+                                    "COOKIE_FILE=\"/tmp/cookie.txt\"\n",
                                     "\n",
                                     "# parameters to fetch for functions\n",
-                                    "ip=$(curl --silent --fail http:\/\/169.254.169.254\/latest\/meta-data\/local-ipv4)\n",
-                                    "local_hostname=$(curl --silent --fail http:\/\/169.254.169.254\/latest\/meta-data\/local-hostname)\n",
+                                    "ip=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)\n",
+                                    "local_hostname=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-hostname)\n",
                                     "\n",
                                     "get_cluster_discovery_token () { # sr_api_url\n",
                                     "  srr_api=$1\n",
-                                    "  cluster_info=$(curl $CURL_ARGS \\\n",
-                                    "       -X GET \\\n",
-                                    "       -b \"${COOKIE_FILE}\" \\\n",
-                                    "       \"${srr_api}\/srr\/cluster\/current\")\n",
+                                    "  cluster_info=$(curl $CURL_ARGS \\n",
+                                    "       -X GET \\n",
+                                    "       -b \"${COOKIE_FILE}\" \\n",
+                                    "       \"${srr_api}/srr/cluster/current\")\n",
                                     "  echo $(echo $cluster_info | jq -r '.ClusterDiscoveryToken' )\n",
                                     "}\n",
                                     "\n",
                                     "put () { # sr_api_url, #json_doc\n",
                                     "  srr_api=$1\n",
                                     "  json=$2\n",
-                                    "  curl $CURL_ARGS \\\n",
-                                    "       -X PUT \\\n",
-                                    "       -b \"${COOKIE_FILE}\" \\\n",
-                                    "       -d \"$json\" \\\n",
+                                    "  curl $CURL_ARGS \\n",
+                                    "       -X PUT \\n",
+                                    "       -b \"${COOKIE_FILE}\" \\n",
+                                    "       -d \"$json\" \\n",
                                     "       \"${srr_api}\"\n",
                                     "}\n",
                                     "\n",
                                     "configure_server () { # server_public_ip, cluster_token\n",
                                     "    cluster_token=$1\n",
-                                    "    sudo storreducectl server init",
-                                    "        --admin_port=8080",
-                                    "        --cluster_listen_port=8095",
-                                    "        --config_server_client_port=2379",
-                                    "        --config_server_peer_port=2380",
-                                    "        --dev_n_shards=36",
-                                    "        --http_port=80",
-                                    "        --https_port=443",
-                                    "        --n_shard_replicas=2",
-                                    "        --force=true",
-                                    "        --cluster_listen_interface=${ip}",
-                                    "        ${cluster_token}\n",
+                                    "    sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}        ${cluster_token}\n",
+                                    "    \n",
+                                    "    # Wait for StorReduce on server to be up\n",
+                                    "    while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done\n",
                                     "\n",
-                                    "    put \"https:\/\/$ip:8080\/api\/srr\/settings\" '{\"hostname\":\"$local_hostname,$ip\"}'\n",
+                                    "    put \"https://$first_server_private_ip:8080/api/srr/settings\" '{\"hostname\":\"$local_hostname,$ip\"}'\n",
                                     "}\n",
                                     "\n",
                                     "get_local_srr_password () { # server_public_ip\n",
-                                    "  curl http:\/\/169.254.169.254\/latest\/meta-data\/instance-id\n",
+                                    "  curl http://169.254.169.254/latest/meta-data/instance-id\n",
                                     "}\n",
                                     "\n",
-                                    "curl --fail --insecure -H \\\"Content-Type: application\/json\\\" -X POST -c ${COOKIE_FILE} -d '{\"UserId\": \"srr:root\", \"Password\": \"$(get_local_srr_password)\"}' https:\/\/${ip}:8080\/api\/auth\/srr --retry 10 --retry-delay 30\n",
+                                    "curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{\"UserId\": \"srr:root\", \"Password\": \"'${first_server_instance_id}'\"}' https://${first_server_private_ip}:8080/api/auth/srr --retry 10 --retry-delay 30\n",
                                     "\n",
                                     "cluster_token=$(get_cluster_discovery_token \"${first_server_public_sr_api}\")\n",
                                     "\n",
-                                    "configure_server $cluster_token"
+                                    "configure_server $cluster_token\n"
                                     ]]},    
                                 "mode": "000550",
                                 "owner": "root",

@@ -12,7 +12,8 @@
                         "KeyPairName",
                         "InstanceType",
                         "BucketName",
-                        "NumSrrHosts"
+                        "NumSrrHosts",
+                        "SSLCertificateId"
                     ]
                 },
                 {
@@ -81,6 +82,9 @@
                 },
                 "KeyPairName": {
                     "default": "Key Pair Name"
+                },
+                "SSLCertificateId": {
+                    "default": "SSL Certificate ID"
                 },
                 "NumBastionHosts": {
                     "default": "Number of Bastion Hosts"
@@ -183,6 +187,11 @@
         "KeyPairName": {
             "Description": "Public/private key pairs allow you to securely connect to your instance after it launches",
             "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "SSLCertificateId": {
+            "Description" : "The host profile to associate with the StorReduce instance(s)",
+            "Type": "String",
+            "Default": "arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988"
         },
         "NumBastionHosts": {
             "AllowedValues": [
@@ -493,6 +502,9 @@
                     ]
                 },
                 "Parameters": {
+                    "SSLCertificateId": {
+                        "Ref": "SSLCertificateId"
+                    },
                     "AvailabilityZones": {
                         "Fn::Join": [
                             ",",

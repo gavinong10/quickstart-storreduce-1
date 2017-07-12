@@ -14,6 +14,8 @@ Rebalance and restart cluster
 
 // Combine mappings into master?
 
+// Fix autoscale cooldown
+
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-master.template
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template
 

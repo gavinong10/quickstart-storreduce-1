@@ -6,8 +6,6 @@ Rebalance and restart cluster
 "command" : "storreducectl server init --server-ip="127.0.0.1" --cluster-listen-port=8095 --etcd-client-port=2379 --etcd-peer-port=2380 --http-port=80 --https-port=443 --admin-port=8080 --shard-count=20 --replica-count=1 --force"
 
 
-// What happens if the init commands fail? -> test that!
-
 // Define PrivateIpAddress
 
 // Make template referencing appropriate - currently testing out of gong-cf-templates
@@ -15,6 +13,12 @@ Rebalance and restart cluster
 // Combine mappings into master?
 
 // Fix autoscale cooldown
+
+// Fix IP addresses permanently
+
+// set min NumSrrHosts to 3
+
+// Create a loop through for IP addresses to try
 
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-master.template
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template

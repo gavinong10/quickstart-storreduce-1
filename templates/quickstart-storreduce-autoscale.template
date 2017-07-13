@@ -24,6 +24,10 @@
             "Description": "The VPC private subnets to span",
             "Type": "List<AWS::EC2::Subnet::Id>"
         },
+        "PublicSubnetsToSpan": {
+            "Description": "The VPC private subnets to span",
+            "Type": "List<AWS::EC2::Subnet::Id>"
+        },
         "NumAutoScaleHosts": {
             "Description": "The number of StorReduce hosts",
             "Type" : "Number",
@@ -48,13 +52,17 @@
         "SSLCertificateId": {
             "Description" : "The host profile to associate with the StorReduce instance(s)",
             "Type": "String"
+        },
+        "LoadBalancerSecurityGroup": {
+            "Description": "The security group associated with the instance",
+            "Type": "AWS::EC2::SecurityGroup::Id"
         }
     },
     "Rules": {},
     "Mappings" : {
         "AWSAMIRegion" : {
             "us-west-2" : {
-                "AMI" : "ami-11203d68"
+                "AMI" : "ami-9b3f23e2"
             }
         }
     },
@@ -63,17 +71,21 @@
          "ElasticLoadBalancer" : {
             "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties" : {
-                "AvailabilityZones" : { "Ref": "AvailabilityZones" },
+                "Subnets": {
+                        "Ref": "PublicSubnetsToSpan"
+                },
                 "CrossZone" : "true",
                 "Listeners" : [ {
                     "LoadBalancerPort" : "80",
                     "InstancePort" : "80",
-                    "Protocol" : "HTTP"
+                    "Protocol" : "TCP",
+                    "InstanceProtocol" : "TCP"
                 },
                 {
                     "LoadBalancerPort" : "443",
-                    "InstancePort" : "43",
-                    "Protocol" : "HTTPS",
+                    "InstancePort" : "443",
+                    "Protocol" : "TCP",
+                    "InstanceProtocol" : "TCP",
                     "SSLCertificateId": { "Ref": "SSLCertificateId" }
                 } ],
                 "HealthCheck" : {
@@ -82,7 +94,8 @@
                     "UnhealthyThreshold" : "5",
                     "Interval" : "30",
                     "Timeout" : "5"
-                }
+                },
+                "SecurityGroups" : [ {"Ref": "LoadBalancerSecurityGroup" }]
             }
         },
         "StorReduceAutoScalingGroup": {
@@ -102,7 +115,7 @@
                     "Ref": "NumAutoScaleHosts"
                 },
                 "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ],
-                "Cooldown": "3000000000000000",
+                "Cooldown": 300,
                 "DesiredCapacity": {
                     "Ref": "NumAutoScaleHosts"
                 },
@@ -121,16 +134,62 @@
                 "AWS::CloudFormation::Init": {
                     "config": {
                         "files": {
+                            "/home/ec2-user/.ssh/id_rsa": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "-----BEGIN RSA PRIVATE KEY-----\n",
+                                            "MIIEpgIBAAKCAQEAu/fGxqwnyxqoSk/PV0sB6o+lBMKuFByL1mczs5l0Js22kSEr\n",
+                                            "6II6U6KAOsrJRbX04QzKey3tbJArAwbxBwChwj4BzUMtLlLO7QOjuH83fX+FPME6\n",
+                                            "r/cqVsv/GZWAWpIkuDgla8vBuTOFdIuaZPPUFutpmD8GqoZ9lnfJXobmc8wwo9lm\n",
+                                            "P4RkK6PB9Z2wiuE4LGMK9fcUHCqHOQ/Ye5VmVDrMrRSefNDQMWz6YZSO4y248VzG\n",
+                                            "DZebruIVWbzoyuqsO24q4hWo2itsDZB+wj5mR8rktRq4KdL3UDMOewOYJTDsngDG\n",
+                                            "6acS+zGlZTZ1jYJP6bBp9jYiXe7XfawRLCUSgwIDAQABAoIBAQCtIkvAQWAh7vrl\n",
+                                            "/98+S4OHVyorWVpYgfa31LVFj2nyN/cadJBqCFHLKVmtTY3YnQHirRJwJVyUa7KC\n",
+                                            "hklKJuXX8Z9dPqwGCBY7L+gEj4FAIk5KKL1yyVoBOsNNAGyKgCQ8XtLxGGvmt7MM\n",
+                                            "J25d4E0Rk2Le7eao+VoCV3FulRj9vJkltQu5+Ap5l7E7eaeGIAv1PgCf8xMaOwZf\n",
+                                            "7/jpmz5P8oGF5zqZ0ovHG9pPFOb2m5R5V+F4jAFl0sGMde/rKLQUC13pp7Samckw\n",
+                                            "N/6r5abPhrE8Tsb+2fWc1rEpSgWZsAXK85NUTpaPl3ek/u9z/eogtn/NumK7jeDq\n",
+                                            "rcqQuk+ZAoGBAOHQ7kQVWnDs7Zt8ML9mHwQiLESqCRpn9f73PuA0dcs7dWg3o/cS\n",
+                                            "VQXy6bOgl/aembOb3r+lzbYQw2qnUbpjIg68UHiRKML6NPSjM74n7nAxKAuk1MOi\n",
+                                            "PEz+qada8/VBmcoMQzC4367QG90UguC23317j7YhlDZq8hYQcnBkttZ1AoGBANUX\n",
+                                            "vQzjYWojpluoiJnVYlRiPv50UiYTKF8BnuyKd8CsnfI0K375jYgA1/o7Xmfuu3TR\n",
+                                            "ds25cuQ7S1AlH6VDiMjv0/GcaQOrfjry/D9keSDtzYvE/lnhJbqhNn5ty6A+c9uC\n",
+                                            "aZqESCuH3vSeHKFKOCWNgwIBe64IYlf0M1EMatYXAoGBAI5wVsr1WS4gFSTdqnYg\n",
+                                            "uXHHCHtrcgCJER9539xW2vKOF9ncNv3zP1RYTFf09cYndrZXnKLwuBie7FULI79Z\n",
+                                            "JrN6z5utnLOYVez2QP4ye/Gi4CqwF1ErtbOvc15QPdA3SAWtxHgoNVg0h07l0ERk\n",
+                                            "tgaV+Smedrn4ramDSFxi+v29AoGBAMrJ7H93ZB0+D/LqUBUVnJ3xYUGGMSdK1ACV\n",
+                                            "6kfw/kW+ABGe1EXh926WXvMjzJPb/UkOjaD5+vx38RQ0QAlmW6XdljU4RDfZ3Cb9\n",
+                                            "VlB9rUhJBnMc5XFjciRJhzKKCl5VEKy1TwpdGNFUXDkuvtA/cW9LXIFsJ+dW00Ag\n",
+                                            "hTV8O6/BAoGBAMjLbyYbPooq17MwPnn01oNLXitO+gbG1AiRcXSUHGT/iOOBQEU2\n",
+                                            "Ho2/cGeJ1wsXUnsOrtbyEJjQCfRje5IWM4sqs+STUVrK3ZABMyJ5IokXdPhDOzlx\n",
+                                            "JaEf1mPYIsioMXrhBVUuGp7/2L6IlLOmPqBI5d+pBoXOvqjuhbY2X8HQ\n",
+                                            "-----END RSA PRIVATE KEY-----"
+                                        ]
+                                    ],
+                                    "mode": "000600",
+                                    "owner": "root",
+                                    "group": "root"
+                                }
+                            },
+                            "/home/ec2-user/.ssh/id_rsa.pub": {
+                                "content": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC798bGrCfLGqhKT89XSwHqj6UEwq4UHIvWZzOzmXQmzbaRISvogjpTooA6yslFtfThDMp7Le1skCsDBvEHAKHCPgHNQy0uUs7tA6O4fzd9f4U8wTqv9ypWy/8ZlYBakiS4OCVry8G5M4V0i5pk89QW62mYPwaqhn2Wd8lehuZzzDCj2WY/hGQro8H1nbCK4TgsYwr19xQcKoc5D9h7lWZUOsytFJ580NAxbPphlI7jLbjxXMYNl5uu4hVZvOjK6qw7biriFajaK2wNkH7CPmZHyuS1Grgp0vdQMw57A5glMOyeAMbppxL7MaVlNnWNgk/psGn2NiJd7td9rBEsJRKD",
+                                "mode": "000644",
+                                "owner": "root",
+                                "group": "root"
+                            },
                             "/home/ec2-user/connect-srr.sh": {
                                 "content": { "Fn::Join" : ["", [
                                     "#!/bin/bash -xe\n",
+                                    "sudo yum install -y jq\n",
                                     "\n",
                                     "# Define inputs here\n",
-                                    "first_server_private_ip=", { "Ref": "FirstClusterPrivateDNS" }, "\n",
-                                    "first_server_instance_id=", { "Ref": "FirstServerInstanceID" }, "\n",
+                                    "first_server_private_dns=", { "Ref": "FirstClusterPrivateDNS" }, "\n",
+                                    "first_server_instance_id=", { "Ref": "FirstServerInstanceID" }, "\n", 
                                     "\n",
                                     "# Reformed inputs\n",
-                                    "first_server_public_sr_api=\"https://${first_server_private_ip}:8080/api\"\n",
+                                    "first_server_public_sr_api=\"https://${first_server_private_dns}:8080/api\"\n",
                                     "\n",
                                     "# the password is server_public_ip.\n",
                                     "#-> Create a password input to the autoscaling group\n",
@@ -147,43 +206,47 @@
                                     "\n",
                                     "get_cluster_discovery_token () { # sr_api_url\n",
                                     "  srr_api=$1\n",
-                                    "  cluster_info=$(curl $CURL_ARGS \\n",
-                                    "       -X GET \\n",
-                                    "       -b \"${COOKIE_FILE}\" \\n",
-                                    "       \"${srr_api}/srr/cluster/current\")\n",
+                                    "  cluster_info=$(curl $CURL_ARGS       -X GET      -b \"${COOKIE_FILE}\"        \"${srr_api}/srr/cluster/current\")\n",
                                     "  echo $(echo $cluster_info | jq -r '.ClusterDiscoveryToken' )\n",
                                     "}\n",
                                     "\n",
                                     "put () { # sr_api_url, #json_doc\n",
                                     "  srr_api=$1\n",
                                     "  json=$2\n",
-                                    "  curl $CURL_ARGS \\n",
-                                    "       -X PUT \\n",
-                                    "       -b \"${COOKIE_FILE}\" \\n",
-                                    "       -d \"$json\" \\n",
-                                    "       \"${srr_api}\"\n",
+                                    "  curl $CURL_ARGS -X PUT        -b \"${COOKIE_FILE}\"        -d \"$json\"       \"${srr_api}\"\n",
                                     "}\n",
                                     "\n",
                                     "configure_server () { # server_public_ip, cluster_token\n",
+                                    "    # TODO: Make while loops finite\n",
                                     "    cluster_token=$1\n",
-                                    "    sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}        ${cluster_token}\n",
+                                    "    sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}\n",
+                                    "    \n",
+                                    "    while ! sudo storreducectl cluster join --token=\"${cluster_token}\"; do sleep 1; done\n",
                                     "    \n",
                                     "    # Wait for StorReduce on server to be up\n",
                                     "    while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done\n",
                                     "\n",
-                                    "    put \"https://$first_server_private_ip:8080/api/srr/settings\" '{\"hostname\":\"$local_hostname,$ip\"}'\n",
+                                    "    # TODO: DO NOT OVERWRITE! NEED TO FETCH FIRST THEN AGGREGATE\n",
+                                    "    put \"https://$first_server_private_dns:8080/api/srr/settings\" '{\"hostname\":\"'$local_hostname,$ip'\"}'\n",
+                                    "\n",
+                                    "    while ! sudo storreducectl cluster rebalance; do sleep 1; done\n",
                                     "}\n",
                                     "\n",
                                     "get_local_srr_password () { # server_public_ip\n",
                                     "  curl http://169.254.169.254/latest/meta-data/instance-id\n",
                                     "}\n",
                                     "\n",
-                                    "curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{\"UserId\": \"srr:root\", \"Password\": \"'${first_server_instance_id}'\"}' https://${first_server_private_ip}:8080/api/auth/srr --retry 10 --retry-delay 30\n",
+                                    "curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{\"UserId\": \"srr:root\", \"Password\": \"'${first_server_instance_id}'\"}' https://${first_server_private_dns}:8080/api/auth/srr --retry 10 --retry-delay 30\n",
                                     "\n",
-                                    "cluster_token=$(get_cluster_discovery_token \"${first_server_public_sr_api}\")\n",
+                                    "cluster_token=\"$(get_cluster_discovery_token ${first_server_public_sr_api})\"\n",
                                     "\n",
-                                    "configure_server $cluster_token\n"
-                                    ]]},    
+                                    "configure_server \"$cluster_token\"\n",
+                                    "\n",
+                                    "# sudo storreducectl cluster restart -f\n",
+                                    "# Error restarting StorReduce on server 10.0.22.21: Error creating SSH client: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain\n",
+                                    "# TODO: Generate key and install on all the hosts"
+
+                                ]]},    
                                 "mode": "000550",
                                 "owner": "root",
                                 "group": "root"                            
@@ -191,7 +254,7 @@
                         },
                         "commands": {
                             "connect-srr": {
-                                "command": "echo test > /home/ec2-user/test.txt && echo /home/ec2-user/connect-srr.sh"
+                                "command": "/home/ec2-user/connect-srr.sh > output.txt"
                             }
                         }
                     }

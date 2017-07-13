@@ -2,8 +2,8 @@
 sudo yum install -y jq
 
 # Define inputs here
-first_server_private_ip=ip-10-0-8-2.us-west-2.compute.internal
-first_server_instance_id=i-0584dc2666391fc7b
+first_server_private_ip=ip-10-0-22-21.us-west-2.compute.internal
+first_server_instance_id=i-0c45d239b3a695e89
 
 # Reformed inputs
 first_server_public_sr_api="https://${first_server_private_ip}:8080/api"
@@ -52,6 +52,10 @@ get_local_srr_password () { # server_public_ip
 
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'${first_server_instance_id}'"}' https://${first_server_private_ip}:8080/api/auth/srr --retry 10 --retry-delay 30
 
-cluster_token=$(get_cluster_discovery_token "${first_server_public_sr_api}")
+cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 
 configure_server "$cluster_token"
+
+# sudo storreducectl cluster restart -f
+# Error restarting StorReduce on server 10.0.22.21: Error creating SSH client: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+# TODO: Generate key and install on all the hosts

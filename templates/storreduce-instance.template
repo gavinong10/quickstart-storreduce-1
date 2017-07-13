@@ -4,37 +4,98 @@
     "Metadata": {},
     "Parameters": {
         "HostProfile": {
-            "Description" : "The host profile to associate with the StorReduce instance(s)",
+            "Description": "The host profile to associate with the StorReduce instance(s)",
             "Type": "String"
         },
         "KeyPairName": {
-            "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances",
             "Type": "AWS::EC2::KeyPair::KeyName",
-            "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
-        "InstanceType" : {
-            "Description" : "EC2 instance type",
-            "Type" : "String",
-            "Default" : "c3.large",
-            "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
-            "ConstraintDescription" : "must be a valid EC2 instance type."
+        "InstanceType": {
+            "Description": "EC2 instance type",
+            "Type": "String",
+            "Default": "c3.large",
+            "AllowedValues": [
+                "t1.micro",
+                "t2.nano",
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
+                "t2.large",
+                "m1.small",
+                "m1.medium",
+                "m1.large",
+                "m1.xlarge",
+                "m2.xlarge",
+                "m2.2xlarge",
+                "m2.4xlarge",
+                "m3.medium",
+                "m3.large",
+                "m3.xlarge",
+                "m3.2xlarge",
+                "m4.large",
+                "m4.xlarge",
+                "m4.2xlarge",
+                "m4.4xlarge",
+                "m4.10xlarge",
+                "c1.medium",
+                "c1.xlarge",
+                "c3.large",
+                "c3.xlarge",
+                "c3.2xlarge",
+                "c3.4xlarge",
+                "c3.8xlarge",
+                "c4.large",
+                "c4.xlarge",
+                "c4.2xlarge",
+                "c4.4xlarge",
+                "c4.8xlarge",
+                "g2.2xlarge",
+                "g2.8xlarge",
+                "r3.large",
+                "r3.xlarge",
+                "r3.2xlarge",
+                "r3.4xlarge",
+                "r3.8xlarge",
+                "i2.xlarge",
+                "i2.2xlarge",
+                "i2.4xlarge",
+                "i2.8xlarge",
+                "d2.xlarge",
+                "d2.2xlarge",
+                "d2.4xlarge",
+                "d2.8xlarge",
+                "hi1.4xlarge",
+                "hs1.8xlarge",
+                "cr1.8xlarge",
+                "cc2.8xlarge",
+                "cg1.4xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
         },
-        "BucketName" : {
-            "Description" : "The bucket to which StorReduce will store data",
-            "ConstraintDescription" : "must be a valid S3 bucket name.",
-            "Type" : "String"
+        "BucketName": {
+            "Description": "The bucket to which StorReduce will store data",
+            "ConstraintDescription": "must be a valid S3 bucket name.",
+            "Type": "String"
         },
-        "LocalSubnet" : {
-            "Description" : "The subnet to which this instance will belong",
+        "LocalSubnet": {
+            "Description": "The subnet to which this instance will belong",
             "Type": "AWS::EC2::Subnet::Id"
         },
-        "AvailabilityZone" : {
-            "Description" : "The availability zone in which to place the EC2 instance",
+        "AvailabilityZone": {
+            "Description": "The availability zone in which to place the EC2 instance",
             "Type": "AWS::EC2::AvailabilityZone::Name"
         },
         "SecurityGroupIds": {
             "Description": "The security group associated with the instance",
             "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        },
+        "StorReduceLicense": {
+            "Description": "A StorReduce license",
+            "ConstraintDescription": "must be a current and valid StorReduce license.",
+            "Type": "String",
+            "Default": "-----BEGIN STORREDUCE LICENSE-----MAoeCgxTUi1EZXZlbG9wZXISABoMCgASABoAIgAqADIAEgAaACABKAEwATgBSABQAHb9y+ofSLQjkHVz0I682cVid4o5Uexb9CM5upV7XeLywwhCJAYnS9R7UlKYKNHY4r5H8l7U9h2LeJLS48Ed4q8NpmwmAMaJ+G7xdqmcCLdnHrbrFoabbTnu4Ex7C9KlZLDHVmNr0yIi7j1d5Trw3VHNxmK5McSmVyPIpOwKh8CwcvbJZ9JsgqCymp2L4TgY16XK3YBu8bL4Lz6SJXLbAzL1ENU6lhIdvbZTJvMHDCSjmYHs7mQc8tLbWLfKaChB4/aCUlcu70unarwrDyMlXpl9WsjkKOhvT17/dqCUfq3hcPHgdF/HO0nD+Ao+jYnb+FfeYqydNxzuAvxl7WqfT0c=-----END STORREDUCE LICENSE-----"
         }
     },
     "Rules": {},
@@ -45,64 +106,113 @@
                 "AWS::CloudFormation::Init": {
                     "config": {
                         "files": {
+                            "/home/ec2-user/.ssh/id_rsa": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "-----BEGIN RSA PRIVATE KEY-----\n",
+                                            "MIIEpgIBAAKCAQEAu/fGxqwnyxqoSk/PV0sB6o+lBMKuFByL1mczs5l0Js22kSEr\n",
+                                            "6II6U6KAOsrJRbX04QzKey3tbJArAwbxBwChwj4BzUMtLlLO7QOjuH83fX+FPME6\n",
+                                            "r/cqVsv/GZWAWpIkuDgla8vBuTOFdIuaZPPUFutpmD8GqoZ9lnfJXobmc8wwo9lm\n",
+                                            "P4RkK6PB9Z2wiuE4LGMK9fcUHCqHOQ/Ye5VmVDrMrRSefNDQMWz6YZSO4y248VzG\n",
+                                            "DZebruIVWbzoyuqsO24q4hWo2itsDZB+wj5mR8rktRq4KdL3UDMOewOYJTDsngDG\n",
+                                            "6acS+zGlZTZ1jYJP6bBp9jYiXe7XfawRLCUSgwIDAQABAoIBAQCtIkvAQWAh7vrl\n",
+                                            "/98+S4OHVyorWVpYgfa31LVFj2nyN/cadJBqCFHLKVmtTY3YnQHirRJwJVyUa7KC\n",
+                                            "hklKJuXX8Z9dPqwGCBY7L+gEj4FAIk5KKL1yyVoBOsNNAGyKgCQ8XtLxGGvmt7MM\n",
+                                            "J25d4E0Rk2Le7eao+VoCV3FulRj9vJkltQu5+Ap5l7E7eaeGIAv1PgCf8xMaOwZf\n",
+                                            "7/jpmz5P8oGF5zqZ0ovHG9pPFOb2m5R5V+F4jAFl0sGMde/rKLQUC13pp7Samckw\n",
+                                            "N/6r5abPhrE8Tsb+2fWc1rEpSgWZsAXK85NUTpaPl3ek/u9z/eogtn/NumK7jeDq\n",
+                                            "rcqQuk+ZAoGBAOHQ7kQVWnDs7Zt8ML9mHwQiLESqCRpn9f73PuA0dcs7dWg3o/cS\n",
+                                            "VQXy6bOgl/aembOb3r+lzbYQw2qnUbpjIg68UHiRKML6NPSjM74n7nAxKAuk1MOi\n",
+                                            "PEz+qada8/VBmcoMQzC4367QG90UguC23317j7YhlDZq8hYQcnBkttZ1AoGBANUX\n",
+                                            "vQzjYWojpluoiJnVYlRiPv50UiYTKF8BnuyKd8CsnfI0K375jYgA1/o7Xmfuu3TR\n",
+                                            "ds25cuQ7S1AlH6VDiMjv0/GcaQOrfjry/D9keSDtzYvE/lnhJbqhNn5ty6A+c9uC\n",
+                                            "aZqESCuH3vSeHKFKOCWNgwIBe64IYlf0M1EMatYXAoGBAI5wVsr1WS4gFSTdqnYg\n",
+                                            "uXHHCHtrcgCJER9539xW2vKOF9ncNv3zP1RYTFf09cYndrZXnKLwuBie7FULI79Z\n",
+                                            "JrN6z5utnLOYVez2QP4ye/Gi4CqwF1ErtbOvc15QPdA3SAWtxHgoNVg0h07l0ERk\n",
+                                            "tgaV+Smedrn4ramDSFxi+v29AoGBAMrJ7H93ZB0+D/LqUBUVnJ3xYUGGMSdK1ACV\n",
+                                            "6kfw/kW+ABGe1EXh926WXvMjzJPb/UkOjaD5+vx38RQ0QAlmW6XdljU4RDfZ3Cb9\n",
+                                            "VlB9rUhJBnMc5XFjciRJhzKKCl5VEKy1TwpdGNFUXDkuvtA/cW9LXIFsJ+dW00Ag\n",
+                                            "hTV8O6/BAoGBAMjLbyYbPooq17MwPnn01oNLXitO+gbG1AiRcXSUHGT/iOOBQEU2\n",
+                                            "Ho2/cGeJ1wsXUnsOrtbyEJjQCfRje5IWM4sqs+STUVrK3ZABMyJ5IokXdPhDOzlx\n",
+                                            "JaEf1mPYIsioMXrhBVUuGp7/2L6IlLOmPqBI5d+pBoXOvqjuhbY2X8HQ\n",
+                                            "-----END RSA PRIVATE KEY-----"
+                                        ]
+                                    ],
+                                    "mode": "000600",
+                                    "owner": "root",
+                                    "group": "root"
+                                }
+                            },
+                            "/home/ec2-user/.ssh/id_rsa.pub": {
+                                "content": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC798bGrCfLGqhKT89XSwHqj6UEwq4UHIvWZzOzmXQmzbaRISvogjpTooA6yslFtfThDMp7Le1skCsDBvEHAKHCPgHNQy0uUs7tA6O4fzd9f4U8wTqv9ypWy/8ZlYBakiS4OCVry8G5M4V0i5pk89QW62mYPwaqhn2Wd8lehuZzzDCj2WY/hGQro8H1nbCK4TgsYwr19xQcKoc5D9h7lWZUOsytFJ580NAxbPphlI7jLbjxXMYNl5uu4hVZvOjK6qw7biriFajaK2wNkH7CPmZHyuS1Grgp0vdQMw57A5glMOyeAMbppxL7MaVlNnWNgk/psGn2NiJd7td9rBEsJRKD",
+                                "mode": "000644",
+                                "owner": "root",
+                                "group": "root"
+                            },
                             "/home/ec2-user/init-srr.sh": {
-                                "content": { "Fn::Join" : ["", [
-                                    "#!/bin/bash -xe\n",
-                                    "\n",
-                                    "# Define inputs here\n",
-                                    "bucket_name=", { "Ref": "BucketName" }, "\n",
-                                    "\n",
-                                    "CURL_ARGS=\"--fail --insecure --retry 10 --retry-delay 30\"\n",
-                                    "COOKIE_FILE=\"/tmp/cookie.txt\"\n",
-                                    "\n",
-                                    "# parameters to fetch for functions\n",
-                                    "ip=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)\n",
-                                    "local_hostname=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-hostname)\n",
-                                    "\n",
-                                    "get_cluster_discovery_token () { # sr_api_url\n",
-                                    "  srr_api=$1\n",
-                                    "  cluster_info=$(curl $CURL_ARGS \\n",
-                                    "       -X GET \\n",
-                                    "       -b \"${COOKIE_FILE}\" \\n",
-                                    "       \"${srr_api}/srr/cluster/current\")\n",
-                                    "  echo $(echo $cluster_info | jq -r '.ClusterDiscoveryToken' )\n",
-                                    "}\n",
-                                    "\n",
-                                    "put () { # sr_api_url, #json_doc\n",
-                                    "  srr_api=$1\n",
-                                    "  json=$2\n",
-                                    "  curl $CURL_ARGS \\n",
-                                    "       -X PUT \\n",
-                                    "       -b \"${COOKIE_FILE}\" \\n",
-                                    "       -d \"$json\" \\n",
-                                    "       \"${srr_api}\"\n",
-                                    "}\n",
-                                    "\n",
-                                    "get_local_srr_password () { # server_public_ip\n",
-                                    "  curl http://169.254.169.254/latest/meta-data/instance-id\n",
-                                    "}\n",
-                                    "\n",
-                                    "\n",
-                                    "sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}        ${cluster_token}\n",
-                                    "\n",
-                                    "# Wait for StorReduce on server to be up\n",
-                                    "while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done\n",
-                                    "curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{\"UserId\": \"srr:root\", \"Password\": \"'$(get_local_srr_password)'\"}' https://${ip}:8080/api/auth/srr --retry 10 --retry-delay 30\n",
-                                    "\n",
-                                    "put \"https://$ip:8080/api/srr/settings\" '{\"hostname\":\"'$local_hostname','$ip'\", \"bucket\":\"'$bucket_name'\"}'\n",
-                                    "\n",
-                                    "cluster_token=$(get_cluster_discovery_token \"${first_server_public_sr_api}\")\n",
-                                    "\n",
-                                    "sudo storreducectl server restart"
-                                    ]]},    
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "#!/bin/bash -xe\n",
+                                            "\n",
+                                            "printf \"\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC798bGrCfLGqhKT89XSwHqj6UEwq4UHIvWZzOzmXQmzbaRISvogjpTooA6yslFtfThDMp7Le1skCsDBvEHAKHCPgHNQy0uUs7tA6O4fzd9f4U8wTqv9ypWy/8ZlYBakiS4OCVry8G5M4V0i5pk89QW62mYPwaqhn2Wd8lehuZzzDCj2WY/hGQro8H1nbCK4TgsYwr19xQcKoc5D9h7lWZUOsytFJ580NAxbPphlI7jLbjxXMYNl5uu4hVZvOjK6qw7biriFajaK2wNkH7CPmZHyuS1Grgp0vdQMw57A5glMOyeAMbppxL7MaVlNnWNgk/psGn2NiJd7td9rBEsJRKD\n\" >>  ~/.ssh/authorized_keys",
+                                            "\n",
+                                            "# Define inputs here\n",
+                                            "bucket_name=",
+                                            {
+                                                "Ref": "BucketName"
+                                            },
+                                            "\n",
+                                            "srr_license=\"",
+                                            {
+                                                "Ref": "StorReduceLicense"
+                                            },
+                                            "\n\"",
+                                            "\n",
+                                            "CURL_ARGS=\"--fail --insecure --retry 10 --retry-delay 30\"\n",
+                                            "COOKIE_FILE=\"/tmp/cookie.txt\"\n",
+                                            "\n",
+                                            "# parameters to fetch for functions\n",
+                                            "ip=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)\n",
+                                            "local_hostname=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-hostname)\n",
+                                            "\n",
+                                            "put () { # sr_api_url, #json_doc\n",
+                                            "  srr_api=$1\n",
+                                            "  json=$2\n",
+                                            "  curl $CURL_ARGS        -X PUT        -b \"${COOKIE_FILE}\"        -d \"$json\"        \"${srr_api}\"\n",
+                                            "}\n",
+                                            "\n",
+                                            "get_local_srr_password () { # server_public_ip\n",
+                                            "  curl http://169.254.169.254/latest/meta-data/instance-id\n",
+                                            "}\n",
+                                            "\n",
+                                            "sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}        ${cluster_token}\n",
+                                            "\n",
+                                            "# Wait for StorReduce on server to be up\n",
+                                            "while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done\n",
+                                            "curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{\"UserId\": \"srr:root\", \"Password\": \"'$(get_local_srr_password)'\"}' https://${ip}:8080/api/auth/srr --retry 10 --retry-delay 30\n",
+                                            "\n",
+                                            "put \"https://$ip:8080/api/srr/settings\" '{\"hostname\":\"'$local_hostname','$ip'\", \"bucket\":\"'$bucket_name'\"}, \"license\": \"'$srr_license'\"'\n",
+                                            "\n",
+                                            "sudo storreducectl server restart\n",
+                                            "\n",
+                                            "# Wait for StorReduce on server to be up\n",
+                                            "while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done\n",
+                                            "\n"
+                                        ]
+                                    ]
+                                },
                                 "mode": "000550",
                                 "owner": "root",
-                                "group": "root"                            
+                                "group": "root"
                             }
                         },
                         "commands": {
                             "connect-srr": {
-                                "command": "echo test > /home/ec2-user/test.txt && /home/ec2-user/init-srr.sh"
+                                "command": "echo test > /home/ec2-user/test.txt && /home/ec2-user/init-srr.sh > output.txt"
                             }
                         }
                     }
@@ -112,29 +222,50 @@
                 "IamInstanceProfile": {
                     "Ref": "HostProfile"
                 },
-                "AvailabilityZone": { 
-                    "Ref" : "AvailabilityZone"
+                "AvailabilityZone": {
+                    "Ref": "AvailabilityZone"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
                         "AWSAMIRegion",
-                            {
-                                        "Ref": "AWS::Region"
-                            },
-                            "AMI"
-                        ]},
-                "InstanceType": { "Ref" : "InstanceType" },
-                "KeyName": { "Ref": "KeyPairName" },
-                "SecurityGroupIds": { "Ref": "SecurityGroupIds" },
-                "SubnetId": { "Ref": "LocalSubnet" },
-                "UserData" : { "Fn::Base64" :
-                    { "Fn::Join" : ["", [
-                        "#!/bin/bash -xe\n",
-                        "/opt/aws/bin/cfn-init -v ",
-                        "         --stack ", { "Ref" : "AWS::StackName" },
-                        "         --resource Ec2Instance ",
-                        "         --region ", { "Ref" : "AWS::Region" }, "\n"
-                    ]]}
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyPairName"
+                },
+                "SecurityGroupIds": {
+                    "Ref": "SecurityGroupIds"
+                },
+                "SubnetId": {
+                    "Ref": "LocalSubnet"
+                },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+                                "/opt/aws/bin/cfn-init -v ",
+                                "         --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "         --resource Ec2Instance ",
+                                "         --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n"
+                            ]
+                        ]
+                    }
                 },
                 "Tags": [
                     {
@@ -146,10 +277,10 @@
             "Type": "AWS::EC2::Instance"
         }
     },
-    "Mappings" : {
-        "AWSAMIRegion" : {
-            "us-west-2" : {
-                "AMI" : "ami-11203d68"
+    "Mappings": {
+        "AWSAMIRegion": {
+            "us-west-2": {
+                "AMI": "ami-9b3f23e2"
             }
         }
     },
@@ -160,9 +291,14 @@
                 "Ref": "Ec2Instance"
             }
         },
-          "PrivateDnsName" : {
-            "Description": "The Private DNS name of the StorReduce server",  
-            "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PrivateDnsName" ]}
+        "PrivateDnsName": {
+            "Description": "The Private DNS name of the StorReduce server",
+            "Value": {
+                "Fn::GetAtt": [
+                    "Ec2Instance",
+                    "PrivateDnsName"
+                ]
+            }
         }
     }
 }

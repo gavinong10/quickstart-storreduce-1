@@ -138,7 +138,7 @@
     "Mappings" : {
         "AWSAMIRegion" : {
             "us-west-2" : {
-                "AMI" : "ami-11203d68"
+                "AMI" : "ami-9b3f23e2"
             }
         }
     },

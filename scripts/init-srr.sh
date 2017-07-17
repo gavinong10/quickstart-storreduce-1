@@ -1,8 +1,11 @@
 #!/bin/bash -xe
 
 # Define inputs here
-bucket_name=lwerasdoijer
-srr_license="-----BEGIN STORREDUCE LICENSE-----MAoeCgxTUi1EZXZlbG9wZXISABoMCgASABoAIgAqADIAEgAaACABKAEwATgBSABQAHb9y+ofSLQjkHVz0I682cVid4o5Uexb9CM5upV7XeLywwhCJAYnS9R7UlKYKNHY4r5H8l7U9h2LeJLS48Ed4q8NpmwmAMaJ+G7xdqmcCLdnHrbrFoabbTnu4Ex7C9KlZLDHVmNr0yIi7j1d5Trw3VHNxmK5McSmVyPIpOwKh8CwcvbJZ9JsgqCymp2L4TgY16XK3YBu8bL4Lz6SJXLbAzL1ENU6lhIdvbZTJvMHDCSjmYHs7mQc8tLbWLfKaChB4/aCUlcu70unarwrDyMlXpl9WsjkKOhvT17/dqCUfq3hcPHgdF/HO0nD+Ao+jYnb+FfeYqydNxzuAvxl7WqfT0c=-----END STORREDUCE LICENSE-----"
+bucket_name=$1
+srr_license="$2"
+load_balancer_DNS=$3
+load_balancer_name=$4
+region=$5
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
@@ -27,12 +30,14 @@ sudo storreducectl server init        --admin_port=8080        --cluster_listen_
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'$(get_local_srr_password)'"}' https://${ip}:8080/api/auth/srr --retry 10 --retry-delay 30
 
-put "https://$ip:8080/api/srr/settings" '{"hostname":"'$local_hostname','$ip'", "bucket":"'$bucket_name'"}, "license": "'$srr_license'"'
+put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'$bucket_name'", "license": "'$srr_license'"}'
 
 sudo storreducectl server restart
 
 # Wait for StorReduce on server to be up
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
+
+aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
 
 #trim
 #replace " with \\"

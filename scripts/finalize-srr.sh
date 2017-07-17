@@ -4,8 +4,7 @@ sudo yum install -y jq
 # Define inputs here
 first_server_private_ip=$1
 first_server_instance_id=$2
-load_balancer_name=$3
-region=$4
+load_balancer_DNS=$3
 
 # Reformed inputs
 first_server_public_sr_api="https://${first_server_private_ip}:8080/api"
@@ -42,9 +41,11 @@ configure_server () { # server_public_ip, cluster_token
     # Wait for StorReduce on server to be up
     while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 
-    # put "https://$first_server_private_ip:8080/api/srr/settings" '{"hostname":"'$local_hostname,$ip'"}'
+    put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'"}'
 
-    while ! sudo storreducectl cluster rebalance; do sleep 1; done
+    #while ! sudo storreducectl cluster restart; do sleep 1; done
+
+    while ! sudo storreducectl cluster leave; do sleep 1; done
 }
 
 get_local_srr_password () { # server_public_ip
@@ -56,8 +57,6 @@ while ! curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${C
 cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 
 configure_server "$cluster_token"
-
-aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
 
 # sudo storreducectl cluster restart -f
 # Error restarting StorReduce on server 10.0.22.21: Error creating SSH client: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain

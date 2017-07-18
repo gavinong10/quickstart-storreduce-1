@@ -1,24 +1,5 @@
-Add access control to bucket and/or specify existing bucket
-Specify AllowedPattern, MinLength, MaxLength for bucket name
-
-Rebalance and restart cluster
-
-"command" : "storreducectl server init --server-ip="127.0.0.1" --cluster-listen-port=8095 --etcd-client-port=2379 --etcd-peer-port=2380 --http-port=80 --https-port=443 --admin-port=8080 --shard-count=20 --replica-count=1 --force"
-
-
-// Define PrivateIpAddress
 
 // Make template referencing appropriate - currently testing out of gong-cf-templates
-
-// Combine mappings into master?
-
-// Fix autoscale cooldown
-
-// Fix IP addresses permanently
-
-// set min NumSrrHosts to 3
-
-// Create a loop through for IP addresses to try
 
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-master.template
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template
@@ -37,27 +18,14 @@ Questions to ask:
 - What do I need to understand about CF stack updates
 - How do I disable rollback on failure?
 - Is there any way I can 'continue' a deployment?
-- Can I make the Init files reference the scripts folder?
-- How do I pass a parameter into an init script?
 
-"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-                    "#!/bin/bash -xe\n",
-                    "ip=$(curl --fail --silent http://169.254.169.254/latest/meta-data/public-ipv4 || curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)\n",
-                    "sudo storreducectl server init",
-                    "        --admin_port=8080",
-                    "        --cluster_listen_port=8095",
-                    "        --config_server_client_port=2379",
-                    "        --config_server_peer_port=2380",
-                    "        --dev_n_shards=36",
-                    "        --http_port=80",
-                    "        --https_port=443",
-                    "        --n_shard_replicas=2",
-                    "        --force=true",
-                    "        --cluster_listen_interface=${ip}\n",
-                    "#TODO: Make dev_n_shards configurable\n",
-                    "#TODO: Make n_shard_replicas configurable\n",
-                    "#10.0.5.107\n"
-                ]]}},
-
-Example of single host seed
 IAM profile for S3 public 
+
+// TODO: Remove ELB setting in StorReduce HTML
+// TODO: Add cloudwatch alarm and recovery
+
+arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988
+
+// TODO: Generate SSL Certificate in template
+// TODO: Add password output
+// TODO: Limit number of SRR servers to odd numbers

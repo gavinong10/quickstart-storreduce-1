@@ -30,7 +30,7 @@ sudo storreducectl server init        --admin_port=8080        --cluster_listen_
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'$(get_local_srr_password)'"}' https://${ip}:8080/api/auth/srr --retry 10 --retry-delay 30
 
-put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'$bucket_name'", "license": "'$srr_license'"}'
+put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
 
 sudo storreducectl server restart
 

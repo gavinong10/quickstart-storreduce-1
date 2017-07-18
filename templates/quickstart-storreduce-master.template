@@ -25,7 +25,6 @@
                         "NumberOfAZs",
                         "AvailabilityZones",
                         "VPCCIDR",
-                        "CreatePrivateSubnets",
                         "PrivateSubnet1ACIDR",
                         "PrivateSubnet2ACIDR",
                         "PrivateSubnet3ACIDR",
@@ -69,14 +68,14 @@
                 "StorReduceLicense": {
                     "default": "A valid StorReduce license"
                 },
+                "SSLCertificateId": {
+                    "default": "SSL Certificate ID"
+                },
                 "NumSrrHosts": {
                     "default": "Number of StorReduce servers"
                 },
                 "AvailabilityZones": {
                     "default": "Availability Zones"
-                },
-                "CreatePrivateSubnets": {
-                    "default": "Create private subnets"
                 },
                 "BastionAMIOS": {
                     "default": "Bastion AMI Operating System"
@@ -87,8 +86,14 @@
                 "KeyPairName": {
                     "default": "Key Pair Name"
                 },
-                "SSLCertificateId": {
-                    "default": "SSL Certificate ID"
+                "InstanceType": {
+                    "default": "Instance Type"
+                },
+                "BucketName": {
+                    "default": "Bucket Name"
+                },
+                "NumberOfAZs": {
+                    "default": "Number of Availability Zones"
                 },
                 "NumBastionHosts": {
                     "default": "Number of Bastion Hosts"
@@ -141,28 +146,20 @@
             "ConstraintDescription" : "must be a valid EC2 instance type."
         },
         "BucketName" : {
-            "Description" : "The bucket to which StorReduce will store data",
-            "ConstraintDescription" : "must be a valid S3 bucket name.",
-            "Type" : "String"
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "The bucket to which StorReduce will store data",
+            "Type": "String"
         },
         "StorReduceLicense": {
             "Description" : "A StorReduce license",
             "ConstraintDescription" : "Must be a current and valid StorReduce license.",
             "Type" : "String",
-            "Default": "FIX ME!!"
+            "Default": ""
         },
         "AvailabilityZones": {
             "Description": "List of Availability Zones to use for the subnets in the VPC. Note: The logical order is preserved and only 2 AZs are used for this deployment.",
             "Type": "List<AWS::EC2::AvailabilityZone::Name>"
-        },
-        "CreatePrivateSubnets": {
-            "AllowedValues": [
-                "true",
-                "false"
-            ],
-            "Default": "true",
-            "Description": "Set to false to create only public subnets. If false, the CIDR parameters for ALL private subnets will be ignored.",
-            "Type": "String"
         },
         "BastionAMIOS": {
             "AllowedValues": [
@@ -199,9 +196,9 @@
             "Type": "AWS::EC2::KeyPair::KeyName"
         },
         "SSLCertificateId": {
-            "Description" : "The host profile to associate with the StorReduce instance(s)",
+            "Description" : "The SSL Certificate ID to use for the Load Balancer. This is of the form \"arn:aws:acm:region:123456789012:certificate/12345678-1234-1234-1234-123456789012\"",
             "Type": "String",
-            "Default": "arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988"
+            "Default": ""
         },
         "NumBastionHosts": {
             "AllowedValues": [
@@ -325,8 +322,9 @@
         "NumSrrHosts": {
             "Description": "The number of StorReduce hosts",
             "Type" : "Number",
-            "MinValue" : 1,
-            "MaxValue" : 10
+            "MinValue" : 3,
+            "MaxValue" : 31,
+            "ConstraintDescription": "Number of StorReduce hosts must be between 3 and 31."
         }
     },
     "Rules": {},
@@ -360,137 +358,6 @@
                     "Ref": "AWS::Region"
                 },
                 "us-gov-west-1"
-            ]
-        },
-        "NATInstanceCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Condition": "GovCloudCondition"
-                }
-            ]
-        },
-        "NATGatewayCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Fn::Not": [
-                        {
-                            "Condition": "GovCloudCondition"
-                        }
-                    ]
-                }
-            ]
-        },
-        "NATInstance&3AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATInstanceCondition"
-                },
-                {
-                    "Condition": "3AZCondition"
-                }
-            ]
-        },
-        "NATInstance&4AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATInstanceCondition"
-                },
-                {
-                    "Condition": "4AZCondition"
-                }
-            ]
-        },
-        "NATGateway&3AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATGatewayCondition"
-                },
-                {
-                    "Condition": "3AZCondition"
-                }
-            ]
-        },
-        "NATGateway&4AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATGatewayCondition"
-                },
-                {
-                    "Condition": "4AZCondition"
-                }
-            ]
-        },
-        "NVirginiaRegionCondition": {
-            "Fn::Equals": [
-                {
-                    "Ref": "AWS::Region"
-                },
-                "us-east-1"
-            ]
-        },
-        "PrivateSubnetsCondition": {
-            "Fn::Equals": [
-                {
-                    "Ref": "CreatePrivateSubnets"
-                },
-                "true"
-            ]
-        },
-        "PrivateSubnets&3AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Condition": "3AZCondition"
-                }
-            ]
-        },
-        "PrivateSubnets&4AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Condition": "4AZCondition"
-                }
-            ]
-        },
-        "S3VPCEndpointCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Fn::Not": [
-                        {
-                            "Fn::Or": [
-                                {
-                                    "Fn::Equals": [
-                                        {
-                                            "Ref": "AWS::Region"
-                                        },
-                                        "us-gov-west-1"
-                                    ]
-                                },
-                                {
-                                    "Fn::Equals": [
-                                        {
-                                            "Ref": "AWS::Region"
-                                        },
-                                        "cn-north-1"
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
             ]
         }
     },
@@ -618,7 +485,7 @@
         "AllInternalAccessSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
-                "GroupDescription": "Enables all TCP access from within the VPC (TODO - refine for SSH to bastion hosts only and storreduce TCP ports from within VPC)",
+                "GroupDescription": "Enables StorReduce and SSH ports TCP access from within the VPC",
                 "VpcId": {
                     "Fn::GetAtt": [
                         "VPCStack",
@@ -628,8 +495,38 @@
                 "SecurityGroupIngress": [
                     {
                         "IpProtocol": "tcp",
-                        "FromPort": 0,
-                        "ToPort": 65535,
+                        "FromPort": 22,
+                        "ToPort": 22,
+                        "CidrIp": { "Ref": "VPCCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 80,
+                        "ToPort": 80,
+                        "CidrIp": { "Ref": "VPCCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 443,
+                        "ToPort": 443,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 8095,
+                        "ToPort": 8099,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 2379,
+                        "ToPort": 2380,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 8080,
+                        "ToPort": 8080,
                         "CidrIp": "0.0.0.0/0"
                     }
                 ]

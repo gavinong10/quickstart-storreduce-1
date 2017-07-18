@@ -308,6 +308,36 @@
                 }
             ]
         },
+        "NumInstancesLessThanOrEqualTo30": {
+            "Fn::Or": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "NumSRRHosts"
+                        },
+                        30
+                    ]
+                },
+                {
+                    "Condition": "NumInstancesLessThanOrEqualTo29"
+                }
+            ]
+        },
+        "NumInstancesLessThanOrEqualTo31": {
+            "Fn::Or": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "NumSRRHosts"
+                        },
+                        31
+                    ]
+                },
+                {
+                    "Condition": "NumInstancesLessThanOrEqualTo30"
+                }
+            ]
+        },
         "NumInstancesLessThanOrEqualTo4": {
             "Fn::Equals": [
                 {
@@ -395,7 +425,7 @@
     "Mappings": {
         "AWSAMIRegion": {
             "us-west-2": {
-                "AMI": "ami-9b3f23e2"
+                "AMI": "ami-15a2bd6c"
             }
         }
     },
@@ -404,580 +434,6 @@
             "Description": "ElasticLoadBalancerID ID",
             "Value": {
                 "Ref": "ElasticLoadBalancer"
-            }
-        },
-        "StorReduceInstance0PrivateDNS": {
-            "Description": "StorReduceInstance0 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance0",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance0PrivateIp": {
-            "Description": "StorReduceInstance0 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance0",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance10PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo11",
-            "Description": "StorReduceInstance10 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance10",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance10PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo11",
-            "Description": "StorReduceInstance10 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance10",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance11PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo12",
-            "Description": "StorReduceInstance11 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance11",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance11PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo12",
-            "Description": "StorReduceInstance11 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance11",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance12PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo13",
-            "Description": "StorReduceInstance12 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance12",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance12PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo13",
-            "Description": "StorReduceInstance12 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance12",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance13PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo14",
-            "Description": "StorReduceInstance13 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance13",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance13PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo14",
-            "Description": "StorReduceInstance13 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance13",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance14PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo15",
-            "Description": "StorReduceInstance14 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance14",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance14PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo15",
-            "Description": "StorReduceInstance14 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance14",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance15PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo16",
-            "Description": "StorReduceInstance15 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance15",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance15PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo16",
-            "Description": "StorReduceInstance15 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance15",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance16PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo17",
-            "Description": "StorReduceInstance16 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance16",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance16PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo17",
-            "Description": "StorReduceInstance16 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance16",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance17PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo18",
-            "Description": "StorReduceInstance17 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance17",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance17PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo18",
-            "Description": "StorReduceInstance17 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance17",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance18PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo19",
-            "Description": "StorReduceInstance18 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance18",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance18PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo19",
-            "Description": "StorReduceInstance18 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance18",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance19PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo20",
-            "Description": "StorReduceInstance19 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance19",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance19PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo20",
-            "Description": "StorReduceInstance19 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance19",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance1PrivateDNS": {
-            "Description": "StorReduceInstance1 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance1",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance1PrivateIp": {
-            "Description": "StorReduceInstance1 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance1",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance20PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo21",
-            "Description": "StorReduceInstance20 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance20",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance20PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo21",
-            "Description": "StorReduceInstance20 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance20",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance21PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo22",
-            "Description": "StorReduceInstance21 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance21",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance21PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo22",
-            "Description": "StorReduceInstance21 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance21",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance22PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo23",
-            "Description": "StorReduceInstance22 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance22",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance22PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo23",
-            "Description": "StorReduceInstance22 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance22",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance23PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo24",
-            "Description": "StorReduceInstance23 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance23",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance23PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo24",
-            "Description": "StorReduceInstance23 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance23",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance24PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo25",
-            "Description": "StorReduceInstance24 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance24",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance24PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo25",
-            "Description": "StorReduceInstance24 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance24",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance25PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo26",
-            "Description": "StorReduceInstance25 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance25",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance25PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo26",
-            "Description": "StorReduceInstance25 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance25",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance26PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo27",
-            "Description": "StorReduceInstance26 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance26",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance26PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo27",
-            "Description": "StorReduceInstance26 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance26",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance27PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo28",
-            "Description": "StorReduceInstance27 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance27",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance27PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo28",
-            "Description": "StorReduceInstance27 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance27",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance28PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo29",
-            "Description": "StorReduceInstance28 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance28",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance28PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo29",
-            "Description": "StorReduceInstance28 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance28",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance2PrivateDNS": {
-            "Description": "StorReduceInstance2 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance2",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance2PrivateIp": {
-            "Description": "StorReduceInstance2 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance2",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance3PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo4",
-            "Description": "StorReduceInstance3 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance3",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance3PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo4",
-            "Description": "StorReduceInstance3 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance3",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance4PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo5",
-            "Description": "StorReduceInstance4 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance4",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance4PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo5",
-            "Description": "StorReduceInstance4 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance4",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance5PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo6",
-            "Description": "StorReduceInstance5 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance5",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance5PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo6",
-            "Description": "StorReduceInstance5 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance5",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance6PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo7",
-            "Description": "StorReduceInstance6 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance6",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance6PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo7",
-            "Description": "StorReduceInstance6 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance6",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance7PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo8",
-            "Description": "StorReduceInstance7 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance7",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance7PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo8",
-            "Description": "StorReduceInstance7 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance7",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance8PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo9",
-            "Description": "StorReduceInstance8 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance8",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance8PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo9",
-            "Description": "StorReduceInstance8 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance8",
-                    "PrivateIp"
-                ]
-            }
-        },
-        "StorReduceInstance9PrivateDNS": {
-            "Condition": "NumInstancesLessThanOrEqualTo10",
-            "Description": "StorReduceInstance9 Private DNS",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance9",
-                    "PrivateDnsName"
-                ]
-            }
-        },
-        "StorReduceInstance9PrivateIp": {
-            "Condition": "NumInstancesLessThanOrEqualTo10",
-            "Description": "StorReduceInstance9 Private IP",
-            "Value": {
-                "Fn::GetAtt": [
-                    "StorReduceInstance9",
-                    "PrivateIp"
-                ]
             }
         }
     },
@@ -1072,7 +528,7 @@
         },
         "NumSRRHosts": {
             "Description": "The number of StorReduce hosts to configure",
-            "MaxValue": 29,
+            "MaxValue": 31,
             "MinValue": 3,
             "Type": "Number"
         },
@@ -1152,6 +608,11 @@
             "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
         },
         "StorReduceInstance0": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "ElasticLoadBalancer",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -1175,7 +636,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo      echo test > /home/ec2-user/test.txt && /home/ec2-user/init-srr.sh \"",
+                                            "/home/ec2-user/init-srr.sh \"",
                                             {
                                                 "Ref": "BucketName"
                                             },
@@ -1201,8 +662,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -1288,6 +748,15 @@
                                 " --resource StorReduceInstance0 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance0 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -1297,6 +766,11 @@
             "Type": "AWS::EC2::Instance"
         },
         "StorReduceInstance1": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -1320,7 +794,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -1341,8 +815,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -1428,6 +901,15 @@
                                 " --resource StorReduceInstance1 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance1 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -1438,6 +920,11 @@
         },
         "StorReduceInstance10": {
             "Condition": "NumInstancesLessThanOrEqualTo11",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -1461,7 +948,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -1482,8 +969,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -1569,6 +1055,15 @@
                                 " --resource StorReduceInstance10 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance10 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -1579,6 +1074,11 @@
         },
         "StorReduceInstance11": {
             "Condition": "NumInstancesLessThanOrEqualTo12",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -1602,7 +1102,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -1623,8 +1123,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -1710,6 +1209,15 @@
                                 " --resource StorReduceInstance11 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance11 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -1720,6 +1228,11 @@
         },
         "StorReduceInstance12": {
             "Condition": "NumInstancesLessThanOrEqualTo13",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -1743,7 +1256,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -1764,8 +1277,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -1851,6 +1363,15 @@
                                 " --resource StorReduceInstance12 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance12 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -1861,6 +1382,11 @@
         },
         "StorReduceInstance13": {
             "Condition": "NumInstancesLessThanOrEqualTo14",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -1884,7 +1410,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -1905,8 +1431,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -1992,6 +1517,15 @@
                                 " --resource StorReduceInstance13 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance13 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2002,6 +1536,11 @@
         },
         "StorReduceInstance14": {
             "Condition": "NumInstancesLessThanOrEqualTo15",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2025,7 +1564,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2046,8 +1585,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2133,6 +1671,15 @@
                                 " --resource StorReduceInstance14 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance14 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2143,6 +1690,11 @@
         },
         "StorReduceInstance15": {
             "Condition": "NumInstancesLessThanOrEqualTo16",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2166,7 +1718,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2187,8 +1739,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2274,6 +1825,15 @@
                                 " --resource StorReduceInstance15 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance15 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2284,6 +1844,11 @@
         },
         "StorReduceInstance16": {
             "Condition": "NumInstancesLessThanOrEqualTo17",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2307,7 +1872,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2328,8 +1893,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2415,6 +1979,15 @@
                                 " --resource StorReduceInstance16 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance16 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2425,6 +1998,11 @@
         },
         "StorReduceInstance17": {
             "Condition": "NumInstancesLessThanOrEqualTo18",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2448,7 +2026,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2469,8 +2047,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2556,6 +2133,15 @@
                                 " --resource StorReduceInstance17 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance17 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2566,6 +2152,11 @@
         },
         "StorReduceInstance18": {
             "Condition": "NumInstancesLessThanOrEqualTo19",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2589,7 +2180,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2610,8 +2201,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2697,6 +2287,15 @@
                                 " --resource StorReduceInstance18 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance18 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2707,6 +2306,11 @@
         },
         "StorReduceInstance19": {
             "Condition": "NumInstancesLessThanOrEqualTo20",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2730,7 +2334,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2751,8 +2355,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2838,6 +2441,15 @@
                                 " --resource StorReduceInstance19 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance19 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2847,6 +2459,11 @@
             "Type": "AWS::EC2::Instance"
         },
         "StorReduceInstance2": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -2870,7 +2487,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -2891,8 +2508,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -2978,6 +2594,15 @@
                                 " --resource StorReduceInstance2 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance2 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -2988,6 +2613,11 @@
         },
         "StorReduceInstance20": {
             "Condition": "NumInstancesLessThanOrEqualTo21",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3011,7 +2641,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3032,8 +2662,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3119,6 +2748,15 @@
                                 " --resource StorReduceInstance20 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance20 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3129,6 +2767,11 @@
         },
         "StorReduceInstance21": {
             "Condition": "NumInstancesLessThanOrEqualTo22",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3152,7 +2795,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3173,8 +2816,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3260,6 +2902,15 @@
                                 " --resource StorReduceInstance21 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance21 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3270,6 +2921,11 @@
         },
         "StorReduceInstance22": {
             "Condition": "NumInstancesLessThanOrEqualTo23",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3293,7 +2949,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3314,8 +2970,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3401,6 +3056,15 @@
                                 " --resource StorReduceInstance22 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance22 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3411,6 +3075,11 @@
         },
         "StorReduceInstance23": {
             "Condition": "NumInstancesLessThanOrEqualTo24",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3434,7 +3103,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3455,8 +3124,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3542,6 +3210,15 @@
                                 " --resource StorReduceInstance23 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance23 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3552,6 +3229,11 @@
         },
         "StorReduceInstance24": {
             "Condition": "NumInstancesLessThanOrEqualTo25",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3575,7 +3257,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3596,8 +3278,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3683,6 +3364,15 @@
                                 " --resource StorReduceInstance24 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance24 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3693,6 +3383,11 @@
         },
         "StorReduceInstance25": {
             "Condition": "NumInstancesLessThanOrEqualTo26",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3716,7 +3411,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3737,8 +3432,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3824,6 +3518,15 @@
                                 " --resource StorReduceInstance25 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance25 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3834,6 +3537,11 @@
         },
         "StorReduceInstance26": {
             "Condition": "NumInstancesLessThanOrEqualTo27",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3857,7 +3565,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -3878,8 +3586,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -3965,6 +3672,15 @@
                                 " --resource StorReduceInstance26 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance26 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -3975,6 +3691,11 @@
         },
         "StorReduceInstance27": {
             "Condition": "NumInstancesLessThanOrEqualTo28",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -3998,7 +3719,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4019,8 +3740,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4106,6 +3826,15 @@
                                 " --resource StorReduceInstance27 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance27 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4116,6 +3845,11 @@
         },
         "StorReduceInstance28": {
             "Condition": "NumInstancesLessThanOrEqualTo29",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4139,7 +3873,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4160,8 +3894,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4247,6 +3980,15 @@
                                 " --resource StorReduceInstance28 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance28 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4255,8 +3997,13 @@
             },
             "Type": "AWS::EC2::Instance"
         },
-        "StorReduceInstance3": {
-            "Condition": "NumInstancesLessThanOrEqualTo4",
+        "StorReduceInstance29": {
+            "Condition": "NumInstancesLessThanOrEqualTo30",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4280,7 +4027,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4301,8 +4048,161 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
+                                            "\" "
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        "files": {
+                            "/home/ec2-user/connect-srr.sh": {
+                                "group": "root",
+                                "mode": "000550",
+                                "owner": "root",
+                                "source": {
+                                    "Fn::Sub": [
+                                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/connect-srr.sh",
+                                        {
+                                            "QSS3Region": {
+                                                "Fn::If": [
+                                                    "GovCloudCondition",
+                                                    "s3-us-gov-west-1",
+                                                    "s3"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Properties": {
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Ref": "AvailabilityZones"
+                        }
+                    ]
+                },
+                "IamInstanceProfile": {
+                    "Ref": "HostProfile"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSAMIRegion",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyPairName"
+                },
+                "SecurityGroupIds": {
+                    "Ref": "SecurityGroupIds"
+                },
+                "SubnetId": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Ref": "PrivateSubnetsToSpan"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "SrrHost"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --resource StorReduceInstance29 --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance29 --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "StorReduceInstance3": {
+            "Condition": "NumInstancesLessThanOrEqualTo4",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
+            "DependsOn": "StorReduceInstance0",
+            "Metadata": {
+                "AWS::CloudFormation::Authentication": {
+                    "S3AccessCreds": {
+                        "buckets": [
+                            {
+                                "Ref": "QSS3BucketName"
+                            }
+                        ],
+                        "roleName": {
+                            "Ref": "HostRole"
+                        },
+                        "type": "S3"
+                    }
+                },
+                "AWS::CloudFormation::Init": {
+                    "config": {
+                        "commands": {
+                            "connect-srr": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "/home/ec2-user/connect-srr.sh \"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "StorReduceInstance0",
+                                                    "PrivateDnsName"
+                                                ]
+                                            },
+                                            "\" \"",
+                                            {
+                                                "Ref": "StorReduceInstance0"
+                                            },
                                             "\" ",
-                                            " > output.txt 2>&1"
+                                            "\"",
+                                            {
+                                                "Ref": "ElasticLoadBalancer"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "AWS::Region"
+                                            },
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4388,6 +4288,15 @@
                                 " --resource StorReduceInstance3 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance3 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4396,8 +4305,13 @@
             },
             "Type": "AWS::EC2::Instance"
         },
-        "StorReduceInstance4": {
-            "Condition": "NumInstancesLessThanOrEqualTo5",
+        "StorReduceInstance30": {
+            "Condition": "NumInstancesLessThanOrEqualTo31",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4421,7 +4335,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4442,8 +4356,161 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
+                                            "\" "
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        "files": {
+                            "/home/ec2-user/connect-srr.sh": {
+                                "group": "root",
+                                "mode": "000550",
+                                "owner": "root",
+                                "source": {
+                                    "Fn::Sub": [
+                                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/connect-srr.sh",
+                                        {
+                                            "QSS3Region": {
+                                                "Fn::If": [
+                                                    "GovCloudCondition",
+                                                    "s3-us-gov-west-1",
+                                                    "s3"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Properties": {
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "2",
+                        {
+                            "Ref": "AvailabilityZones"
+                        }
+                    ]
+                },
+                "IamInstanceProfile": {
+                    "Ref": "HostProfile"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSAMIRegion",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyPairName"
+                },
+                "SecurityGroupIds": {
+                    "Ref": "SecurityGroupIds"
+                },
+                "SubnetId": {
+                    "Fn::Select": [
+                        "2",
+                        {
+                            "Ref": "PrivateSubnetsToSpan"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "SrrHost"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --resource StorReduceInstance30 --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance30 --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "StorReduceInstance4": {
+            "Condition": "NumInstancesLessThanOrEqualTo5",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
+            "DependsOn": "StorReduceInstance0",
+            "Metadata": {
+                "AWS::CloudFormation::Authentication": {
+                    "S3AccessCreds": {
+                        "buckets": [
+                            {
+                                "Ref": "QSS3BucketName"
+                            }
+                        ],
+                        "roleName": {
+                            "Ref": "HostRole"
+                        },
+                        "type": "S3"
+                    }
+                },
+                "AWS::CloudFormation::Init": {
+                    "config": {
+                        "commands": {
+                            "connect-srr": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "/home/ec2-user/connect-srr.sh \"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "StorReduceInstance0",
+                                                    "PrivateDnsName"
+                                                ]
+                                            },
+                                            "\" \"",
+                                            {
+                                                "Ref": "StorReduceInstance0"
+                                            },
                                             "\" ",
-                                            " > output.txt 2>&1"
+                                            "\"",
+                                            {
+                                                "Ref": "ElasticLoadBalancer"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "AWS::Region"
+                                            },
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4529,6 +4596,15 @@
                                 " --resource StorReduceInstance4 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance4 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4539,6 +4615,11 @@
         },
         "StorReduceInstance5": {
             "Condition": "NumInstancesLessThanOrEqualTo6",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4562,7 +4643,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4583,8 +4664,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4670,6 +4750,15 @@
                                 " --resource StorReduceInstance5 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance5 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4680,6 +4769,11 @@
         },
         "StorReduceInstance6": {
             "Condition": "NumInstancesLessThanOrEqualTo7",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4703,7 +4797,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4724,8 +4818,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4811,6 +4904,15 @@
                                 " --resource StorReduceInstance6 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance6 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4821,6 +4923,11 @@
         },
         "StorReduceInstance7": {
             "Condition": "NumInstancesLessThanOrEqualTo8",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4844,7 +4951,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -4865,8 +4972,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -4952,6 +5058,15 @@
                                 " --resource StorReduceInstance7 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance7 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -4962,6 +5077,11 @@
         },
         "StorReduceInstance8": {
             "Condition": "NumInstancesLessThanOrEqualTo9",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -4985,7 +5105,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -5006,8 +5126,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -5093,6 +5212,15 @@
                                 " --resource StorReduceInstance8 --region ",
                                 {
                                     "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance8 --region ",
+                                {
+                                    "Ref": "AWS::Region"
                                 }
                             ]
                         ]
@@ -5103,6 +5231,11 @@
         },
         "StorReduceInstance9": {
             "Condition": "NumInstancesLessThanOrEqualTo10",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -5126,7 +5259,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"",
+                                            "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
                                                     "StorReduceInstance0",
@@ -5147,8 +5280,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" ",
-                                            " > output.txt 2>&1"
+                                            "\" "
                                         ]
                                     ]
                                 }
@@ -5232,6 +5364,15 @@
                                     "Ref": "AWS::StackName"
                                 },
                                 " --resource StorReduceInstance9 --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource StorReduceInstance9 --region ",
                                 {
                                     "Ref": "AWS::Region"
                                 }

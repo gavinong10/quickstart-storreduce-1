@@ -58,7 +58,3 @@ cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 configure_server "$cluster_token"
 
 aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
-
-# sudo storreducectl cluster restart -f
-# Error restarting StorReduce on server 10.0.22.21: Error creating SSH client: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
-# TODO: Generate key and install on all the hosts

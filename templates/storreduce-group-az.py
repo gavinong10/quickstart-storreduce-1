@@ -3,11 +3,13 @@ from troposphere import Parameter, Output, Ref, Template
 from troposphere import Join, cloudformation, Select
 from troposphere import If, Equals, Or, And, Not, Condition
 from troposphere import Output, Sub
+from troposphere.policies import (CreationPolicy,
+                                  ResourceSignal)
 import sys
 
 import troposphere.elasticloadbalancing as elb
 
-MAX_INSTANCES = 29
+MAX_INSTANCES = 31
 MIN_INSTANCES = 3
 
 NUM_AZS = int(sys.argv[1])
@@ -179,7 +181,7 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-9b3f23e2"}
+    "us-west-2":      {"AMI": "ami-15a2bd6c"}
 })
   
 BASE_NAME = "StorReduceInstance"
@@ -248,7 +250,10 @@ def generate_new_instance(counter):
     """
     #!/bin/bash -xe
     /opt/aws/bin/cfn-init -v --stack """, Ref("AWS::StackName"),
-    " --resource " + instance.title + " --region ", Ref("AWS::Region")
+    " --resource " + instance.title + " --region ", Ref("AWS::Region"), 
+    "\n",
+    "/opt/aws/bin/cfn-signal -e $? --stack ", Ref("AWS::StackName"),
+        "    --resource " + instance.title + " --region ", Ref("AWS::Region")
     ]))
 
     instance.Metadata= cloudformation.Metadata(
@@ -276,13 +281,12 @@ def generate_new_instance(counter):
                 }),
                 commands={
                     "init-srr": {
-                        "command": Join("", ["echo      echo test > /home/ec2-user/test.txt && /home/ec2-user/init-srr.sh \"", 
+                        "command": Join("", ["/home/ec2-user/init-srr.sh \"", 
                                 Ref(BucketNameParam), "\" \'", 
                                 Ref(StorReduceLicenseParam), "\' ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
-                                "\"", Ref("AWS::Region"), "\" ",
-                                " > output.txt 2>&1"])
+                                "\"", Ref("AWS::Region"), "\" "])
                     }
                 }
             )
@@ -294,6 +298,10 @@ def generate_new_instance(counter):
             "Value": "SrrBaseHost"
         }
     ]
+
+    instance.CreationPolicy=CreationPolicy(
+            ResourceSignal=ResourceSignal(Timeout='PT15M')
+            )
     return instance
 
 base_instance = generate_new_instance(counter)
@@ -336,11 +344,10 @@ def configure_for_follower(instance, counter):
             }),
             commands={
                 "connect-srr": {
-                    "command": Join("", ["echo test > /home/ec2-user/test.txt && /home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \"", 
+                    "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \"", 
                     Ref(base_instance), "\" ",
                     "\"", Ref(elasticLB), "\" ",
-                    "\"", Ref("AWS::Region"), "\" ",
-                    " > output.txt 2>&1"])
+                    "\"", Ref("AWS::Region"), "\" "])
                 }
             }
         )
@@ -393,13 +400,13 @@ outputs.append(
         Description="ElasticLoadBalancerID" + " ID"
     )
 )
-for i in range(MIN_INSTANCES):
-    outputs.append(generate_private_DNS_output(i))
-    outputs.append(generate_private_IP_output(i))
+# for i in range(MIN_INSTANCES):
+#     outputs.append(generate_private_DNS_output(i))
+#     outputs.append(generate_private_IP_output(i))
 
-for i in range(MIN_INSTANCES, MAX_INSTANCES):
-    outputs.append(add_conditional(generate_private_DNS_output(i), i))
-    outputs.append(add_conditional(generate_private_IP_output(i), i))
+# for i in range(MIN_INSTANCES, MAX_INSTANCES):
+#     outputs.append(add_conditional(generate_private_DNS_output(i), i))
+#     outputs.append(add_conditional(generate_private_IP_output(i), i))
 
 
 t.add_output(outputs)

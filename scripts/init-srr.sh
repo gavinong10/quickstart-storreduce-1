@@ -1,7 +1,12 @@
 #!/bin/bash -xe
 
-# TODO: provide a dynamic bucket name
-bucket_name=laksjdfalkejr
+# Define inputs here
+bucket_name=$1
+srr_license="$2"
+srr_password="$3"
+load_balancer_DNS=$4
+load_balancer_name=$5
+region=$6
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
@@ -10,23 +15,10 @@ COOKIE_FILE="/tmp/cookie.txt"
 ip=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)
 local_hostname=$(curl --silent --fail http://169.254.169.254/latest/meta-data/local-hostname)
 
-get_cluster_discovery_token () { # sr_api_url
-  srr_api=$1
-  cluster_info=$(curl $CURL_ARGS \
-       -X GET \
-       -b "${COOKIE_FILE}" \
-       "${srr_api}/srr/cluster/current")
-  echo $(echo $cluster_info | jq -r '.ClusterDiscoveryToken' )
-}
-
 put () { # sr_api_url, #json_doc
   srr_api=$1
   json=$2
-  curl $CURL_ARGS \
-       -X PUT \
-       -b "${COOKIE_FILE}" \
-       -d "$json" \
-       "${srr_api}"
+  curl $CURL_ARGS        -X PUT        -b "${COOKIE_FILE}"        -d "$json"        "${srr_api}"
 }
 
 get_local_srr_password () { # server_public_ip
@@ -34,30 +26,24 @@ get_local_srr_password () { # server_public_ip
 }
 
 
-sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}        ${cluster_token}
+sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}       ${cluster_token}
 
+# Wait for StorReduce on server to be up
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'$(get_local_srr_password)'"}' https://${ip}:8080/api/auth/srr --retry 10 --retry-delay 30
 
-put "https://$ip:8080/api/srr/settings" '{"hostname":"'$local_hostname','$ip'", "bucket":"'$bucket_name'"}'
+curl --fail --insecure -H 'Content-Type:application/json' -X POST -b ${COOKIE_FILE} -d '{"NewPassword": "'$srr_password'"}' https://${ip}:8080/api/srr/id/root/password --retry 10 --retry-delay 30
 
-cluster_token=$(get_cluster_discovery_token "${first_server_public_sr_api}")
+put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
 
 sudo storreducectl server restart
 
-# "#!/bin/bash -xe\n",
-# "ip=$(curl --fail --silent http://169.254.169.25eta-data/public-ipv4 || curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)\n",
-# "sudo storreducectl server init\n",
-# "        --admin_port=8080\n",
-# "        --cluster_listen_port=8095\n",
-# "        --config_server_client_port=2379\n",
-# "        --config_server_peer_port=2380\n",
-# "        --dev_n_shards=36\n",
-# "        --http_port=80\n",
-# "        --https_port=443\n",
-# "        --n_shard_replicas=2\n",
-# "        --force=true\n",
-# "        --cluster_listen_interface=${ip}\n",
-# "#TODO: Make dev_n_shards configurable\n",
-# "#TODO: Make n_shard_replicas configurable\n",
-# "#10.0.5.107"
+# Wait for StorReduce on server to be up
+while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
+
+aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
+
+#trim
+#replace " with \\"
+#replace \n with \\n",\n"
+#append at start and finish character "

@@ -101,7 +101,9 @@ NumSRRHostsParam = t.add_parameter(Parameter(
     Description="The number of StorReduce hosts to configure",
     Type="Number",
     MinValue=MIN_INSTANCES,
-    MaxValue=MAX_INSTANCES
+    MaxValue=MAX_INSTANCES,
+    AllowedValues=[i for i in range(MIN_INSTANCES, MAX_INSTANCES + 1) if i % 2],
+    ConstraintDescription="Number of StorReduce hosts must be an odd number between 3 and 31."
 ))
 
 PublicSubnetsToSpanParam = t.add_parameter(Parameter(

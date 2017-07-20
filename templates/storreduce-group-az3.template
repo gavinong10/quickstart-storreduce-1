@@ -490,6 +490,24 @@
             "Type": "AWS::EC2::SecurityGroup::Id"
         },
         "NumSRRHosts": {
+            "AllowedValues": [
+                3,
+                5,
+                7,
+                9,
+                11,
+                13,
+                15,
+                17,
+                19,
+                21,
+                23,
+                25,
+                27,
+                29,
+                31
+            ],
+            "ConstraintDescription": "Number of StorReduce hosts must be an odd number between 3 and 31.",
             "Description": "The number of StorReduce hosts to configure",
             "MaxValue": 31,
             "MinValue": 3,

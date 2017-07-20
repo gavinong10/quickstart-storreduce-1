@@ -5,24 +5,16 @@ https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-maste
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template
 
 
-
-AWS::CloudFormation::Stack	kajsdflkasjdfkl-VPCStack-15YN6CRSQZZKW-Ec2Instance1-3OHIOH9AKXDN	Parameter validation failed: parameter type AWS::EC2::Subnet for parameter name LocalSubnet does not exist, parameter type AWS::EC2::VPC for parameter name VPC does not exist
-https://s3.amazonaws.com/quickstart-reference/linux/bastion/latest/templates/linux-bastion-master.template
-
 Questions to ask:
-- UserData vs AWS::CloudFormation::Init
 - How do I get one server to complete a script in autoscaling followed by the rest
 - How do I subtract from an input
 - What do I need to understand about CF stack updates
-- How do I disable rollback on failure?
 - Is there any way I can 'continue' a deployment?
 
-IAM profile for S3 public 
-
+IAM profile for S3 public
 
 // TODO: Add cloudwatch alarm and recovery
 // TODO: Generate SSL Certificate in template (to test)
-// TODO: Limit number of SRR servers to odd numbers
 
 arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988
 

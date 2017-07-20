@@ -1,5 +1,21 @@
 [
     {
+        "ParameterKey": "InstanceType",
+        "ParameterValue": "i3.large"
+    },
+    {
+        "ParameterKey": "BucketName",
+        "ParameterValue": "gong-srr-quickstart-$[alfred_genuuid]"
+    },
+    {
+        "ParameterKey": "StorReducePassword",
+        "ParameterValue": "storreduce"
+    },
+    {
+        "ParameterKey": "StorReduceLicense",
+        "ParameterValue": "-----BEGIN STORREDUCE LICENSE-----\ndwo9ChhTdG9yUmVkdWNlIFF1aWNrc3RhcnQgQ0kSE2dvbmdAc3RvcnJlZHVjZS5j\nb20aDAoAEgAaACIAKgAyABIAGhg5OTk5LTAxLTAxVDAwOjAwOjAwLjAwMFogASgB\nMAA4AEgAUABYAGAAaAVwAHoDNzJogAEAobtmHdnAIqXbRCwAKw3byh/xIUX3eIkX\nKg5jVXU5CqxUhJ/SQSAhhs+phUFwiT+g+t+n8ZX7xiF74iE1uSNI9BdRgsmGNVAJ\nMfY7YaDNekPnMafmoFkgEIXQpq6p+NEN0AlX7IvgMto1PHLAvsRBkjSyWZyYldZO\nXemg3SAOjN2+f4cxjTEOfL1Lj64wDSPPlISeKOdi2FLT0+82lZrKh3rto2NT/HqQ\nNQI2DDMbc6caBLBAthU4n7ar+l0ZwDVKpmtDDpxOPe4GcpRWUXTgnRhsrWqpotOs\nwYtyAeC6lygKX2cJeJuPFQQi3Hf1giGOAlb9t0Mp3+/noD2e5Coz1Q==\n-----END STORREDUCE LICENSE-----"
+    },
+    {
         "ParameterKey": "AvailabilityZones",
         "ParameterValue": "$[taskcat_genaz_3]"
     },
@@ -12,32 +28,44 @@
         "ParameterValue": "t2.micro"
     },
     {
-        "ParameterKey": "BucketName",
-        "ParameterValue": "tonynv-storereduce"
-    },
-    {
-        "ParameterKey": "CreatePrivateSubnets",
-        "ParameterValue": "true"
-    },
-    {
-        "ParameterKey": "InstanceType",
-        "ParameterValue": "c3.large"
-    },
-    {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "tonynv"
+        "ParameterValue": "$[alfred_getkeypair]"
+    },
+    {
+        "ParameterKey": "SSLCertificateId",
+        "ParameterValue": "arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988"
+    },
+    {
+        "ParameterKey": "DomainName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "ValidationDomainName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "NumBastionHosts",
+        "ParameterValue": 1
+    },
+    {
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "gong-cf-templates"
+    },
+    {
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "RemoteAccessCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
     },
     {
         "ParameterKey": "NATInstanceType",
         "ParameterValue": "t2.small"
-    },
-    {
-        "ParameterKey": "NumBastionHosts",
-        "ParameterValue": "1"
-    },
-    {
-        "ParameterKey": "NumSrrHosts",
-        "ParameterValue": "3"
     },
     {
         "ParameterKey": "NumberOfAZs",
@@ -61,34 +89,22 @@
     },
     {
         "ParameterKey": "PublicSubnet1CIDR",
-        "ParameterValue": "10.0.128.0/20"
+        "ParameterValue": "10.0.128.0/19"
     },
     {
         "ParameterKey": "PublicSubnet2CIDR",
-        "ParameterValue": "10.0.144.0/20"
+        "ParameterValue": "10.0.144.0/19"
     },
     {
         "ParameterKey": "PublicSubnet3CIDR",
-        "ParameterValue": "10.0.160.0/20"
+        "ParameterValue": "10.0.160.0/19"
     },
     {
-        "ParameterKey": "PublicSubnet4CIDR",
-        "ParameterValue": "10.0.176.0/20"
+        "ParameterKey": "PublicSubnet1CIDR",
+        "ParameterValue": "10.0.176.0/19"
     },
     {
-        "ParameterKey": "QSS3BucketName",
-        "ParameterValue": "$[taskcat_autobucket]"
-    },
-    {
-        "ParameterKey": "QSS3KeyPrefix",
-        "ParameterValue": "quickstart-storreduce/"
-    },
-    {
-        "ParameterKey": "RemoteAccessCIDR",
-        "ParameterValue": "0.0.0.0/0"
-    },
-    {
-        "ParameterKey": "VPCCIDR",
-        "ParameterValue": "10.0.0.0/16"
+        "ParameterKey": "NumSrrHosts",
+        "ParameterValue": 3
     }
 ]

@@ -1,11 +1,11 @@
 [
     {
         "ParameterKey": "InstanceType",
-        "ParameterValue": "i3.large"
+        "ParameterValue": "i3.xlarge"
     },
     {
         "ParameterKey": "BucketName",
-        "ParameterValue": "gong-srr-quickstart-$[alfred_genuuid]"
+        "ParameterValue": "$[taskcat_autobucket]"
     },
     {
         "ParameterKey": "StorReducePassword",
@@ -29,7 +29,7 @@
     },
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "$[alfred_getkeypair]"
+        "ParameterValue": "updateme"
     },
     {
         "ParameterKey": "SSLCertificateId",
@@ -45,15 +45,15 @@
     },
     {
         "ParameterKey": "NumBastionHosts",
-        "ParameterValue": 1
+        "ParameterValue": "1"
     },
     {
         "ParameterKey": "QSS3BucketName",
-        "ParameterValue": "gong-cf-templates"
+        "ParameterValue": "$[taskcat_autobucket]"
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
-        "ParameterValue": ""
+        "ParameterValue": "quickstart-storreduce/"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -69,7 +69,7 @@
     },
     {
         "ParameterKey": "NumberOfAZs",
-        "ParameterValue": 3
+        "ParameterValue": "3"
     },
     {
         "ParameterKey": "PrivateSubnet1ACIDR",
@@ -105,6 +105,6 @@
     },
     {
         "ParameterKey": "NumSrrHosts",
-        "ParameterValue": 3
+        "ParameterValue": "3"
     }
 ]

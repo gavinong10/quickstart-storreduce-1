@@ -3,9 +3,10 @@
 # Define inputs here
 bucket_name=$1
 srr_license="$2"
-load_balancer_DNS=$3
-load_balancer_name=$4
-region=$5
+srr_password="$3"
+load_balancer_DNS=$4
+load_balancer_name=$5
+region=$6
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
@@ -24,11 +25,14 @@ get_local_srr_password () { # server_public_ip
   curl http://169.254.169.254/latest/meta-data/instance-id
 }
 
-sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}        ${cluster_token}
+
+sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}       ${cluster_token}
 
 # Wait for StorReduce on server to be up
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'$(get_local_srr_password)'"}' https://${ip}:8080/api/auth/srr --retry 10 --retry-delay 30
+
+curl --fail --insecure -H 'Content-Type:application/json' -X POST -b ${COOKIE_FILE} -d '{"NewPassword": "'$srr_password'"}' https://${ip}:8080/api/srr/id/root/password --retry 10 --retry-delay 30
 
 put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
 

@@ -3,7 +3,7 @@ sudo yum install -y jq
 
 # Define inputs here
 first_server_private_ip=$1
-first_server_instance_id=$2
+srr_password="$2"
 load_balancer_name=$3
 region=$4
 
@@ -47,11 +47,7 @@ configure_server () { # server_public_ip, cluster_token
     while ! sudo storreducectl cluster rebalance; do sleep 1; done
 }
 
-get_local_srr_password () { # server_public_ip
-  curl http://169.254.169.254/latest/meta-data/instance-id
-}
-
-while ! curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'${first_server_instance_id}'"}' https://${first_server_private_ip}:8080/api/auth/srr --retry 10 --retry-delay 30; do sleep 1; done
+while ! curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FILE} -d '{"UserId": "srr:root", "Password": "'${srr_password}'"}' https://${first_server_private_ip}:8080/api/auth/srr --retry 10 --retry-delay 30; do sleep 1; done
 
 cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 

@@ -5,6 +5,8 @@ from troposphere import If, Equals, Or, And, Not, Condition
 from troposphere import Output, Sub
 from troposphere.policies import (CreationPolicy,
                                   ResourceSignal)
+from troposphere.certificatemanager import Certificate, DomainValidationOption
+
 import sys
 
 import troposphere.elasticloadbalancing as elb
@@ -22,9 +24,28 @@ CONDITION_COUNTER_PREFIX = "NumInstancesLessThanOrEqualTo"
 
 t = Template()
 
+StorReducePasswordParam = t.add_parameter(Parameter(
+    "StorReducePassword",
+    Description="Password for the StorReduce admin root user",
+    Type="String",
+    NoEcho=True
+))
+
 SSLCertificateIdParam = t.add_parameter(Parameter(
     "SSLCertificateId",
     Description="The SSL Certificate ID to use for the load balancer",
+    Type="String",
+))
+
+DomainNameParam = t.add_parameter(Parameter(
+    "DomainName",
+    Description="The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+    Type="String",
+))
+
+ValidationDomainNameParam = t.add_parameter(Parameter(
+    "ValidationDomainName",
+    Description="The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
     Type="String",
 ))
 
@@ -57,62 +78,13 @@ InstanceTypeParam = t.add_parameter(Parameter(
     "InstanceType",
     Description="EC2 instance type",
     Type="String",
-    Default="c3.large",
+    Default="i3.4xlarge",
     AllowedValues=[
-        "t1.micro",
-                "t2.nano",
-                "t2.micro",
-                "t2.small",
-                "t2.medium",
-                "t2.large",
-                "m1.small",
-                "m1.medium",
-                "m1.large",
-                "m1.xlarge",
-                "m2.xlarge",
-                "m2.2xlarge",
-                "m2.4xlarge",
-                "m3.medium",
-                "m3.large",
-                "m3.xlarge",
-                "m3.2xlarge",
-                "m4.large",
-                "m4.xlarge",
-                "m4.2xlarge",
-                "m4.4xlarge",
-                "m4.10xlarge",
-                "c1.medium",
-                "c1.xlarge",
-                "c3.large",
-                "c3.xlarge",
-                "c3.2xlarge",
-                "c3.4xlarge",
-                "c3.8xlarge",
-                "c4.large",
-                "c4.xlarge",
-                "c4.2xlarge",
-                "c4.4xlarge",
-                "c4.8xlarge",
-                "g2.2xlarge",
-                "g2.8xlarge",
-                "r3.large",
-                "r3.xlarge",
-                "r3.2xlarge",
-                "r3.4xlarge",
-                "r3.8xlarge",
-                "i2.xlarge",
-                "i2.2xlarge",
-                "i2.4xlarge",
-                "i2.8xlarge",
-                "d2.xlarge",
-                "d2.2xlarge",
-                "d2.4xlarge",
-                "d2.8xlarge",
-                "hi1.4xlarge",
-                "hs1.8xlarge",
-                "cr1.8xlarge",
-                "cc2.8xlarge",
-                "cg1.4xlarge"
+        "i3.xlarge",
+        "i3.2xlarge",
+        "i3.4xlarge",
+        "i3.8xlarge",
+        "i3.16xlarge"
     ],
     ConstraintDescription="must be a valid EC2 instance type."
 ))
@@ -181,7 +153,7 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-15a2bd6c"}
+    "us-west-2":      {"AMI": "ami-9b7f66e2"}
 })
   
 BASE_NAME = "StorReduceInstance"
@@ -198,8 +170,27 @@ def create_conditions():
         last_condition = CONDITION_COUNTER_PREFIX + str(i)
 
     t.add_condition("GovCloudCondition", Equals(Ref("AWS::Region"), "us-gov-west-1"))
+
+    t.add_condition("SSLCertificateIdIsUndefined", Equals(Ref(SSLCertificateIdParam), ""))
         
 create_conditions()
+
+
+# TODO: Test - IF SSLCertificateID is empty
+
+gen_SSL_certificate_resource = t.add_resource(
+    Certificate(
+        'StorReduceSSLCertificate',
+        Condition="SSLCertificateIdIsUndefined",
+        DomainName=Ref(DomainNameParam),
+        DomainValidationOptions=[
+            DomainValidationOption(
+                DomainName=Ref(DomainNameParam),
+                ValidationDomain=Ref(ValidationDomainNameParam),
+            ),
+        ]
+    )
+)
 
 elasticLB = t.add_resource(elb.LoadBalancer(
         'ElasticLoadBalancer',
@@ -217,9 +208,9 @@ elasticLB = t.add_resource(elb.LoadBalancer(
             elb.Listener(
                 LoadBalancerPort="443",
                 InstancePort="443",
-                Protocol="TCP",
-                InstanceProtocol="TCP",
-                SSLCertificateId=Ref(SSLCertificateIdParam)
+                Protocol="SSL",
+                InstanceProtocol="SSL",
+                SSLCertificateId=If("SSLCertificateIdIsUndefined",Ref(gen_SSL_certificate_resource),Ref(SSLCertificateIdParam))
             ),
         ],
         HealthCheck=elb.HealthCheck(
@@ -284,6 +275,7 @@ def generate_new_instance(counter):
                         "command": Join("", ["/home/ec2-user/init-srr.sh \"", 
                                 Ref(BucketNameParam), "\" \'", 
                                 Ref(StorReduceLicenseParam), "\' ",
+                                "\'",Ref(StorReducePasswordParam), "\' ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
                                 "\"", Ref("AWS::Region"), "\" "])
@@ -344,8 +336,8 @@ def configure_for_follower(instance, counter):
             }),
             commands={
                 "connect-srr": {
-                    "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \"", 
-                    Ref(base_instance), "\" ",
+                    "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
+                    Ref(StorReducePasswordParam), "\' ",
                     "\"", Ref(elasticLB), "\" ",
                     "\"", Ref("AWS::Region"), "\" "])
                 }

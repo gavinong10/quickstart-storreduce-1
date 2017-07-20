@@ -10,9 +10,14 @@
                     },
                     "Parameters": [
                         "KeyPairName",
+                        "StorReducePassword",
                         "InstanceType",
                         "BucketName",
-                        "NumSrrHosts"
+                        "NumSrrHosts",
+                        "StorReduceLicense",
+                        "SSLCertificateId",
+                        "DomainName",
+                        "ValidationDomainName"                        
                     ]
                 },
                 {
@@ -23,7 +28,6 @@
                         "NumberOfAZs",
                         "AvailabilityZones",
                         "VPCCIDR",
-                        "CreatePrivateSubnets",
                         "PrivateSubnet1ACIDR",
                         "PrivateSubnet2ACIDR",
                         "PrivateSubnet3ACIDR",
@@ -52,7 +56,7 @@
                         "BastionAMIOS",
                         "BastionInstanceType"
                     ]
-                },
+                    },
                 {
                     "Label": {
                         "default": "AWS Quick Start Configuration"
@@ -64,14 +68,26 @@
                 }
             ],
             "ParameterLabels": {
+                "StorReducePassword": {
+                    "default": "StorReduce Password"
+                },
+                "StorReduceLicense": {
+                    "default": "StorReduce license"
+                },
+                "SSLCertificateId": {
+                    "default": "SSL Certificate ID"
+                },
+                "DomainName": {
+                    "default": "Domain Name"
+                },
+                "ValidationDomainName": {
+                    "default": "Validation Domain Name"
+                },
                 "NumSrrHosts": {
                     "default": "Number of StorReduce servers"
                 },
                 "AvailabilityZones": {
                     "default": "Availability Zones"
-                },
-                "CreatePrivateSubnets": {
-                    "default": "Create private subnets"
                 },
                 "BastionAMIOS": {
                     "default": "Bastion AMI Operating System"
@@ -81,6 +97,15 @@
                 },
                 "KeyPairName": {
                     "default": "Key Pair Name"
+                },
+                "InstanceType": {
+                    "default": "Instance Type"
+                },
+                "BucketName": {
+                    "default": "Bucket Name"
+                },
+                "NumberOfAZs": {
+                    "default": "Number of Availability Zones"
                 },
                 "NumBastionHosts": {
                     "default": "Number of Bastion Hosts"
@@ -128,27 +153,36 @@
         "InstanceType" : {
             "Description" : "EC2 instance type",
             "Type" : "String",
-            "Default" : "c3.large",
-            "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
+                "Default" : "i3.4xlarge",
+                "AllowedValues":[
+                    "i3.xlarge",
+                    "i3.2xlarge",
+                    "i3.4xlarge",
+                    "i3.8xlarge",
+                    "i3.16xlarge"
+                ],
             "ConstraintDescription" : "must be a valid EC2 instance type."
         },
         "BucketName" : {
-            "Description" : "The bucket to which StorReduce will store data",
-            "ConstraintDescription" : "must be a valid S3 bucket name.",
-            "Type" : "String"
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "The bucket to which StorReduce will store data",
+            "Type": "String"
+        },
+        "StorReduceLicense": {
+            "Description" : "A valid StorReduce license",
+            "ConstraintDescription" : "Must be a current and valid StorReduce license.",
+            "Type" : "String",
+            "Default": ""
+        },
+        "StorReducePassword": {
+            "Description": "Password for the StorReduce admin root user",
+            "NoEcho": "True",
+            "Type": "String"
         },
         "AvailabilityZones": {
             "Description": "List of Availability Zones to use for the subnets in the VPC. Note: The logical order is preserved and only 2 AZs are used for this deployment.",
             "Type": "List<AWS::EC2::AvailabilityZone::Name>"
-        },
-        "CreatePrivateSubnets": {
-            "AllowedValues": [
-                "true",
-                "false"
-            ],
-            "Default": "true",
-            "Description": "Set to false to create only public subnets. If false, the CIDR parameters for ALL private subnets will be ignored.",
-            "Type": "String"
         },
         "BastionAMIOS": {
             "AllowedValues": [
@@ -184,6 +218,21 @@
             "Description": "Public/private key pairs allow you to securely connect to your instance after it launches",
             "Type": "AWS::EC2::KeyPair::KeyName"
         },
+        "SSLCertificateId": {
+            "Description" : "The SSL Certificate ID to use for the Load Balancer. This is of the form \"arn:aws:acm:region:123456789012:certificate/12345678-1234-1234-1234-123456789012\"",
+            "Type": "String",
+            "Default": ""
+        },
+        "DomainName": {
+            "Description" : "The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+            "Type": "String",
+            "Default": ""
+        },
+        "ValidationDomainName": {
+            "Description" : "The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
+            "Type": "String",
+            "Default": ""
+        },
         "NumBastionHosts": {
             "AllowedValues": [
                 "1",
@@ -212,7 +261,7 @@
         "RemoteAccessCIDR": {
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
-            "Description": "Allowed CIDR block for external SSH access to the bastions",
+            "Description": "Allowed CIDR block for bastion and load balancer access",
             "Type": "String"
         },
         "VPCCIDR": {
@@ -239,6 +288,7 @@
         },
         "NumberOfAZs": {
             "AllowedValues": [
+                "2",
                 "3",
                 "4"
             ],
@@ -306,7 +356,8 @@
             "Description": "The number of StorReduce hosts",
             "Type" : "Number",
             "MinValue" : 3,
-            "MaxValue" : 10
+            "MaxValue" : 31,
+            "ConstraintDescription": "Number of StorReduce hosts must be between 3 and 31."
         }
     },
     "Rules": {},
@@ -341,176 +392,26 @@
                 },
                 "us-gov-west-1"
             ]
-        },
-        "NATInstanceCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Condition": "GovCloudCondition"
-                }
-            ]
-        },
-        "NATGatewayCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Fn::Not": [
-                        {
-                            "Condition": "GovCloudCondition"
-                        }
-                    ]
-                }
-            ]
-        },
-        "NATInstance&3AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATInstanceCondition"
-                },
-                {
-                    "Condition": "3AZCondition"
-                }
-            ]
-        },
-        "NATInstance&4AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATInstanceCondition"
-                },
-                {
-                    "Condition": "4AZCondition"
-                }
-            ]
-        },
-        "NATGateway&3AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATGatewayCondition"
-                },
-                {
-                    "Condition": "3AZCondition"
-                }
-            ]
-        },
-        "NATGateway&4AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "NATGatewayCondition"
-                },
-                {
-                    "Condition": "4AZCondition"
-                }
-            ]
-        },
-        "NVirginiaRegionCondition": {
-            "Fn::Equals": [
-                {
-                    "Ref": "AWS::Region"
-                },
-                "us-east-1"
-            ]
-        },
-        "PrivateSubnetsCondition": {
-            "Fn::Equals": [
-                {
-                    "Ref": "CreatePrivateSubnets"
-                },
-                "true"
-            ]
-        },
-        "PrivateSubnets&3AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Condition": "3AZCondition"
-                }
-            ]
-        },
-        "PrivateSubnets&4AZCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Condition": "4AZCondition"
-                }
-            ]
-        },
-        "S3VPCEndpointCondition": {
-            "Fn::And": [
-                {
-                    "Condition": "PrivateSubnetsCondition"
-                },
-                {
-                    "Fn::Not": [
-                        {
-                            "Fn::Or": [
-                                {
-                                    "Fn::Equals": [
-                                        {
-                                            "Ref": "AWS::Region"
-                                        },
-                                        "us-gov-west-1"
-                                    ]
-                                },
-                                {
-                                    "Fn::Equals": [
-                                        {
-                                            "Ref": "AWS::Region"
-                                        },
-                                        "cn-north-1"
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
         }
     },
     "Resources": {
         "VPCStack": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": {
-                    "Fn::Sub": [
-                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-storreduce-vpc.template",
-                        {
-                            "QSS3Region": {
-                                "Fn::If": [
-                                    "GovCloudCondition",
-                                    "s3-us-gov-west-1",
-                                    "s3"
-                                ]
-                            }
-                        }
-                    ]
-                },
+                "TemplateURL": "https://s3.amazonaws.com/quickstart-reference/aws/vpc/latest/templates/aws-vpc.template",
                 "Parameters": {
                     "AvailabilityZones": {
                         "Fn::Join": [
-                            ",",
-                            {
-                                "Ref": "AvailabilityZones"
-                            }
+                        ",", {
+                            "Ref": "AvailabilityZones"
+                        }
                         ]
-                    },
-                    "NumSrrHosts": {
-                        "Ref": "NumSrrHosts"
                     },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
-                    "NumberOfAZs": {
-                        "Ref": "NumberOfAZs"
-                    },
-                    "PrivateSubnet1ACIDR": {
+
+                     "PrivateSubnet1ACIDR": {
                         "Ref": "PrivateSubnet1ACIDR"
                     },
                     "PrivateSubnet2ACIDR": {
@@ -534,26 +435,11 @@
                     "PublicSubnet4CIDR": {
                         "Ref": "PublicSubnet4CIDR"
                     },
+                    "NumberOfAZs": {
+                        "Ref": "NumberOfAZs"
+                    },
                     "VPCCIDR": {
                         "Ref": "VPCCIDR"
-                    },
-                    "NATInstanceType": {
-                        "Ref": "NATInstanceType"
-                    },
-                    "InstanceType": {
-                        "Ref": "InstanceType"
-                    },
-                    "BucketName": {
-                        "Ref": "BucketName"
-                    },
-                    "CreatePrivateSubnets": {
-                        "Ref": "CreatePrivateSubnets"
-                    },
-                    "QSS3BucketName": {
-                        "Ref": "QSS3BucketName"
-                    },
-                    "QSS3KeyPrefix":{
-                        "Ref": "QSS3KeyPrefix"   
                     }
                 }
             }
@@ -562,20 +448,7 @@
             "DependsOn": "VPCStack",
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": {        
-                    "Fn::Sub": [
-                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/linux-bastion.template",
-                        {
-                            "QSS3Region": {
-                                "Fn::If": [
-                                    "GovCloudCondition",
-                                    "s3-us-gov-west-1",
-                                    "s3"
-                                ]
-                            }
-                        }
-                    ]
-                },
+                "TemplateURL": "https://s3.amazonaws.com/quickstart-reference/linux/bastion/latest/templates/linux-bastion.template",
                 "Parameters": {
                     "BastionAMIOS": {
                         "Ref": "BastionAMIOS"
@@ -604,12 +477,6 @@
                             "Outputs.PublicSubnet2ID"
                         ]
                     },
-                    "QSS3BucketName": {
-                        "Ref": "QSS3BucketName"
-                    },
-                    "QSS3KeyPrefix": {
-                         "Ref": "QSS3KeyPrefix"
-                    },
                     "RemoteAccessCIDR": {
                         "Ref": "RemoteAccessCIDR"
                     },
@@ -621,61 +488,406 @@
                     }
                 }
             }
-        }
+        },
+        "LoadBalancerSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enables remote access to port 80 and 443",
+                "VpcId": {
+                    "Fn::GetAtt": [
+                        "VPCStack",
+                        "Outputs.VPCID"
+                    ]
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 80,
+                        "ToPort": 80,
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 443,
+                        "ToPort": 443,
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
+                    }
+                ]
+            }
+        },
+        "AllInternalAccessSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enables StorReduce and SSH ports TCP access from within the VPC",
+                "VpcId": {
+                    "Fn::GetAtt": [
+                        "VPCStack",
+                        "Outputs.VPCID"
+                    ]
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 22,
+                        "ToPort": 22,
+                        "CidrIp": { "Ref": "VPCCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 80,
+                        "ToPort": 80,
+                        "CidrIp": { "Ref": "VPCCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 443,
+                        "ToPort": 443,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 8095,
+                        "ToPort": 8099,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 2379,
+                        "ToPort": 2380,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 8080,
+                        "ToPort": 8080,
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "StorReduceHostRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Policies": [
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:GetObject"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": [
+                                            "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
+                                            {
+                                                "Partition": {
+                                                    "Fn::If": [
+                                                        "GovCloudCondition",
+                                                        "aws-us-gov",
+                                                        "aws"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "aws-quick-start-s3-policy"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:ListBucket",
+                                        "s3:ListBucketMultipartUploads"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:s3:::",
+                                                {
+                                                    "Ref": "BucketName"
+                                                }
+                                            ]
+                                        ]
+                                    },
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "srr-quick-start-s3-policy-bucket"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "s3:DeleteObject",
+                                        "s3:ListMultipartUploadParts",
+                                        "s3:AbortMultipartUpload"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:s3:::",
+                                                {
+                                                    "Ref": "BucketName"
+                                                },
+                                                "/*"
+                                            ]
+                                        ]
+                                    },
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "srr-quick-start-s3-policy-objects"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "elasticloadbalancing:Describe*",
+                                        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                                        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                                        "autoscaling:Describe*",
+                                        "autoscaling:EnterStandby",
+                                        "autoscaling:ExitStandby",
+                                        "autoscaling:UpdateAutoScalingGroup",
+                                        "autoscaling:SuspendProcesses",
+                                        "autoscaling:ResumeProcesses"
+                                    ],
+                                    "Resource": "*",
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "elb-join-policy"
+                    }
+                ],
+                "Path": "/",
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            },
+                            "Effect": "Allow"
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                }
+            }
+        },
+        "StorReduceHostProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Roles": [
+                    {
+                        "Ref": "StorReduceHostRole"
+                    }
+                ],
+                "Path": "/"
+            }
+        },
+        "SrrBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": {
+                    "Ref": "BucketName"
+                }
+            }
+        },
+
+        "SrrGroup": {
+                "DependsOn": [
+                    "VPCStack",
+                    "StorReduceHostProfile"
+                ],
+                "Type": "AWS::CloudFormation::Stack",
+                "Properties": {
+                    "TemplateURL": {
+                        "Fn::Sub": [
+                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/storreduce-group-az${NumberOfAZs}.template",
+                            {
+                                "QSS3Region": {
+                                    "Fn::If": [
+                                        "GovCloudCondition",
+                                        "s3-us-gov-west-1",
+                                        "s3"
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "Parameters": {
+                        "StorReducePassword": {
+                            "Ref": "StorReducePassword"
+                        },
+                        "HostRole": {
+                            "Ref": "StorReduceHostRole"
+                        },
+                        "HostProfile": {
+                            "Ref": "StorReduceHostProfile"
+                        },
+                        "KeyPairName": {
+                            "Ref": "KeyPairName"
+                        },
+                        "InstanceType": {
+                            "Ref": "InstanceType"
+                        },
+                        "BucketName": {
+                            "Ref": "BucketName"
+                        },
+                        "SecurityGroupIds": {
+                            "Fn::Join": [
+                                ",",
+                                [
+                                    {
+                                        "Ref": "AllInternalAccessSecurityGroup"
+                                    }
+                                ]
+                            ]
+                        },
+                        "PrivateSubnetsToSpan": {
+                            "Fn::Join": [
+                                ",",
+                                [
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PrivateSubnet1AID"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PrivateSubnet2AID"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If": [
+                                            "3AZCondition",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "VPCStack",
+                                                    "Outputs.PrivateSubnet3AID"
+                                                ]
+                                            },
+                                            {
+                                                "Ref": "AWS::NoValue"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If": [
+                                            "4AZCondition",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "VPCStack",
+                                                    "Outputs.PrivateSubnet4AID"
+                                                ]
+                                            },
+                                            {
+                                                "Ref": "AWS::NoValue"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            ]
+                        },
+                        "NumSRRHosts": { "Ref": "NumSrrHosts" },
+                        "PublicSubnetsToSpan": {
+                        "Fn::Join": [
+                            ",",
+                            [
+                                {
+                                    "Fn::GetAtt": [
+                                        "VPCStack",
+                                        "Outputs.PublicSubnet1ID"
+                                    ]
+                                },
+                                {
+                                    "Fn::GetAtt": [
+                                        "VPCStack",
+                                        "Outputs.PublicSubnet2ID"
+                                    ]
+                                },
+                                {
+                                    "Fn::If": [
+                                        "3AZCondition",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "VPCStack",
+                                                "Outputs.PublicSubnet3ID"
+                                            ]
+                                        },
+                                        {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::If": [
+                                        "4AZCondition",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "VPCStack",
+                                                "Outputs.PublicSubnet4ID"
+                                            ]
+                                        },
+                                        {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    },
+                        "AvailabilityZones": {
+                            "Fn::Join": [
+                                ",",
+                                {
+                                    "Ref": "AvailabilityZones"
+                                }
+                            ]
+                        },
+                        "SSLCertificateId": {
+                            "Ref": "SSLCertificateId"
+                        },
+                        "DomainName": {
+                            "Ref": "DomainName"
+                        },
+                        "ValidationDomainName": {
+                            "Ref": "ValidationDomainName"
+                        },
+                        "LoadBalancerSecurityGroup": { "Ref": "LoadBalancerSecurityGroup" },
+                        "StorReduceLicense": {
+                            "Ref": "StorReduceLicense"
+                        }
+                    }
+                }
+            }
     },
     "Mappings": {
-        "AWSInfoRegionMap": {
-            "ap-northeast-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "ap-northeast-2": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "ap-south-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "ap-southeast-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "ap-southeast-2": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "eu-central-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "eu-west-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "sa-east-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "us-east-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "us-east-2": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "us-west-1": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            },
-            "us-west-2": {
-                "Partition": "aws",
-                "QuickStartS3URL": "https://s3.amazonaws.com"
-            }
-        }
     },
     "Outputs": {
-       
     }
 }

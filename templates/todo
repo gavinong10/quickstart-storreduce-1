@@ -1,24 +1,13 @@
-Add access control to bucket and/or specify existing bucket
-Specify AllowedPattern, MinLength, MaxLength for bucket name
-
-"command" : "storreducectl server init --server-ip="127.0.0.1" --cluster-listen-port=8095 --etcd-client-port=2379 --etcd-peer-port=2380 --http-port=80 --https-port=443 --admin-port=8080 --shard-count=20 --replica-count=1 --force"
-
-
-// What happens if the init commands fail? -> test that!
-
-// Define PrivateIpAddress
 
 // Make template referencing appropriate - currently testing out of gong-cf-templates
-
-// Combine mappings into master?
 
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-master.template
 https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-vpc.template
 
 
 
-	AWS::CloudFormation::Stack	kajsdflkasjdfkl-VPCStack-15YN6CRSQZZKW-Ec2Instance1-3OHIOH9AKXDN	Parameter validation failed: parameter type AWS::EC2::Subnet for parameter name LocalSubnet does not exist, parameter type AWS::EC2::VPC for parameter name VPC does not exist
-    https://s3.amazonaws.com/quickstart-reference/linux/bastion/latest/templates/linux-bastion-master.template
+AWS::CloudFormation::Stack	kajsdflkasjdfkl-VPCStack-15YN6CRSQZZKW-Ec2Instance1-3OHIOH9AKXDN	Parameter validation failed: parameter type AWS::EC2::Subnet for parameter name LocalSubnet does not exist, parameter type AWS::EC2::VPC for parameter name VPC does not exist
+https://s3.amazonaws.com/quickstart-reference/linux/bastion/latest/templates/linux-bastion-master.template
 
 Questions to ask:
 - UserData vs AWS::CloudFormation::Init
@@ -27,24 +16,14 @@ Questions to ask:
 - What do I need to understand about CF stack updates
 - How do I disable rollback on failure?
 - Is there any way I can 'continue' a deployment?
-- Can I make the Init files reference the scripts folder?
-- How do I pass a parameter into an init script?
 
-"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-                    "#!/bin/bash -xe\n",
-                    "ip=$(curl --fail --silent http://169.254.169.254/latest/meta-data/public-ipv4 || curl --silent --fail http://169.254.169.254/latest/meta-data/local-ipv4)\n",
-                    "sudo storreducectl server init",
-                    "        --admin_port=8080",
-                    "        --cluster_listen_port=8095",
-                    "        --config_server_client_port=2379",
-                    "        --config_server_peer_port=2380",
-                    "        --dev_n_shards=36",
-                    "        --http_port=80",
-                    "        --https_port=443",
-                    "        --n_shard_replicas=2",
-                    "        --force=true",
-                    "        --cluster_listen_interface=${ip}\n",
-                    "#TODO: Make dev_n_shards configurable\n",
-                    "#TODO: Make n_shard_replicas configurable\n",
-                    "#10.0.5.107\n"
-                ]]}},
+IAM profile for S3 public 
+
+
+// TODO: Add cloudwatch alarm and recovery
+// TODO: Generate SSL Certificate in template (to test)
+// TODO: Limit number of SRR servers to odd numbers
+
+arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988
+
+-----BEGIN STORREDUCE LICENSE-----\nMAoeCgxTUi1EZXZlbG9wZXISABoMCgASABoAIgAqADIAEgAaACABKAEwATgBSABQ\nAHb9y+ofSLQjkHVz0I682cVid4o5Uexb9CM5upV7XeLywwhCJAYnS9R7UlKYKNHY\n4r5H8l7U9h2LeJLS48Ed4q8NpmwmAMaJ+G7xdqmcCLdnHrbrFoabbTnu4Ex7C9Kl\nZLDHVmNr0yIi7j1d5Trw3VHNxmK5McSmVyPIpOwKh8CwcvbJZ9JsgqCymp2L4TgY\n16XK3YBu8bL4Lz6SJXLbAzL1ENU6lhIdvbZTJvMHDCSjmYHs7mQc8tLbWLfKaChB\n4/aCUlcu70unarwrDyMlXpl9WsjkKOhvT17/dqCUfq3hcPHgdF/HO0nD+Ao+jYnb\n+FfeYqydNxzuAvxl7WqfT0c=\n-----END STORREDUCE LICENSE-----

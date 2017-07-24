@@ -143,7 +143,7 @@ QSS3BucketNameParam = t.add_parameter(Parameter(
     ConstraintDescription="Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
     Default="gong-cf-templates",
     Type="String",
-    AllowedPattern="^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    AllowedPattern="^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$"
 ))
 QSS3KeyPrefixParam = t.add_parameter(Parameter(
     "QSS3KeyPrefix",
@@ -155,7 +155,7 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-9b7f66e2"}
+    "us-west-2":      {"AMI": "ami-e512099c"}
 })
   
 BASE_NAME = "StorReduceInstance"

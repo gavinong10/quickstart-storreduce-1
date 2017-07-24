@@ -433,7 +433,7 @@
     "Mappings": {
         "AWSAMIRegion": {
             "us-west-2": {
-                "AMI": "ami-9b7f66e2"
+                "AMI": "ami-e512099c"
             }
         }
     },
@@ -522,7 +522,7 @@
             "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "QSS3BucketName": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "gong-cf-templates",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",

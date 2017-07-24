@@ -1,7 +1,7 @@
 [
     {
         "ParameterKey": "InstanceType",
-        "ParameterValue": "i3.large"
+        "ParameterValue": "i3.xlarge"
     },
     {
         "ParameterKey": "BucketName",
@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "StorReduceLicense",
-        "ParameterValue": "-----BEGIN STORREDUCE LICENSE-----\ndwo9ChhTdG9yUmVkdWNlIFF1aWNrc3RhcnQgQ0kSE2dvbmdAc3RvcnJlZHVjZS5j\nb20aDAoAEgAaACIAKgAyABIAGhg5OTk5LTAxLTAxVDAwOjAwOjAwLjAwMFogASgB\nMAA4AEgAUABYAGAAaAVwAHoDNzJogAEAobtmHdnAIqXbRCwAKw3byh/xIUX3eIkX\nKg5jVXU5CqxUhJ/SQSAhhs+phUFwiT+g+t+n8ZX7xiF74iE1uSNI9BdRgsmGNVAJ\nMfY7YaDNekPnMafmoFkgEIXQpq6p+NEN0AlX7IvgMto1PHLAvsRBkjSyWZyYldZO\nXemg3SAOjN2+f4cxjTEOfL1Lj64wDSPPlISeKOdi2FLT0+82lZrKh3rto2NT/HqQ\nNQI2DDMbc6caBLBAthU4n7ar+l0ZwDVKpmtDDpxOPe4GcpRWUXTgnRhsrWqpotOs\nwYtyAeC6lygKX2cJeJuPFQQi3Hf1giGOAlb9t0Mp3+/noD2e5Coz1Q==\n-----END STORREDUCE LICENSE-----"
+        "ParameterValue": "$[taskcat_url_https://s3-us-west-2.amazonaws.com/gong-private/developer_license.lic]"
     },
     {
         "ParameterKey": "AvailabilityZones",
@@ -29,7 +29,7 @@
     },
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "$[alfred_getkeypair]"
+        "ParameterValue": "gong-srr"
     },
     {
         "ParameterKey": "SSLCertificateId",
@@ -45,15 +45,15 @@
     },
     {
         "ParameterKey": "NumBastionHosts",
-        "ParameterValue": 1
+        "ParameterValue": "1"
     },
     {
         "ParameterKey": "QSS3BucketName",
-        "ParameterValue": "gong-cf-templates"
+        "ParameterValue": "$[taskcat_autobucket]"
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
-        "ParameterValue": ""
+        "ParameterValue": "quickstart-storreduce/"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -104,7 +104,7 @@
         "ParameterValue": "10.0.176.0/19"
     },
     {
-        "ParameterKey": "NumSrrHosts",
-        "ParameterValue": 3
+        "ParameterKey": "NumSRRHosts",
+        "ParameterValue": "3"
     }
 ]

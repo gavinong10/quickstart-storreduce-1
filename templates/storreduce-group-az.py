@@ -280,7 +280,7 @@ def generate_new_instance(counter):
                                 "\'",Ref(StorReducePasswordParam), "\' ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
-                                "\"", Ref("AWS::Region"), "\" > output.txt 2>&1"])
+                                "\"", Ref("AWS::Region"), "\""])
                     }
                 }
             )
@@ -341,7 +341,7 @@ def configure_for_follower(instance, counter):
                     "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
                     Ref(StorReducePasswordParam), "\' ",
                     "\"", Ref(elasticLB), "\" ",
-                    "\"", Ref("AWS::Region"), "\" > output.txt 2>&1"])
+                    "\"", Ref("AWS::Region"), "\""])
                 }
             }
         )

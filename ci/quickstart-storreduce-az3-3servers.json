@@ -5,7 +5,7 @@
     },
     {
         "ParameterKey": "BucketName",
-        "ParameterValue": "gong-$[taskcat_autobucket]"
+        "ParameterValue": "gong-quickstart-random-123123123"
     },
     {
         "ParameterKey": "StorReducePassword",
@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "StorReduceLicense",
-        "ParameterValue": "$[taskcat_url_https://s3-us-west-2.amazonaws.com/gong-private/developer_license.lic]"
+        "ParameterValue": "$[taskcat_url_https://s3-us-west-2.amazonaws.com/gong-private/developer_escaped_license.lic]"
     },
     {
         "ParameterKey": "AvailabilityZones",
@@ -89,19 +89,19 @@
     },
     {
         "ParameterKey": "PublicSubnet1CIDR",
-        "ParameterValue": "10.0.128.0/19"
+        "ParameterValue": "10.0.128.0/20"
     },
     {
         "ParameterKey": "PublicSubnet2CIDR",
-        "ParameterValue": "10.0.144.0/19"
+        "ParameterValue": "10.0.144.0/20"
     },
     {
         "ParameterKey": "PublicSubnet3CIDR",
-        "ParameterValue": "10.0.160.0/19"
+        "ParameterValue": "10.0.160.0/20"
     },
     {
-        "ParameterKey": "PublicSubnet1CIDR",
-        "ParameterValue": "10.0.176.0/19"
+        "ParameterKey": "PublicSubnet4CIDR",
+        "ParameterValue": "10.0.176.0/20"
     },
     {
         "ParameterKey": "NumSRRHosts",

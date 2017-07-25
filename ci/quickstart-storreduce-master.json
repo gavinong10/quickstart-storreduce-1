@@ -89,19 +89,19 @@
     },
     {
         "ParameterKey": "PublicSubnet1CIDR",
-        "ParameterValue": "10.0.128.0/19"
+        "ParameterValue": "10.0.128.0/20"
     },
     {
         "ParameterKey": "PublicSubnet2CIDR",
-        "ParameterValue": "10.0.144.0/19"
+        "ParameterValue": "10.0.144.0/20"
     },
     {
         "ParameterKey": "PublicSubnet3CIDR",
-        "ParameterValue": "10.0.160.0/19"
+        "ParameterValue": "10.0.160.0/20"
     },
     {
         "ParameterKey": "PublicSubnet1CIDR",
-        "ParameterValue": "10.0.176.0/19"
+        "ParameterValue": "10.0.176.0/20"
     },
     {
         "ParameterKey": "NumSrrHosts",

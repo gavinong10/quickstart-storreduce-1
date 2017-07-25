@@ -151,11 +151,11 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
     ConstraintDescription="Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
     Default="",
     Type="String",
-    AllowedPattern="^[0-9a-zA-Z-/]*$",
+    AllowedPattern="^[0-9a-zA-Z\\-/]*$",
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-e512099c"}
+    "us-west-2":      {"AMI": "ami-74140f0d"}
 })
   
 BASE_NAME = "StorReduceInstance"
@@ -280,7 +280,7 @@ def generate_new_instance(counter):
                                 "\'",Ref(StorReducePasswordParam), "\' ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
-                                "\"", Ref("AWS::Region"), "\" "])
+                                "\"", Ref("AWS::Region"), "\" > output.txt 2>&1"])
                     }
                 }
             )
@@ -341,7 +341,7 @@ def configure_for_follower(instance, counter):
                     "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
                     Ref(StorReducePasswordParam), "\' ",
                     "\"", Ref(elasticLB), "\" ",
-                    "\"", Ref("AWS::Region"), "\" "])
+                    "\"", Ref("AWS::Region"), "\" > output.txt 2>&1"])
                 }
             }
         )

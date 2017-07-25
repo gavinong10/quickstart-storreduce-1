@@ -373,6 +373,7 @@
             "Description": "The number of StorReduce hosts to configure",
             "MaxValue": 31,
             "MinValue": 3,
+            "Default": 3,
             "Type": "Number",
             "ConstraintDescription": "Number of StorReduce hosts must be an odd number between 3 and 31."
         },
@@ -715,6 +716,7 @@
         },
         "StorReduceHostProfile": {
             "Type": "AWS::IAM::InstanceProfile",
+            "DependsOn": ["StorReduceHostRole"],
             "Properties": {
                 "Roles": [
                     {
@@ -755,6 +757,12 @@
                         ]
                     },
                     "Parameters": {
+                        "QSS3BucketName": {
+                            "Ref": "QSS3BucketName"
+                        },
+                        "QSS3KeyPrefix": {
+                            "Ref": "QSS3KeyPrefix"
+                        },
                         "StorReducePassword": {
                             "Ref": "StorReducePassword"
                         },

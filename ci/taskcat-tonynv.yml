@@ -19,8 +19,8 @@ global:
   reporting: true
  
 tests:
-  quickstart-storreducet1:
-    parameter_input: regular.json
+  storreduce-tonynv:
+    parameter_input: quickstart-storreduce-master.json
     template_file: quickstart-storreduce-master.template
     regions:
     - us-east-1

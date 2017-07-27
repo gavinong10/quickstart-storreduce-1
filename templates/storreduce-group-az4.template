@@ -433,7 +433,7 @@
     "Mappings": {
         "AWSAMIRegion": {
             "us-west-2": {
-                "AMI": "ami-9b7f66e2"
+                "AMI": "ami-74140f0d"
             }
         }
     },
@@ -490,6 +490,24 @@
             "Type": "AWS::EC2::SecurityGroup::Id"
         },
         "NumSRRHosts": {
+            "AllowedValues": [
+                3,
+                5,
+                7,
+                9,
+                11,
+                13,
+                15,
+                17,
+                19,
+                21,
+                23,
+                25,
+                27,
+                29,
+                31
+            ],
+            "ConstraintDescription": "Number of StorReduce hosts must be an odd number between 3 and 31.",
             "Description": "The number of StorReduce hosts to configure",
             "MaxValue": 31,
             "MinValue": 3,
@@ -504,14 +522,14 @@
             "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "QSS3BucketName": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "gong-cf-templates",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
-            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "AllowedPattern": "^[0-9a-zA-Z\\-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
@@ -647,7 +665,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -800,7 +818,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -954,7 +972,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -1108,7 +1126,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -1262,7 +1280,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -1416,7 +1434,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -1570,7 +1588,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -1724,7 +1742,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -1878,7 +1896,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2032,7 +2050,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2186,7 +2204,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2340,7 +2358,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2493,7 +2511,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2647,7 +2665,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2801,7 +2819,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -2955,7 +2973,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -3109,7 +3127,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -3263,7 +3281,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -3417,7 +3435,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -3571,7 +3589,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -3725,7 +3743,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -3879,7 +3897,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4033,7 +4051,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4187,7 +4205,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4341,7 +4359,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4495,7 +4513,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4649,7 +4667,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4803,7 +4821,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -4957,7 +4975,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -5111,7 +5129,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }
@@ -5265,7 +5283,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            "\" "
+                                            "\""
                                         ]
                                     ]
                                 }

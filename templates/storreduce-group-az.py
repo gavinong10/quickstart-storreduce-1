@@ -101,7 +101,9 @@ NumSRRHostsParam = t.add_parameter(Parameter(
     Description="The number of StorReduce hosts to configure",
     Type="Number",
     MinValue=MIN_INSTANCES,
-    MaxValue=MAX_INSTANCES
+    MaxValue=MAX_INSTANCES,
+    AllowedValues=[i for i in range(MIN_INSTANCES, MAX_INSTANCES + 1) if i % 2],
+    ConstraintDescription="Number of StorReduce hosts must be an odd number between 3 and 31."
 ))
 
 PublicSubnetsToSpanParam = t.add_parameter(Parameter(
@@ -141,7 +143,7 @@ QSS3BucketNameParam = t.add_parameter(Parameter(
     ConstraintDescription="Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
     Default="gong-cf-templates",
     Type="String",
-    AllowedPattern="^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    AllowedPattern="^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$"
 ))
 QSS3KeyPrefixParam = t.add_parameter(Parameter(
     "QSS3KeyPrefix",
@@ -149,11 +151,11 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
     ConstraintDescription="Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
     Default="",
     Type="String",
-    AllowedPattern="^[0-9a-zA-Z-/]*$",
+    AllowedPattern="^[0-9a-zA-Z\\-/]*$",
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-9b7f66e2"}
+    "us-west-2":      {"AMI": "ami-74140f0d"}
 })
   
 BASE_NAME = "StorReduceInstance"
@@ -278,7 +280,7 @@ def generate_new_instance(counter):
                                 "\'",Ref(StorReducePasswordParam), "\' ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
-                                "\"", Ref("AWS::Region"), "\" "])
+                                "\"", Ref("AWS::Region"), "\""])
                     }
                 }
             )
@@ -339,7 +341,7 @@ def configure_for_follower(instance, counter):
                     "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
                     Ref(StorReducePasswordParam), "\' ",
                     "\"", Ref(elasticLB), "\" ",
-                    "\"", Ref("AWS::Region"), "\" "])
+                    "\"", Ref("AWS::Region"), "\""])
                 }
             }
         )

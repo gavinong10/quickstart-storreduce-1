@@ -13,7 +13,7 @@
                         "StorReducePassword",
                         "InstanceType",
                         "BucketName",
-                        "NumSrrHosts",
+                        "NumSRRHosts",
                         "StorReduceLicense",
                         "SSLCertificateId",
                         "DomainName",
@@ -83,7 +83,7 @@
                 "ValidationDomainName": {
                     "default": "Validation Domain Name"
                 },
-                "NumSrrHosts": {
+                "NumSRRHosts": {
                     "default": "Number of StorReduce servers"
                 },
                 "AvailabilityZones": {
@@ -164,7 +164,7 @@
             "ConstraintDescription" : "must be a valid EC2 instance type."
         },
         "BucketName" : {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Description": "The bucket to which StorReduce will store data",
             "Type": "String"
@@ -245,7 +245,7 @@
             "Type": "String"
         },
         "QSS3BucketName": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "gong-cf-templates",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
@@ -352,13 +352,31 @@
             "Description": "CIDR block for the public DMZ subnet 4 located in Availability Zone 4",
             "Type": "String"
         },
-        "NumSrrHosts": {
-            "Description": "The number of StorReduce hosts",
-            "Type" : "Number",
-            "MinValue" : 3,
-            "MaxValue" : 31,
-            "ConstraintDescription": "Number of StorReduce hosts must be between 3 and 31."
-        }
+        "NumSRRHosts": {
+            "AllowedValues": [
+                3,
+                5,
+                7,
+                9,
+                11,
+                13,
+                15,
+                17,
+                19,
+                21,
+                23,
+                25,
+                27,
+                29,
+                31
+            ],
+            "Description": "The number of StorReduce hosts to configure",
+            "MaxValue": 31,
+            "MinValue": 3,
+            "Default": 3,
+            "Type": "Number",
+            "ConstraintDescription": "Number of StorReduce hosts must be an odd number between 3 and 31."
+        },
     },
     "Rules": {},
     "Conditions": {
@@ -698,6 +716,7 @@
         },
         "StorReduceHostProfile": {
             "Type": "AWS::IAM::InstanceProfile",
+            "DependsOn": ["StorReduceHostRole"],
             "Properties": {
                 "Roles": [
                     {
@@ -738,6 +757,12 @@
                         ]
                     },
                     "Parameters": {
+                        "QSS3BucketName": {
+                            "Ref": "QSS3BucketName"
+                        },
+                        "QSS3KeyPrefix": {
+                            "Ref": "QSS3KeyPrefix"
+                        },
                         "StorReducePassword": {
                             "Ref": "StorReducePassword"
                         },
@@ -813,7 +838,7 @@
                                 ]
                             ]
                         },
-                        "NumSRRHosts": { "Ref": "NumSrrHosts" },
+                        "NumSRRHosts": { "Ref": "NumSRRHosts" },
                         "PublicSubnetsToSpan": {
                         "Fn::Join": [
                             ",",

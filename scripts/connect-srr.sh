@@ -6,6 +6,7 @@ first_server_private_ip=$1
 srr_password="$2"
 load_balancer_name=$3
 region=$4
+monitor_vm_ip=$5
 
 # Reformed inputs
 first_server_public_sr_api="https://${first_server_private_ip}:8080/api"
@@ -52,5 +53,17 @@ while ! curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${C
 cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 
 configure_server "$cluster_token"
+
+# Configure storreduce monitor
+# Gavin TODO: Get the latest version published in public repo
+# sudo yum install -y storreduce-monitor
+
+# sudo /usr/share/storreduce/filebeat/storreduce-filebeat install "$monitor_vm_ip:5044"
+# sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
+
+sudo storreducectl server restart
+
+# Wait for StorReduce on server to be up
+while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 
 aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"

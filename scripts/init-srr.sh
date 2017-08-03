@@ -7,6 +7,7 @@ srr_password="$3"
 load_balancer_DNS=$4
 load_balancer_name=$5
 region=$6
+monitor_vm_ip=$7
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
@@ -35,6 +36,13 @@ curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FI
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -b ${COOKIE_FILE} -d '{"NewPassword": "'$srr_password'"}' https://${ip}:8080/api/srr/id/root/password --retry 10 --retry-delay 30
 
 put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
+
+# Configure storreduce monitor
+# Gavin TODO: Get the latest version published in public repo
+# sudo yum install -y storreduce-monitor
+
+# sudo /usr/share/storreduce/filebeat/storreduce-filebeat install "$monitor_vm_ip:5044"
+# sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
 
 sudo storreducectl server restart
 

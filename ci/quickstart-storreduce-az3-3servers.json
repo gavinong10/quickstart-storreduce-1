@@ -4,8 +4,12 @@
         "ParameterValue": "i3.xlarge"
     },
     {
+        "ParameterKey": "MonitorInstanceType",
+        "ParameterValue": "i3.large"
+    },
+    {
         "ParameterKey": "BucketName",
-        "ParameterValue": "gong-quickstart-random-123123123"
+        "ParameterValue": "gong-quickstart-12345123"
     },
     {
         "ParameterKey": "StorReducePassword",

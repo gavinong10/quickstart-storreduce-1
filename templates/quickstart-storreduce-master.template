@@ -788,7 +788,8 @@
                 "BucketName": {
                     "Ref": "BucketName"
                 }
-            }
+            },
+            "DeletionPolicy" : "Retain"
         },
 
         "SrrGroup": {

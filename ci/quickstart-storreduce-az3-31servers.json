@@ -9,7 +9,7 @@
     },
     {
         "ParameterKey": "BucketName",
-        "ParameterValue": "gong-quickstart-12345123"
+        "ParameterValue": "gong-quickstart-$[taskcat_random-string]"
     },
     {
         "ParameterKey": "StorReducePassword",

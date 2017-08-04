@@ -433,8 +433,8 @@
     "Mappings": {
         "AWSAMIRegion": {
             "us-west-2": {
-                "AMI": "ami-1355b16b",
-                "MonitorAMI": "ami-2733d45f"
+                "AMI": "ami-b88a6cc0",
+                "MonitorAMI": "ami-b6886ece"
             }
         }
     },
@@ -698,6 +698,11 @@
             "Type": "AWS::EC2::NetworkInterface"
         },
         "MonitorInstance": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
             "DependsOn": "StorReduceInstance0",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
@@ -745,7 +750,7 @@
                                 "owner": "root",
                                 "source": {
                                     "Fn::Sub": [
-                                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/init-srr.sh",
+                                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/monitor-srr.sh",
                                         {
                                             "QSS3Region": {
                                                 "Fn::If": [
@@ -763,6 +768,9 @@
                 }
             },
             "Properties": {
+                "IamInstanceProfile": {
+                    "Ref": "HostProfile"
+                },
                 "ImageId": {
                     "Fn::FindInMap": [
                         "AWSAMIRegion",

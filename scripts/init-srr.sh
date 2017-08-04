@@ -38,11 +38,10 @@ curl --fail --insecure -H 'Content-Type:application/json' -X POST -b ${COOKIE_FI
 put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
 
 # Configure storreduce monitor
-# Gavin TODO: Get the latest version published in public repo
-# sudo yum install -y storreduce-monitor
-
-# sudo /usr/share/storreduce/filebeat/storreduce-filebeat install "$monitor_vm_ip:5044"
-# sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
+sudo yum install -y storreduce-monitor
+cd /usr/share/storreduce/filebeat
+sudo storreduce-filebeat install "$monitor_vm_ip:5044"
+sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
 
 sudo storreducectl server restart
 

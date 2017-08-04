@@ -184,8 +184,8 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-1355b16b",
-                       "MonitorAMI": "ami-2733d45f" }
+    "us-west-2":      {"AMI": "ami-b88a6cc0",
+                       "MonitorAMI": "ami-b6886ece" }
 })
   
 BASE_NAME = "StorReduceInstance"
@@ -377,7 +377,8 @@ monitor_instance = t.add_resource(ec2.Instance(
     ],
     InstanceType=Ref(MonitorInstanceTypeParam),
     ImageId=FindInMap("AWSAMIRegion", Ref("AWS::Region"), "MonitorAMI"),
-    Tags=Tags(Name="SRRMonitorVM",)
+    Tags=Tags(Name="SRRMonitorVM",),
+    IamInstanceProfile=Ref(HostProfileParam)
 ))
 
 monitor_instance.UserData = Base64(Join("", [
@@ -404,7 +405,7 @@ monitor_instance.Metadata= cloudformation.Metadata(
                 files=cloudformation.InitFiles({
                     "/home/ec2-user/monitor-srr.sh": cloudformation.InitFile(
                         source=Sub(
-                            "https://${" + QSS3BucketNameParam.title + "}.${QSS3Region}.amazonaws.com/${" + QSS3KeyPrefixParam.title + "}scripts/init-srr.sh",
+                            "https://${" + QSS3BucketNameParam.title + "}.${QSS3Region}.amazonaws.com/${" + QSS3KeyPrefixParam.title + "}scripts/monitor-srr.sh",
                             **{"QSS3Region":If("GovCloudCondition",
                                                 "s3-us-gov-west-1",
                                                 "s3")}
@@ -422,6 +423,10 @@ monitor_instance.Metadata= cloudformation.Metadata(
                 }
             )
         }))
+
+monitor_instance.CreationPolicy=CreationPolicy(
+            ResourceSignal=ResourceSignal(Timeout='PT15M')
+            )
 
 # Build the instance such that we specify the correct subnet ID
 

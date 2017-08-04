@@ -55,11 +55,10 @@ cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 configure_server "$cluster_token"
 
 # Configure storreduce monitor
-# Gavin TODO: Get the latest version published in public repo
-# sudo yum install -y storreduce-monitor
-
-# sudo /usr/share/storreduce/filebeat/storreduce-filebeat install "$monitor_vm_ip:5044"
-# sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
+sudo yum install -y storreduce-monitor
+cd /usr/share/storreduce/filebeat
+sudo storreduce-filebeat install "$monitor_vm_ip:5044"
+sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
 
 sudo storreducectl server restart
 

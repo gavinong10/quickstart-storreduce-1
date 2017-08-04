@@ -66,3 +66,6 @@ sudo storreducectl server restart
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
 
 aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
+
+sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init.log
+sudo rm -rf ${COOKIE_FILE}

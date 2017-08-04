@@ -54,3 +54,6 @@ aws elb register-instances-with-load-balancer --load-balancer-name="$load_balanc
 #replace " with \\"
 #replace \n with \\n",\n"
 #append at start and finish character "
+
+sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init.log
+sudo rm -rf ${COOKIE_FILE}

@@ -32,3 +32,6 @@ while ! curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${C
 cluster_token="$(get_cluster_discovery_token ${first_server_public_sr_api})"
 
 sudo storreduce-monitor --initial_cluster_discovery_token="$cluster_token"
+
+sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init.log
+sudo rm -rf ${COOKIE_FILE}

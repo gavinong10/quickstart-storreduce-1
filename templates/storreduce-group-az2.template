@@ -432,6 +432,58 @@
     },
     "Mappings": {
         "AWSAMIRegion": {
+            "ap-northeast-1": {
+                "AMI": "ami-13b85075",
+                "MonitorAMI": "ami-1bbd557d"
+            },
+            "ap-northeast-2": {
+                "AMI": "ami-1d0ed773",
+                "MonitorAMI": "ami-bb0fd6d5"
+            },
+            "ap-south-1": {
+                "AMI": "ami-f584ff9a",
+                "MonitorAMI": "ami-76fb8019"
+            },
+            "ap-southeast-1": {
+                "AMI": "ami-6e61ff0d",
+                "MonitorAMI": "ami-8b60fee8"
+            },
+            "ap-southeast-2": {
+                "AMI": "ami-f4776e97",
+                "MonitorAMI": "ami-07766f64"
+            },
+            "ca-central-1": {
+                "AMI": "ami-88e957ec",
+                "MonitorAMI": "ami-93e856f7"
+            },
+            "eu-central-1": {
+                "AMI": "ami-32e9475d",
+                "MonitorAMI": "ami-b0e846df"
+            },
+            "eu-west-1": {
+                "AMI": "ami-eadb2c93",
+                "MonitorAMI": "ami-27da2d5e"
+            },
+            "eu-west-2": {
+                "AMI": "ami-e8d6c78c",
+                "MonitorAMI": "ami-33dacb57"
+            },
+            "sa-east-1": {
+                "AMI": "ami-5f522433",
+                "MonitorAMI": "ami-865422ea"
+            },
+            "us-east-1": {
+                "AMI": "ami-c5ae8dbe",
+                "MonitorAMI": "ami-73b29108"
+            },
+            "us-east-2": {
+                "AMI": "ami-2afbdb4f",
+                "MonitorAMI": "ami-11f8d874"
+            },
+            "us-west-1": {
+                "AMI": "ami-7e73581e",
+                "MonitorAMI": "ami-7c73581c"
+            },
             "us-west-2": {
                 "AMI": "ami-b88a6cc0",
                 "MonitorAMI": "ami-b6886ece"

@@ -29,10 +29,12 @@ tests:
     - eu-west-1
     - us-east-1
     - us-east-2
-    
+
+  quickstart-storreducet2:
     parameter_input: quickstart-storreduce-az2-3servers.json
     template_file: quickstart-storreduce-master.template
     
+  quickstart-storreducet3:
     parameter_input: quickstart-storreduce-az31-3servers.json
     template_file: quickstart-storreduce-master.template
     regions:

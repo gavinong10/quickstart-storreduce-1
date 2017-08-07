@@ -4,8 +4,12 @@
         "ParameterValue": "i3.large"
     },
     {
+        "ParameterKey": "MonitorInstanceType",
+        "ParameterValue": "i3.large"
+    },
+    {
         "ParameterKey": "BucketName",
-        "ParameterValue": "gong-$[taskcat_autobucket]"
+        "ParameterValue": "gong-quickstart-$[taskcat_genuuid]"
     },
     {
         "ParameterKey": "StorReducePassword",

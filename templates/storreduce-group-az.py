@@ -1,7 +1,7 @@
 from troposphere import Base64, FindInMap, GetAtt
 from troposphere import Parameter, Output, Ref, Template
-from troposphere import Join, cloudformation, Select
-from troposphere import If, Equals, Or, And, Not, Condition
+from troposphere import Join, Split, cloudformation, Select
+from troposphere import If, Equals, Or, And, Not, Condition, Tags
 from troposphere import Output, Sub
 from troposphere.policies import (CreationPolicy,
                                   ResourceSignal)
@@ -10,6 +10,11 @@ from troposphere.certificatemanager import Certificate, DomainValidationOption
 import sys
 
 import troposphere.elasticloadbalancing as elb
+
+# // Gavin TODO: Fix TaskCat
+
+# Connect Monitor VM to cluster:
+# -> sudo storreduce-monitor --initial_cluster_discovery_token="eyJDbHVzdGVySWQiOiJCREFBQzM1NC1GQ0MzLTQzNTgtQjY2MC02RjYwRUQwNDc4OEYiLCJFdGNkQ2xpZW50VXJsIjoiaHR0cDovLzEwLjAuMTQuMTc0OjIzNzkiLCJFdGNkQ2xpZW50UGFzc3dvcmQiOiIiLCJFdGNkQ2xpZW50VXNlcm5hbWUiOiIiLCJFeHRlcm5hbEV0Y2RTZXJ2ZXIiOmZhbHNlfQ=="
 
 MAX_INSTANCES = 31
 MIN_INSTANCES = 3
@@ -55,6 +60,13 @@ LoadBalancerSecurityGroupParam = t.add_parameter(Parameter(
     Type="AWS::EC2::SecurityGroup::Id"
 ))
 
+# Gavin TODO:  Add both MonitorInstance and AllInternal to monitor VM
+MonitorSecurityGroupParam = t.add_parameter(Parameter(
+    "MonitorSecurityGroup",
+    Description="The security group associated with the Monitor VM",
+    Type="AWS::EC2::SecurityGroup::Id"
+))
+
 HostProfileParam = t.add_parameter(Parameter(
     "HostProfile",
     Description="The host profile to associate with the StorReduce instance(s)",
@@ -80,6 +92,23 @@ InstanceTypeParam = t.add_parameter(Parameter(
     Type="String",
     Default="i3.4xlarge",
     AllowedValues=[
+        "i3.xlarge",
+        "i3.2xlarge",
+        "i3.4xlarge",
+        "i3.8xlarge",
+        "i3.16xlarge"
+    ],
+    ConstraintDescription="must be a valid EC2 instance type."
+))
+
+# Gavin TODO: Make Monitor Instsance Type Selectable from master
+MonitorInstanceTypeParam = t.add_parameter(Parameter(
+    "MonitorInstanceType",
+    Description="EC2 instance type",
+    Type="String",
+    Default="i3.large",
+    AllowedValues=[
+        "i3.large",
         "i3.xlarge",
         "i3.2xlarge",
         "i3.4xlarge",
@@ -155,7 +184,20 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
 ))
 
 t.add_mapping('AWSAMIRegion', {
-    "us-west-2":      {"AMI": "ami-74140f0d"}
+    "ap-northeast-1": {"AMI": "ami-13b85075", "MonitorAMI": "ami-1bbd557d" },
+    "ap-northeast-2": {"AMI": "ami-1d0ed773", "MonitorAMI": "ami-bb0fd6d5" },
+    "ap-south-1": {"AMI": "ami-f584ff9a", "MonitorAMI": "ami-76fb8019" },
+    "ap-southeast-1": {"AMI": "ami-6e61ff0d", "MonitorAMI": "ami-8b60fee8" },
+    "ap-southeast-2": {"AMI": "ami-f4776e97", "MonitorAMI": "ami-07766f64" },
+    "ca-central-1": {"AMI": "ami-88e957ec", "MonitorAMI": "ami-93e856f7" },
+    "eu-central-1": {"AMI": "ami-32e9475d", "MonitorAMI": "ami-b0e846df" },
+    "eu-west-1": {"AMI": "ami-eadb2c93", "MonitorAMI": "ami-27da2d5e" },
+    "eu-west-2": {"AMI": "ami-e8d6c78c", "MonitorAMI": "ami-33dacb57" },
+    "sa-east-1": {"AMI": "ami-5f522433", "MonitorAMI": "ami-865422ea" },
+    "us-east-1": {"AMI": "ami-c5ae8dbe", "MonitorAMI": "ami-73b29108" },
+    "us-east-2": {"AMI": "ami-2afbdb4f", "MonitorAMI": "ami-11f8d874" },
+    "us-west-1": {"AMI": "ami-7e73581e", "MonitorAMI": "ami-7c73581c" },
+    "us-west-2": {"AMI": "ami-b88a6cc0", "MonitorAMI": "ami-b6886ece" }
 })
   
 BASE_NAME = "StorReduceInstance"
@@ -225,7 +267,32 @@ elasticLB = t.add_resource(elb.LoadBalancer(
         SecurityGroups=[Ref(LoadBalancerSecurityGroupParam)]
     ))
 
+######### Monitor VM Pre-setup ###########
+eip1 = t.add_resource(ec2.EIP(
+    "EIPMonitor",
+    Domain="vpc",
+))
 
+eth0 = t.add_resource(ec2.NetworkInterface(
+    "Eth0",
+    Description="eth0",
+    GroupSet=Split(",", Join(",", [Join(",", Ref(SecurityGroupIdsParam)), Ref(MonitorSecurityGroupParam), ])),
+    # SourceDestCheck=True,
+    SubnetId=Select("0", Ref(PublicSubnetsToSpanParam)),
+    Tags=Tags(
+        Name="Interface 0",
+        Interface="eth0",
+    ),
+))
+
+eipassoc1 = t.add_resource(ec2.EIPAssociation(
+    "EIPAssoc1",
+    NetworkInterfaceId=Ref(eth0),
+    AllocationId=GetAtt("EIPMonitor", "AllocationId"),
+    PrivateIpAddress=GetAtt("Eth0", "PrimaryPrivateIpAddress"),
+))
+
+######### End Monitor VM Pre-setup #######
 
 def generate_new_instance(counter):
     # Create base StorReduce instance
@@ -280,7 +347,8 @@ def generate_new_instance(counter):
                                 "\'",Ref(StorReducePasswordParam), "\' ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
-                                "\"", Ref("AWS::Region"), "\""])
+                                "\"", Ref("AWS::Region"), "\" ",
+                                "\"", GetAtt("Eth0", "PrimaryPrivateIpAddress"), "\""])
                     }
                 }
             )
@@ -305,11 +373,81 @@ counter += 1
 
 num_mandatory_instances = MIN_INSTANCES - 1
 
+# Create monitor VM
+# -> sudo storreduce-monitor --initial_cluster_discovery_token="eyJDbHVzdGVySWQiOiJCREFBQzM1NC1GQ0MzLTQzNTgtQjY2MC02RjYwRUQwNDc4OEYiLCJFdGNkQ2xpZW50VXJsIjoiaHR0cDovLzEwLjAuMTQuMTc0OjIzNzkiLCJFdGNkQ2xpZW50UGFzc3dvcmQiOiIiLCJFdGNkQ2xpZW50VXNlcm5hbWUiOiIiLCJFeHRlcm5hbEV0Y2RTZXJ2ZXIiOmZhbHNlfQ=="
+monitor_instance = t.add_resource(ec2.Instance(
+    "MonitorInstance",
+    # Gavin TODO: Depend on the base instance of StorReduce and make 2nd instance depend on monitor
+    # Fix connect-srr.sh and init-srr.sh
+    DependsOn = base_instance.title,
+    KeyName=Ref(KeyPairNameParam),
+    NetworkInterfaces=[
+        ec2.NetworkInterfaceProperty(
+            NetworkInterfaceId=Ref(eth0),
+            DeviceIndex="0",
+        ),
+    ],
+    InstanceType=Ref(MonitorInstanceTypeParam),
+    ImageId=FindInMap("AWSAMIRegion", Ref("AWS::Region"), "MonitorAMI"),
+    Tags=Tags(Name="SRRMonitorVM",),
+    IamInstanceProfile=Ref(HostProfileParam)
+))
+
+monitor_instance.UserData = Base64(Join("", [
+    """
+    #!/bin/bash -xe
+    /opt/aws/bin/cfn-init -v --stack """, Ref("AWS::StackName"),
+    " --resource " + monitor_instance.title + " --region ", Ref("AWS::Region"), 
+    "\n",
+    "/opt/aws/bin/cfn-signal -e $? --stack ", Ref("AWS::StackName"),
+        "    --resource " + monitor_instance.title + " --region ", Ref("AWS::Region")
+]))
+
+monitor_instance.Metadata= cloudformation.Metadata(
+            cloudformation.Authentication({
+                "S3AccessCreds": cloudformation.AuthenticationBlock(
+                    type="S3",
+                    roleName=Ref(HostRoleParam),
+                    buckets=[Ref(QSS3BucketNameParam)]
+                )
+                
+            }),
+            cloudformation.Init({
+            "config": cloudformation.InitConfig(
+                files=cloudformation.InitFiles({
+                    "/home/ec2-user/monitor-srr.sh": cloudformation.InitFile(
+                        source=Sub(
+                            "https://${" + QSS3BucketNameParam.title + "}.${QSS3Region}.amazonaws.com/${" + QSS3KeyPrefixParam.title + "}scripts/monitor-srr.sh",
+                            **{"QSS3Region":If("GovCloudCondition",
+                                                "s3-us-gov-west-1",
+                                                "s3")}
+                        ),
+                        mode="000550",
+                        owner="root",
+                        group="root")
+                }),
+                commands={
+                    "monitor-srr": {
+                        "command": Join("", ["/home/ec2-user/monitor-srr.sh \"", 
+                                GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
+                                Ref(StorReducePasswordParam), "\'"])
+                    }
+                }
+            )
+        }))
+
+monitor_instance.CreationPolicy=CreationPolicy(
+            ResourceSignal=ResourceSignal(Timeout='PT15M')
+            )
+
 # Build the instance such that we specify the correct subnet ID
 
 def configure_for_follower(instance, counter):
     subnet_index = counter % NUM_AZS
-    instance.DependsOn = base_instance.title
+    if counter == 2:
+        instance.DependsOn = "MonitorInstance"
+    else:
+        instance.DependsOn = BASE_NAME + str(counter - 1) #base_instance.title
     instance.SubnetId = Select(str(subnet_index), Ref(PrivateSubnetsToSpanParam))
     instance.AvailabilityZone = Select(str(subnet_index), Ref(AvailabilityZonesParam))
     instance.Metadata=cloudformation.Metadata(
@@ -341,7 +479,8 @@ def configure_for_follower(instance, counter):
                     "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
                     Ref(StorReducePasswordParam), "\' ",
                     "\"", Ref(elasticLB), "\" ",
-                    "\"", Ref("AWS::Region"), "\""])
+                    "\"", Ref("AWS::Region"), "\" ",
+                    "\"", GetAtt("Eth0", "PrimaryPrivateIpAddress"), "\""])
                 }
             }
         )

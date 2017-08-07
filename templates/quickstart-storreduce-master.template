@@ -12,6 +12,7 @@
                         "KeyPairName",
                         "StorReducePassword",
                         "InstanceType",
+                        "MonitorInstanceType",
                         "BucketName",
                         "NumSRRHosts",
                         "StorReduceLicense",
@@ -101,6 +102,9 @@
                 "InstanceType": {
                     "default": "Instance Type"
                 },
+                "MonitorInstanceType": {
+                    "default": "Monitor Instance Type"
+                },
                 "BucketName": {
                     "default": "Bucket Name"
                 },
@@ -155,6 +159,20 @@
             "Type" : "String",
                 "Default" : "i3.4xlarge",
                 "AllowedValues":[
+                    "i3.xlarge",
+                    "i3.2xlarge",
+                    "i3.4xlarge",
+                    "i3.8xlarge",
+                    "i3.16xlarge"
+                ],
+            "ConstraintDescription" : "must be a valid EC2 instance type."
+        },
+        "MonitorInstanceType" : {
+            "Description" : "Monitor EC2 instance type",
+            "Type" : "String",
+                "Default" : "i3.large",
+                "AllowedValues":[
+                    "i3.large",
                     "i3.xlarge",
                     "i3.2xlarge",
                     "i3.4xlarge",
@@ -533,6 +551,32 @@
                 ]
             }
         },
+        "MonitorSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enables remote access to port 3000 and 5601",
+                "VpcId": {
+                    "Fn::GetAtt": [
+                        "VPCStack",
+                        "Outputs.VPCID"
+                    ]
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 3000,
+                        "ToPort": 3000,
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 5601,
+                        "ToPort": 5601,
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
+                    }
+                ]
+            }
+        },
         "AllInternalAccessSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
@@ -560,25 +604,37 @@
                         "IpProtocol": "tcp",
                         "FromPort": 443,
                         "ToPort": 443,
-                        "CidrIp": "0.0.0.0/0"
+                        "CidrIp": { "Ref": "VPCCIDR" }
                     },
                     {
                         "IpProtocol": "tcp",
                         "FromPort": 8095,
                         "ToPort": 8099,
-                        "CidrIp": "0.0.0.0/0"
+                        "CidrIp": { "Ref": "VPCCIDR" }
                     },
                     {
                         "IpProtocol": "tcp",
                         "FromPort": 2379,
                         "ToPort": 2380,
-                        "CidrIp": "0.0.0.0/0"
+                        "CidrIp": { "Ref": "VPCCIDR" }
                     },
                     {
                         "IpProtocol": "tcp",
                         "FromPort": 8080,
                         "ToPort": 8080,
-                        "CidrIp": "0.0.0.0/0"
+                        "CidrIp": { "Ref": "VPCCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 5044,
+                        "ToPort": 5044,
+                        "CidrIp": { "Ref": "VPCCIDR" }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 9090,
+                        "ToPort": 9090,
+                        "CidrIp": { "Ref": "VPCCIDR" }
                     }
                 ]
             }
@@ -732,7 +788,8 @@
                 "BucketName": {
                     "Ref": "BucketName"
                 }
-            }
+            },
+            "DeletionPolicy" : "Retain"
         },
 
         "SrrGroup": {
@@ -777,6 +834,9 @@
                         },
                         "InstanceType": {
                             "Ref": "InstanceType"
+                        },
+                        "MonitorInstanceType": {
+                            "Ref": "MonitorInstanceType"
                         },
                         "BucketName": {
                             "Ref": "BucketName"
@@ -904,6 +964,7 @@
                             "Ref": "ValidationDomainName"
                         },
                         "LoadBalancerSecurityGroup": { "Ref": "LoadBalancerSecurityGroup" },
+                        "MonitorSecurityGroup": {"Ref": "MonitorSecurityGroup" },
                         "StorReduceLicense": {
                             "Ref": "StorReduceLicense"
                         }

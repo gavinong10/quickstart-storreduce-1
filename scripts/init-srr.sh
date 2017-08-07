@@ -7,6 +7,7 @@ srr_password="$3"
 load_balancer_DNS=$4
 load_balancer_name=$5
 region=$6
+monitor_vm_ip=$7
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
@@ -36,6 +37,12 @@ curl --fail --insecure -H 'Content-Type:application/json' -X POST -b ${COOKIE_FI
 
 put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
 
+# Configure storreduce monitor
+sudo yum install -y storreduce-monitor
+cd /usr/share/storreduce/filebeat
+sudo storreduce-filebeat install "$monitor_vm_ip:5044"
+sudo storreducectl server flags set stats_server_address "$monitor_vm_ip:9090"
+
 sudo storreducectl server restart
 
 # Wait for StorReduce on server to be up
@@ -47,3 +54,6 @@ aws elb register-instances-with-load-balancer --load-balancer-name="$load_balanc
 #replace " with \\"
 #replace \n with \\n",\n"
 #append at start and finish character "
+
+sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init.log
+sudo rm -rf ${COOKIE_FILE}

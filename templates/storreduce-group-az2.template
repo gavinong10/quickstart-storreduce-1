@@ -432,8 +432,61 @@
     },
     "Mappings": {
         "AWSAMIRegion": {
+            "ap-northeast-1": {
+                "AMI": "ami-13b85075",
+                "MonitorAMI": "ami-1bbd557d"
+            },
+            "ap-northeast-2": {
+                "AMI": "ami-1d0ed773",
+                "MonitorAMI": "ami-bb0fd6d5"
+            },
+            "ap-south-1": {
+                "AMI": "ami-f584ff9a",
+                "MonitorAMI": "ami-76fb8019"
+            },
+            "ap-southeast-1": {
+                "AMI": "ami-6e61ff0d",
+                "MonitorAMI": "ami-8b60fee8"
+            },
+            "ap-southeast-2": {
+                "AMI": "ami-f4776e97",
+                "MonitorAMI": "ami-07766f64"
+            },
+            "ca-central-1": {
+                "AMI": "ami-88e957ec",
+                "MonitorAMI": "ami-93e856f7"
+            },
+            "eu-central-1": {
+                "AMI": "ami-32e9475d",
+                "MonitorAMI": "ami-b0e846df"
+            },
+            "eu-west-1": {
+                "AMI": "ami-eadb2c93",
+                "MonitorAMI": "ami-27da2d5e"
+            },
+            "eu-west-2": {
+                "AMI": "ami-e8d6c78c",
+                "MonitorAMI": "ami-33dacb57"
+            },
+            "sa-east-1": {
+                "AMI": "ami-5f522433",
+                "MonitorAMI": "ami-865422ea"
+            },
+            "us-east-1": {
+                "AMI": "ami-c5ae8dbe",
+                "MonitorAMI": "ami-73b29108"
+            },
+            "us-east-2": {
+                "AMI": "ami-2afbdb4f",
+                "MonitorAMI": "ami-11f8d874"
+            },
+            "us-west-1": {
+                "AMI": "ami-7e73581e",
+                "MonitorAMI": "ami-7c73581c"
+            },
             "us-west-2": {
-                "AMI": "ami-74140f0d"
+                "AMI": "ami-b88a6cc0",
+                "MonitorAMI": "ami-b6886ece"
             }
         }
     },
@@ -487,6 +540,24 @@
         },
         "LoadBalancerSecurityGroup": {
             "Description": "The security group associated with the load balancer",
+            "Type": "AWS::EC2::SecurityGroup::Id"
+        },
+        "MonitorInstanceType": {
+            "AllowedValues": [
+                "i3.large",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge",
+                "i3.8xlarge",
+                "i3.16xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type.",
+            "Default": "i3.large",
+            "Description": "EC2 instance type",
+            "Type": "String"
+        },
+        "MonitorSecurityGroup": {
+            "Description": "The security group associated with the Monitor VM",
             "Type": "AWS::EC2::SecurityGroup::Id"
         },
         "NumSRRHosts": {
@@ -559,6 +630,32 @@
         }
     },
     "Resources": {
+        "EIPAssoc1": {
+            "Properties": {
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "EIPMonitor",
+                        "AllocationId"
+                    ]
+                },
+                "NetworkInterfaceId": {
+                    "Ref": "Eth0"
+                },
+                "PrivateIpAddress": {
+                    "Fn::GetAtt": [
+                        "Eth0",
+                        "PrimaryPrivateIpAddress"
+                    ]
+                }
+            },
+            "Type": "AWS::EC2::EIPAssociation"
+        },
+        "EIPMonitor": {
+            "Properties": {
+                "Domain": "vpc"
+            },
+            "Type": "AWS::EC2::EIP"
+        },
         "ElasticLoadBalancer": {
             "Properties": {
                 "CrossZone": "true",
@@ -604,6 +701,185 @@
                 }
             },
             "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+        },
+        "Eth0": {
+            "Properties": {
+                "Description": "eth0",
+                "GroupSet": {
+                    "Fn::Split": [
+                        ",",
+                        {
+                            "Fn::Join": [
+                                ",",
+                                [
+                                    {
+                                        "Fn::Join": [
+                                            ",",
+                                            {
+                                                "Ref": "SecurityGroupIds"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "Ref": "MonitorSecurityGroup"
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                "SubnetId": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Ref": "PublicSubnetsToSpan"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Interface",
+                        "Value": "eth0"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": "Interface 0"
+                    }
+                ]
+            },
+            "Type": "AWS::EC2::NetworkInterface"
+        },
+        "MonitorInstance": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
+            "DependsOn": "StorReduceInstance0",
+            "Metadata": {
+                "AWS::CloudFormation::Authentication": {
+                    "S3AccessCreds": {
+                        "buckets": [
+                            {
+                                "Ref": "QSS3BucketName"
+                            }
+                        ],
+                        "roleName": {
+                            "Ref": "HostRole"
+                        },
+                        "type": "S3"
+                    }
+                },
+                "AWS::CloudFormation::Init": {
+                    "config": {
+                        "commands": {
+                            "monitor-srr": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "/home/ec2-user/monitor-srr.sh \"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "StorReduceInstance0",
+                                                    "PrivateDnsName"
+                                                ]
+                                            },
+                                            "\" '",
+                                            {
+                                                "Ref": "StorReducePassword"
+                                            },
+                                            "'"
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        "files": {
+                            "/home/ec2-user/monitor-srr.sh": {
+                                "group": "root",
+                                "mode": "000550",
+                                "owner": "root",
+                                "source": {
+                                    "Fn::Sub": [
+                                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/monitor-srr.sh",
+                                        {
+                                            "QSS3Region": {
+                                                "Fn::If": [
+                                                    "GovCloudCondition",
+                                                    "s3-us-gov-west-1",
+                                                    "s3"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Properties": {
+                "IamInstanceProfile": {
+                    "Ref": "HostProfile"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSAMIRegion",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "MonitorAMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "MonitorInstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyPairName"
+                },
+                "NetworkInterfaces": [
+                    {
+                        "DeviceIndex": "0",
+                        "NetworkInterfaceId": {
+                            "Ref": "Eth0"
+                        }
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "SRRMonitorVM"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --resource MonitorInstance --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --resource MonitorInstance --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::EC2::Instance"
         },
         "StorReduceInstance0": {
             "CreationPolicy": {
@@ -664,6 +940,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -818,6 +1102,14 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
+                                            },
                                             "\""
                                         ]
                                     ]
@@ -928,7 +1220,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance9",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -971,6 +1263,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -1082,7 +1382,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance10",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -1125,6 +1425,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -1236,7 +1544,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance11",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -1279,6 +1587,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -1390,7 +1706,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance12",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -1433,6 +1749,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -1544,7 +1868,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance13",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -1587,6 +1911,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -1698,7 +2030,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance14",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -1741,6 +2073,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -1852,7 +2192,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance15",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -1895,6 +2235,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2006,7 +2354,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance16",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2049,6 +2397,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2160,7 +2516,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance17",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2203,6 +2559,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2314,7 +2678,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance18",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2357,6 +2721,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2467,7 +2839,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "MonitorInstance",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2510,6 +2882,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2621,7 +3001,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance19",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2664,6 +3044,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2775,7 +3163,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance20",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2818,6 +3206,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -2929,7 +3325,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance21",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -2972,6 +3368,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -3083,7 +3487,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance22",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -3126,6 +3530,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -3237,7 +3649,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance23",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -3280,6 +3692,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -3391,7 +3811,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance24",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -3434,6 +3854,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -3545,7 +3973,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance25",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -3588,6 +4016,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -3699,7 +4135,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance26",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -3742,6 +4178,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -3853,7 +4297,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance27",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -3896,6 +4340,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4007,7 +4459,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance28",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4050,6 +4502,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4161,7 +4621,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance2",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4204,6 +4664,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4315,7 +4783,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance29",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4358,6 +4826,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4469,7 +4945,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance3",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4512,6 +4988,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4623,7 +5107,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance4",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4666,6 +5150,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4777,7 +5269,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance5",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4820,6 +5312,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -4931,7 +5431,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance6",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -4974,6 +5474,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -5085,7 +5593,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance7",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -5128,6 +5636,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]
@@ -5239,7 +5755,7 @@
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": "StorReduceInstance8",
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -5282,6 +5798,14 @@
                                             "\"",
                                             {
                                                 "Ref": "AWS::Region"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "Eth0",
+                                                    "PrimaryPrivateIpAddress"
+                                                ]
                                             },
                                             "\""
                                         ]

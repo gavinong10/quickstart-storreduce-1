@@ -490,6 +490,124 @@
             }
         }
     },
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "StorReduce Configuration"
+                    },
+                    "Parameters": [
+                        "KeyPairName",
+                        "StorReducePassword",
+                        "ShardsNum",
+                        "ReplicaShardsNum",
+                        "InstanceType",
+                        "MonitorInstanceType",
+                        "BucketName",
+                        "NumSRRHosts",
+                        "StorReduceLicense",
+                        "SSLCertificateId",
+                        "DomainName",
+                        "ValidationDomainName"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Network Configuration"
+                    },
+                    "Parameters": [
+                        "NumberOfAZs",
+                        "VpcId",
+                        "VPCCIDR",
+                        "RemoteAccessCIDR",
+                        "PrivateSubnetsToSpan",
+                        "PublicSubnetsToSpan"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "AWS Quick Start Configuration"
+                    },
+                    "Parameters": [
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "BastionAMIOS": {
+                    "default": "Bastion AMI Operating System"
+                },
+                "BastionInstanceType": {
+                    "default": "Bastion Instance Type"
+                },
+                "BucketName": {
+                    "default": "Bucket Name"
+                },
+                "DomainName": {
+                    "default": "Domain Name"
+                },
+                "InstanceType": {
+                    "default": "Instance Type"
+                },
+                "KeyPairName": {
+                    "default": "Key Pair Name"
+                },
+                "MonitorInstanceType": {
+                    "default": "Monitor Instance Type"
+                },
+                "NumBastionHosts": {
+                    "default": "Number of Bastion Hosts"
+                },
+                "NumSRRHosts": {
+                    "default": "Number of StorReduce servers"
+                },
+                "NumberOfAZs": {
+                    "default": "Number of Availability Zones"
+                },
+                "PrivateSubnetsToSpan": {
+                    "default": "VPC Private Subnets"
+                },
+                "PublicSubnetsToSpan": {
+                    "default": "VPC Public Subnets"
+                },
+                "QSS3BucketName": {
+                    "default": "Quick Start S3 Bucket Name"
+                },
+                "QSS3KeyPrefix": {
+                    "default": "Quick Start S3 Key Prefix"
+                },
+                "RemoteAccessCIDR": {
+                    "default": "External Allowed Access CIDR"
+                },
+                "ReplicaShardsNum": {
+                    "default": "Number of Replica Shards"
+                },
+                "SSLCertificateId": {
+                    "default": "SSL Certificate ID"
+                },
+                "ShardsNum": {
+                    "default": "Number of Shards"
+                },
+                "StorReduceLicense": {
+                    "default": "StorReduce license"
+                },
+                "StorReducePassword": {
+                    "default": "StorReduce Password"
+                },
+                "VPCCIDR": {
+                    "default": "VPC CIDR"
+                },
+                "ValidationDomainName": {
+                    "default": "Validation Domain Name"
+                },
+                "VpcId": {
+                    "default": "VPC ID"
+                }
+            }
+        }
+    },
     "Outputs": {
         "ElasticLoadBalancerID": {
             "Description": "ElasticLoadBalancerID ID",
@@ -499,10 +617,6 @@
         }
     },
     "Parameters": {
-        "AvailabilityZones": {
-            "Description": "The availability zone in which to place the EC2 instance",
-            "Type": "List<AWS::EC2::AvailabilityZone::Name>"
-        },
         "BucketName": {
             "ConstraintDescription": "must be a valid S3 bucket name.",
             "Description": "The bucket to which StorReduce will store data",
@@ -510,14 +624,6 @@
         },
         "DomainName": {
             "Description": "The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
-            "Type": "String"
-        },
-        "HostProfile": {
-            "Description": "The host profile to associate with the StorReduce instance(s)",
-            "Type": "String"
-        },
-        "HostRole": {
-            "Description": "The host role to associate with the StorReduce instance(s) for pulling scripts",
             "Type": "String"
         },
         "InstanceType": {
@@ -530,17 +636,13 @@
             ],
             "ConstraintDescription": "must be a valid EC2 instance type.",
             "Default": "i3.4xlarge",
-            "Description": "EC2 instance type",
+            "Description": "StorReduce EC2 instance type",
             "Type": "String"
         },
         "KeyPairName": {
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair.",
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances",
             "Type": "AWS::EC2::KeyPair::KeyName"
-        },
-        "LoadBalancerSecurityGroup": {
-            "Description": "The security group associated with the load balancer",
-            "Type": "AWS::EC2::SecurityGroup::Id"
         },
         "MonitorInstanceType": {
             "AllowedValues": [
@@ -555,10 +657,6 @@
             "Default": "i3.large",
             "Description": "EC2 instance type",
             "Type": "String"
-        },
-        "MonitorSecurityGroup": {
-            "Description": "The security group associated with the Monitor VM",
-            "Type": "AWS::EC2::SecurityGroup::Id"
         },
         "NumSRRHosts": {
             "AllowedValues": [
@@ -585,34 +683,46 @@
             "Type": "Number"
         },
         "PrivateSubnetsToSpan": {
-            "Description": "The VPC private subnets to span",
+            "Description": "A list of VPC private subnets to span for StorReduce instances to reside",
             "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "PublicSubnetsToSpan": {
-            "Description": "The VPC public subnets to span",
+            "Description": "A list of VPC public subnets to span for the StorReduce Load Balancer to cover",
             "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "gong-cf-templates",
-            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z\\-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
             "Type": "String"
+        },
+        "RemoteAccessCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
+            "Description": "Allowed CIDR block for bastion, StorReduce Monitor and load balancer access",
+            "Type": "String"
+        },
+        "ReplicaShardsNum": {
+            "Description": "The number of replica shards to use for the StorReduce cluster. Replicas create redundancy for higher resiliency but use extra CPU and disk space",
+            "MinValue": 0,
+            "Type": "Number"
         },
         "SSLCertificateId": {
             "Description": "The SSL Certificate ID to use for the load balancer",
             "Type": "String"
         },
-        "SecurityGroupIds": {
-            "Description": "The securitys group associated with the instance",
-            "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        "ShardsNum": {
+            "Description": "The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 12 * number of servers)",
+            "MinValue": 0,
+            "Type": "Number"
         },
         "StorReduceLicense": {
             "ConstraintDescription": "must be a current and valid StorReduce license.",
@@ -624,12 +734,99 @@
             "NoEcho": true,
             "Type": "String"
         },
+        "VPCCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
+            "Default": "10.0.0.0/16",
+            "Description": "CIDR Block for the VPC",
+            "Type": "String"
+        },
         "ValidationDomainName": {
             "Description": "The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
+        },
+        "VpcId": {
+            "ConstraintDescription": "Your VPC-ID must be in the form vpc-xxxxxxxx where 'x' can be a number or a letter.",
+            "Description": "VPC-ID of your existing Virtual Private Cloud (VPC) where you want to deploy a StorReduce cluster",
+            "Type": "AWS::EC2::VPC::Id"
         }
     },
     "Resources": {
+        "AllInternalAccessSecurityGroup": {
+            "Properties": {
+                "GroupDescription": "Enables StorReduce and SSH ports TCP access from within the VPC",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "22",
+                        "IpProtocol": "tcp",
+                        "ToPort": "22"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "80",
+                        "IpProtocol": "tcp",
+                        "ToPort": "80"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "443",
+                        "IpProtocol": "tcp",
+                        "ToPort": "443"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "8095",
+                        "IpProtocol": "tcp",
+                        "ToPort": "8099"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "2379",
+                        "IpProtocol": "tcp",
+                        "ToPort": "2380"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "8080",
+                        "IpProtocol": "tcp",
+                        "ToPort": "8080"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "5044",
+                        "IpProtocol": "tcp",
+                        "ToPort": "5044"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "FromPort": "9090",
+                        "IpProtocol": "tcp",
+                        "ToPort": "9090"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
         "EIPAssoc1": {
             "Properties": {
                 "AllocationId": {
@@ -703,31 +900,17 @@
             "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
         },
         "Eth0": {
+            "DependsOn": "AllInternalAccessSecurityGroup",
             "Properties": {
                 "Description": "eth0",
-                "GroupSet": {
-                    "Fn::Split": [
-                        ",",
-                        {
-                            "Fn::Join": [
-                                ",",
-                                [
-                                    {
-                                        "Fn::Join": [
-                                            ",",
-                                            {
-                                                "Ref": "SecurityGroupIds"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "Ref": "MonitorSecurityGroup"
-                                    }
-                                ]
-                            ]
-                        }
-                    ]
-                },
+                "GroupSet": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "MonitorSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -749,13 +932,43 @@
             },
             "Type": "AWS::EC2::NetworkInterface"
         },
+        "LoadBalancerSecurityGroup": {
+            "Properties": {
+                "GroupDescription": "Enables remote access to port 80 and 443 for the StorReduce load balancer",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "80",
+                        "IpProtocol": "tcp",
+                        "ToPort": "80"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "443",
+                        "IpProtocol": "tcp",
+                        "ToPort": "443"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
         "MonitorInstance": {
             "CreationPolicy": {
                 "ResourceSignal": {
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "StorReduceInstance0",
+            "DependsOn": [
+                "StorReduceInstance0",
+                "StorReduceHostProfile"
+            ],
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -765,7 +978,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -821,7 +1034,7 @@
             },
             "Properties": {
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -881,13 +1094,198 @@
             },
             "Type": "AWS::EC2::Instance"
         },
+        "MonitorSecurityGroup": {
+            "Properties": {
+                "GroupDescription": "Enables remote access to port 3000 and 5601 for StorReduce monitor",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "5000",
+                        "IpProtocol": "tcp",
+                        "ToPort": "5000"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "5601",
+                        "IpProtocol": "tcp",
+                        "ToPort": "5601"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
+        "SrrBucket": {
+            "DeletionPolicy": "Retain",
+            "Properties": {
+                "BucketName": {
+                    "Ref": "BucketName"
+                }
+            },
+            "Type": "AWS::S3::Bucket"
+        },
+        "StorReduceHostProfile": {
+            "DependsOn": "StorReduceHostRole",
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "StorReduceHostRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::InstanceProfile"
+        },
+        "StorReduceHostRole": {
+            "DependsOn": "SrrBucket",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:GetObject"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": {
+                                        "Fn::Sub": [
+                                            "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
+                                            {
+                                                "Partition": {
+                                                    "Fn::If": [
+                                                        "GovCloudCondition",
+                                                        "aws-us-gov",
+                                                        "aws"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Version": "2012-10-17"
+                        },
+                        "PolicyName": "aws-quick-start-s3-policy"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:ListBucket",
+                                        "s3:ListBucketMultipartUploads"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:s3:::",
+                                                {
+                                                    "Ref": "BucketName"
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Version": "2012-10-17"
+                        },
+                        "PolicyName": "srr-quick-start-s3-policy-bucket"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "s3:DeleteObject",
+                                        "s3:ListMultipartUploadParts",
+                                        "s3:AbortMultipartUpload"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:s3:::",
+                                                {
+                                                    "Ref": "BucketName"
+                                                },
+                                                "/*"
+                                            ]
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Version": "2012-10-17"
+                        },
+                        "PolicyName": "srr-quick-start-s3-policy-objects"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "elasticloadbalancing:Describe*",
+                                        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                                        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                                        "autoscaling:Describe*",
+                                        "autoscaling:EnterStandby",
+                                        "autoscaling:ExitStandby",
+                                        "autoscaling:UpdateAutoScalingGroup",
+                                        "autoscaling:SuspendProcesses",
+                                        "autoscaling:ResumeProcesses"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "*"
+                                }
+                            ],
+                            "Version": "2012-10-17"
+                        },
+                        "PolicyName": "elb-join-policy"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Role"
+        },
         "StorReduceInstance0": {
             "CreationPolicy": {
                 "ResourceSignal": {
                     "Timeout": "PT15M"
                 }
             },
-            "DependsOn": "ElasticLoadBalancer",
+            "DependsOn": [
+                "ElasticLoadBalancer",
+                "SrrBucket",
+                "StorReduceHostProfile",
+                "AllInternalAccessSecurityGroup"
+            ],
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
@@ -897,7 +1295,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -924,6 +1322,16 @@
                                                 "Ref": "StorReducePassword"
                                             },
                                             "' ",
+                                            "'",
+                                            {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "' ",
+                                            "'",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "' ",
                                             "\"",
                                             {
                                                 "Fn::GetAtt": [
@@ -948,6 +1356,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -980,16 +1393,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1006,9 +1411,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -1068,7 +1475,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -1095,6 +1502,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -1109,6 +1526,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -1141,16 +1563,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1167,9 +1581,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -1230,7 +1646,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -1257,6 +1673,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -1271,6 +1697,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -1303,16 +1734,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1329,9 +1752,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -1392,7 +1817,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -1419,6 +1844,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -1433,6 +1868,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -1465,16 +1905,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1491,9 +1923,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -1554,7 +1988,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -1581,6 +2015,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -1595,6 +2039,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -1627,16 +2076,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1653,9 +2094,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -1716,7 +2159,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -1743,6 +2186,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -1757,6 +2210,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -1789,16 +2247,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1815,9 +2265,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -1878,7 +2330,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -1905,6 +2357,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -1919,6 +2381,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -1951,16 +2418,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -1977,9 +2436,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -2040,7 +2501,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -2067,6 +2528,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -2081,6 +2552,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -2113,16 +2589,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -2139,9 +2607,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -2202,7 +2672,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -2229,6 +2699,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -2243,6 +2723,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -2275,16 +2760,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -2301,9 +2778,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -2364,7 +2843,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -2391,6 +2870,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -2405,6 +2894,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -2437,16 +2931,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -2463,9 +2949,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -2526,7 +3014,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -2553,6 +3041,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -2567,6 +3065,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -2599,16 +3102,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -2625,9 +3120,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -2688,7 +3185,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -2715,6 +3212,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -2729,6 +3236,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -2761,16 +3273,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -2787,9 +3291,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -2849,7 +3355,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -2876,6 +3382,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -2890,6 +3406,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -2922,16 +3443,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -2948,9 +3461,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -3011,7 +3526,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -3038,6 +3553,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -3052,6 +3577,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -3084,16 +3614,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -3110,9 +3632,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -3173,7 +3697,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -3200,6 +3724,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -3214,6 +3748,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -3246,16 +3785,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -3272,9 +3803,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -3335,7 +3868,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -3362,6 +3895,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -3376,6 +3919,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -3408,16 +3956,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -3434,9 +3974,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -3497,7 +4039,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -3524,6 +4066,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -3538,6 +4090,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -3570,16 +4127,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -3596,9 +4145,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -3659,7 +4210,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -3686,6 +4237,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -3700,6 +4261,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -3732,16 +4298,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -3758,9 +4316,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -3821,7 +4381,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -3848,6 +4408,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -3862,6 +4432,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -3894,16 +4469,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -3920,9 +4487,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -3983,7 +4552,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4010,6 +4579,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4024,6 +4603,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -4056,16 +4640,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -4082,9 +4658,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -4145,7 +4723,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4172,6 +4750,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4186,6 +4774,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -4218,16 +4811,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -4244,9 +4829,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -4307,7 +4894,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4334,6 +4921,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4348,6 +4945,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -4380,16 +4982,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -4406,9 +5000,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -4469,7 +5065,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4496,6 +5092,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4510,6 +5116,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -4542,16 +5153,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -4568,9 +5171,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -4631,7 +5236,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4658,6 +5263,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4672,6 +5287,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -4704,16 +5324,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -4730,9 +5342,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -4793,7 +5407,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4820,6 +5434,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4834,6 +5458,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -4866,16 +5495,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -4892,9 +5513,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -4955,7 +5578,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -4982,6 +5605,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -4996,6 +5629,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -5028,16 +5666,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -5054,9 +5684,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -5117,7 +5749,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -5144,6 +5776,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -5158,6 +5800,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -5190,16 +5837,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -5216,9 +5855,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -5279,7 +5920,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -5306,6 +5947,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -5320,6 +5971,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -5352,16 +6008,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "2",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -5378,9 +6026,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "2",
@@ -5441,7 +6091,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -5468,6 +6118,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -5482,6 +6142,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -5514,16 +6179,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "3",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -5540,9 +6197,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "3",
@@ -5603,7 +6262,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -5630,6 +6289,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -5644,6 +6313,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -5676,16 +6350,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "0",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -5702,9 +6368,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -5765,7 +6433,7 @@
                             }
                         ],
                         "roleName": {
-                            "Ref": "HostRole"
+                            "Ref": "StorReduceHostRole"
                         },
                         "type": "S3"
                     }
@@ -5792,6 +6460,16 @@
                                             "' ",
                                             "\"",
                                             {
+                                                "Ref": "ShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "ReplicaShardsNum"
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
                                                 "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
@@ -5806,6 +6484,11 @@
                                                     "Eth0",
                                                     "PrimaryPrivateIpAddress"
                                                 ]
+                                            },
+                                            "\" ",
+                                            "\"",
+                                            {
+                                                "Ref": "NumSRRHosts"
                                             },
                                             "\""
                                         ]
@@ -5838,16 +6521,8 @@
                 }
             },
             "Properties": {
-                "AvailabilityZone": {
-                    "Fn::Select": [
-                        "1",
-                        {
-                            "Ref": "AvailabilityZones"
-                        }
-                    ]
-                },
                 "IamInstanceProfile": {
-                    "Ref": "HostProfile"
+                    "Ref": "StorReduceHostProfile"
                 },
                 "ImageId": {
                     "Fn::FindInMap": [
@@ -5864,9 +6539,11 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": {
-                    "Ref": "SecurityGroupIds"
-                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "AllInternalAccessSecurityGroup"
+                    }
+                ],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",

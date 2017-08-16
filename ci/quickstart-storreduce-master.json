@@ -16,6 +16,14 @@
         "ParameterValue": "storreduce"
     },
     {
+        "ParameterKey": "ShardsNum",
+        "ParameterValue": "0"
+    },
+    {
+        "ParameterKey": "ReplicaShardsNum",
+        "ParameterValue": "1"
+    },
+    {
         "ParameterKey": "StorReduceLicense",
         "ParameterValue": "-----BEGIN STORREDUCE LICENSE-----\ndwo9ChhTdG9yUmVkdWNlIFF1aWNrc3RhcnQgQ0kSE2dvbmdAc3RvcnJlZHVjZS5j\nb20aDAoAEgAaACIAKgAyABIAGhg5OTk5LTAxLTAxVDAwOjAwOjAwLjAwMFogASgB\nMAA4AEgAUABYAGAAaAVwAHoDNzJogAEAobtmHdnAIqXbRCwAKw3byh/xIUX3eIkX\nKg5jVXU5CqxUhJ/SQSAhhs+phUFwiT+g+t+n8ZX7xiF74iE1uSNI9BdRgsmGNVAJ\nMfY7YaDNekPnMafmoFkgEIXQpq6p+NEN0AlX7IvgMto1PHLAvsRBkjSyWZyYldZO\nXemg3SAOjN2+f4cxjTEOfL1Lj64wDSPPlISeKOdi2FLT0+82lZrKh3rto2NT/HqQ\nNQI2DDMbc6caBLBAthU4n7ar+l0ZwDVKpmtDDpxOPe4GcpRWUXTgnRhsrWqpotOs\nwYtyAeC6lygKX2cJeJuPFQQi3Hf1giGOAlb9t0Mp3+/noD2e5Coz1Q==\n-----END STORREDUCE LICENSE-----"
     },

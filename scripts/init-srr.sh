@@ -4,10 +4,17 @@
 bucket_name=$1
 srr_license="$2"
 srr_password="$3"
-load_balancer_DNS=$4
-load_balancer_name=$5
-region=$6
-monitor_vm_ip=$7
+shard_num=$4
+replica_shard_num=$5
+load_balancer_DNS=$6
+load_balancer_name=$7
+region=$8
+monitor_vm_ip=$9
+num_servers=${10}
+
+if [ "$shard_num" -eq "0" ]; then
+   shard_num="$((12 * ${num_servers}))"
+fi
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
@@ -26,8 +33,7 @@ get_local_srr_password () { # server_public_ip
   curl http://169.254.169.254/latest/meta-data/instance-id
 }
 
-
-sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}       ${cluster_token}
+sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=${shard_num}        --http_port=80        --https_port=443        --n_shard_replicas=${replica_shard_num}        --force=true        --cluster_listen_interface=${ip}       ${cluster_token}
 
 # Wait for StorReduce on server to be up
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done

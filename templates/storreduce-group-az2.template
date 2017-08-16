@@ -683,7 +683,7 @@
             "Type": "Number"
         },
         "PrivateSubnetsToSpan": {
-            "Description": "A list of VPC private subnets to span for StorReduce instances to reside",
+            "Description": "A list of VPC private subnets to span for StorReduce instances to reside. This number must equal the number of availability zones specified",
             "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "PublicSubnetsToSpan": {

@@ -545,6 +545,176 @@
                 }
             }
         },
+        "SrrGroup": {
+                "DependsOn": [
+                    "VPCStack",
+                ],
+                "Type": "AWS::CloudFormation::Stack",
+                "Properties": {
+                    "TemplateURL": {
+                        "Fn::Sub": [
+                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/storreduce-group-az${NumberOfAZs}.template",
+                            {
+                                "QSS3Region": {
+                                    "Fn::If": [
+                                        "GovCloudCondition",
+                                        "s3-us-gov-west-1",
+                                        "s3"
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "Parameters": {
+                        "RemoteAccessCIDR": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "ReplicaShardsNum": {
+                            "Ref": "ReplicaShardsNum"
+                        },
+                        "ShardsNum": {
+                            "Ref": "ShardsNum"
+                        },
+                        "VPCCIDR": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "VpcId": {
+                            "Fn::GetAtt": [
+                                "VPCStack",
+                                "Outputs.VPCID"
+                            ]
+                        },
+                        "QSS3BucketName": {
+                            "Ref": "QSS3BucketName"
+                        },
+                        "QSS3KeyPrefix": {
+                            "Ref": "QSS3KeyPrefix"
+                        },
+                        "StorReducePassword": {
+                            "Ref": "StorReducePassword"
+                        },
+                        "KeyPairName": {
+                            "Ref": "KeyPairName"
+                        },
+                        "InstanceType": {
+                            "Ref": "InstanceType"
+                        },
+                        "MonitorInstanceType": {
+                            "Ref": "MonitorInstanceType"
+                        },
+                        "BucketName": {
+                            "Ref": "BucketName"
+                        },
+                        "PrivateSubnetsToSpan": {
+                            "Fn::Join": [
+                                ",",
+                                [
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PrivateSubnet1AID"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PrivateSubnet2AID"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If": [
+                                            "3AZCondition",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "VPCStack",
+                                                    "Outputs.PrivateSubnet3AID"
+                                                ]
+                                            },
+                                            {
+                                                "Ref": "AWS::NoValue"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If": [
+                                            "4AZCondition",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "VPCStack",
+                                                    "Outputs.PrivateSubnet4AID"
+                                                ]
+                                            },
+                                            {
+                                                "Ref": "AWS::NoValue"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            ]
+                        },
+                        "NumSRRHosts": { "Ref": "NumSRRHosts" },
+                        "PublicSubnetsToSpan": {
+                        "Fn::Join": [
+                            ",",
+                            [
+                                {
+                                    "Fn::GetAtt": [
+                                        "VPCStack",
+                                        "Outputs.PublicSubnet1ID"
+                                    ]
+                                },
+                                {
+                                    "Fn::GetAtt": [
+                                        "VPCStack",
+                                        "Outputs.PublicSubnet2ID"
+                                    ]
+                                },
+                                {
+                                    "Fn::If": [
+                                        "3AZCondition",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "VPCStack",
+                                                "Outputs.PublicSubnet3ID"
+                                            ]
+                                        },
+                                        {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::If": [
+                                        "4AZCondition",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "VPCStack",
+                                                "Outputs.PublicSubnet4ID"
+                                            ]
+                                        },
+                                        {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    },
+                        "SSLCertificateId": {
+                            "Ref": "SSLCertificateId"
+                        },
+                        "DomainName": {
+                            "Ref": "DomainName"
+                        },
+                        "ValidationDomainName": {
+                            "Ref": "ValidationDomainName"
+                        },
+                        "StorReduceLicense": {
+                            "Ref": "StorReduceLicense"
+                        }
+                    }
+                }
+            }
         
     },
     "Mappings": {

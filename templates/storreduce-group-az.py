@@ -157,7 +157,7 @@ PublicSubnetsToSpanParam = t.add_parameter(Parameter(
 
 PrivateSubnetsToSpanParam = t.add_parameter(Parameter(
     "PrivateSubnetsToSpan",
-    Description="A list of VPC private subnets to span for StorReduce instances to reside",
+    Description="A list of VPC private subnets to span for StorReduce instances to reside. This number must equal the number of availability zones specified",
     Type="List<AWS::EC2::Subnet::Id>"
 ))
 

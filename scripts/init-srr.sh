@@ -6,11 +6,12 @@ srr_license="$2"
 srr_password="$3"
 shard_num=$4
 replica_shard_num=$5
-load_balancer_DNS=$6
-load_balancer_name=$7
-region=$8
-monitor_vm_ip=$9
-num_servers=${10}
+hostname=$6
+load_balancer_DNS=$7
+load_balancer_name=$8
+region=$9
+monitor_vm_ip=${10}
+num_servers=${11}
 
 if [ "$shard_num" -eq "0" ]; then
    shard_num="$((12 * ${num_servers}))"
@@ -41,7 +42,11 @@ curl --fail --insecure -H 'Content-Type:application/json' -X POST -c ${COOKIE_FI
 
 curl --fail --insecure -H 'Content-Type:application/json' -X POST -b ${COOKIE_FILE} -d '{"NewPassword": "'$srr_password'"}' https://${ip}:8080/api/srr/id/root/password --retry 10 --retry-delay 30
 
-put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
+if [ -z "$hostname" ]; then
+  put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS,$hostname'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
+else
+  put "https://$ip:8080/api/srr/settings" '{"hostname":"'$load_balancer_DNS'", "bucket":"'"$bucket_name"'", "license": "'"$srr_license"'"}'
+fi
 
 # Configure storreduce monitor
 sudo yum install -y storreduce-monitor

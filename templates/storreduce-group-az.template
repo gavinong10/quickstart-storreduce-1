@@ -7,15 +7,15 @@
                         "default": "StorReduce Configuration"
                     },
                     "Parameters": [
-                        "KeyPairName",
                         "StorReducePassword",
+                        "NumSRRHosts",
                         "ShardsNum",
                         "ReplicaShardsNum",
                         "InstanceType",
                         "MonitorInstanceType",
                         "BucketName",
-                        "NumSRRHosts",
                         "StorReduceLicense",
+                        "StorReduceHostName",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName"
@@ -23,15 +23,23 @@
                 },
                 {
                     "Label": {
-                        "default": "Network Configuration"
+                        "default": "VPC Network Configuration"
                     },
                     "Parameters": [
                         "NumberOfAZs",
                         "VpcId",
-                        "VPCCIDR",
                         "RemoteAccessCIDR",
+                        "VPCCIDR",
                         "PrivateSubnetsToSpan",
                         "PublicSubnetsToSpan"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Amazon EC2 Configuration"
+                    },
+                    "Parameters": [
+                        "KeyPairName"
                     ]
                 },
                 {
@@ -90,6 +98,9 @@
                 "RemoteAccessCIDR": {
                     "default": "External Allowed Access CIDR"
                 },
+                "StorReduceHostName": {
+                    "default": "StorReduce Hostname"
+                },
                 "ReplicaShardsNum": {
                     "default": "Number of Replica Shards"
                 },
@@ -141,7 +152,7 @@
         },
         "BucketName": {
             "ConstraintDescription": "must be a valid S3 bucket name.",
-            "Description": "The bucket to which StorReduce will store data",
+            "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
             "Type": "String"
         },
         "DomainName": {
@@ -150,11 +161,20 @@
         },
         "InstanceType": {
             "AllowedValues": [
+                "i3.large",
                 "i3.xlarge",
                 "i3.2xlarge",
                 "i3.4xlarge",
                 "i3.8xlarge",
-                "i3.16xlarge"
+                "i3.16xlarge",
+                "i2.xlarge",
+                "i2.2xlarge",
+                "i2.4xlarge",
+                "c3.large",
+                "c3.xlarge",
+                "c3.2xlarge",
+                "c3.4xlarge",
+                "c3.8xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type.",
             "Default": "i3.4xlarge",
@@ -237,6 +257,10 @@
             "MinValue": 0,
             "Type": "Number"
         },
+        "StorReduceHostName": {
+            "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
+            "Type": "String"
+        },
         "SSLCertificateId": {
             "Description": "The SSL Certificate ID to use for the load balancer",
             "Type": "String"
@@ -300,6 +324,9 @@
                     },
                     "ShardsNum": {
                         "Ref": "ShardsNum"
+                    },
+                    "StorReduceHostName": {
+                        "Ref": "StorReduceHostName"
                     },
                     "VPCCIDR": {
                         "Ref": "VPCCIDR"

@@ -9,15 +9,15 @@
                         "default": "StorReduce Configuration"
                     },
                     "Parameters": [
-                        "KeyPairName",
                         "StorReducePassword",
+                        "NumSRRHosts",
                         "ShardsNum",
                         "ReplicaShardsNum",
                         "InstanceType",
                         "MonitorInstanceType",
                         "BucketName",
-                        "NumSRRHosts",
                         "StorReduceLicense",
+                        "StorReduceHostName",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName"                        
@@ -25,11 +25,12 @@
                 },
                 {
                     "Label": {
-                        "default": "Network Configuration"
+                        "default": "VPC Network Configuration"
                     },
                     "Parameters": [
                         "NumberOfAZs",
                         "AvailabilityZones",
+                        "RemoteAccessCIDR",
                         "VPCCIDR",
                         "PrivateSubnet1ACIDR",
                         "PrivateSubnet2ACIDR",
@@ -38,8 +39,7 @@
                         "PublicSubnet1CIDR",
                         "PublicSubnet2CIDR",
                         "PublicSubnet3CIDR",
-                        "PublicSubnet4CIDR",
-                        "RemoteAccessCIDR"
+                        "PublicSubnet4CIDR"
                     ]
                 },
                 {
@@ -47,6 +47,7 @@
                         "default": "Amazon EC2 Configuration"
                     },
                     "Parameters": [
+                        "KeyPairName",
                         "NATInstanceType"
                     ]
                 },
@@ -71,6 +72,9 @@
                 }
             ],
             "ParameterLabels": {
+                "NATInstanceType": {
+                    "default": "NAT Instance Type"
+                },
                 "StorReducePassword": {
                     "default": "StorReduce Password"
                 },
@@ -79,6 +83,9 @@
                 },
                 "ReplicaShardsNum": {
                     "default": "Number of Replica Shards"
+                },
+                "StorReduceHostName": {
+                    "default": "StorReduce Hostname"
                 },
                 "StorReduceLicense": {
                     "default": "StorReduce license"
@@ -167,11 +174,20 @@
             "Type" : "String",
                 "Default" : "i3.4xlarge",
                 "AllowedValues":[
+                    "i3.large",
                     "i3.xlarge",
                     "i3.2xlarge",
                     "i3.4xlarge",
                     "i3.8xlarge",
-                    "i3.16xlarge"
+                    "i3.16xlarge",
+                    "i2.xlarge",
+                    "i2.2xlarge",
+                    "i2.4xlarge",
+                    "c3.large",
+                    "c3.xlarge",
+                    "c3.2xlarge",
+                    "c3.4xlarge",
+                    "c3.8xlarge"
                 ],
             "ConstraintDescription" : "must be a valid EC2 instance type."
         },
@@ -192,7 +208,7 @@
         "BucketName" : {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The bucket to which StorReduce will store data",
+            "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
             "Type": "String"
         },
         "StorReduceLicense": {
@@ -217,6 +233,10 @@
             "Type": "Number",
             "Default": 1,
             "MinValue": 0
+        },
+        "StorReduceHostName": {
+            "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
+            "Type": "String"
         },
         "AvailabilityZones": {
             "Description": "List of Availability Zones to use for the subnets in the VPC.",
@@ -262,7 +282,7 @@
             "Default": ""
         },
         "DomainName": {
-            "Description" : "The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+            "Description" : "The domain name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String",
             "Default": ""
         },
@@ -571,6 +591,9 @@
                         },
                         "ReplicaShardsNum": {
                             "Ref": "ReplicaShardsNum"
+                        },
+                        "StorReduceHostName": {
+                            "Ref": "StorReduceHostName"
                         },
                         "ShardsNum": {
                             "Ref": "ShardsNum"

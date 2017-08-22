@@ -61,6 +61,12 @@ VPCCIDRParam = t.add_parameter(Parameter(
     ConstraintDescription="CIDR block parameter must be in the form x.x.x.x/16-28"
 ))
 
+StorReduceHostNameParam = t.add_parameter(Parameter(
+    "StorReduceHostName",
+    Description="The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
+    Type="String",
+))
+
 SSLCertificateIdParam = t.add_parameter(Parameter(
     "SSLCertificateId",
     Description="The SSL Certificate ID to use for the load balancer",
@@ -107,11 +113,20 @@ InstanceTypeParam = t.add_parameter(Parameter(
     Type="String",
     Default="i3.4xlarge",
     AllowedValues=[
+        "i3.large",
         "i3.xlarge",
         "i3.2xlarge",
         "i3.4xlarge",
         "i3.8xlarge",
-        "i3.16xlarge"
+        "i3.16xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge"
     ],
     ConstraintDescription="must be a valid EC2 instance type."
 ))
@@ -134,7 +149,7 @@ MonitorInstanceTypeParam = t.add_parameter(Parameter(
 
 BucketNameParam = t.add_parameter(Parameter(
     "BucketName",
-    Description="The bucket to which StorReduce will store data",
+    Description="The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
     Type="String",
     ConstraintDescription="must be a valid S3 bucket name.",
 ))
@@ -210,7 +225,7 @@ t.add_metadata({
                 },
                 {
                     "Label": {
-                        "default": "Network Configuration"
+                        "default": "VPC Network Configuration"
                     },
                     "Parameters": [
                         "NumberOfAZs",
@@ -425,8 +440,6 @@ AllInternalAccessSecurityGroup = t.add_resource(ec2.SecurityGroup(
             VpcId=Ref(VpcIdParam)
         ))
 
-#TODO: Create a dependency on the bucket being created
-
 SrrBucket = t.add_resource(Bucket(
     "SrrBucket",
     BucketName=Ref(BucketNameParam),
@@ -604,9 +617,6 @@ def create_conditions():
         
 create_conditions()
 
-
-# TODO: Test - IF SSLCertificateID is empty
-
 gen_SSL_certificate_resource = t.add_resource(
     Certificate(
         'StorReduceSSLCertificate',
@@ -649,7 +659,10 @@ elasticLB = t.add_resource(elb.LoadBalancer(
             Interval="30",
             Timeout="5",
         ),
-        SecurityGroups=[Ref(LoadBalancerSecurityGroup)]
+        SecurityGroups=[Ref(LoadBalancerSecurityGroup)],
+        CreationPolicy=CreationPolicy(
+            ResourceSignal=ResourceSignal(Timeout='PT15M')
+            )
     ))
 
 ######### Monitor VM Pre-setup ###########
@@ -734,6 +747,7 @@ def generate_new_instance(counter):
                                 "\'",Ref(StorReducePasswordParam), "\' ",
                                 "\'",Ref(ShardsNumParam), "\' ",
                                 "\'",Ref(ReplicaShardsNumParam), "\' ",
+                                "\"", Ref(StorReduceHostNameParam), "\" ",
                                 "\"", GetAtt(elasticLB, "DNSName"), "\" ",
                                 "\"", Ref(elasticLB), "\" ",
                                 "\"", Ref("AWS::Region"), "\" ",
@@ -767,7 +781,6 @@ num_mandatory_instances = MIN_INSTANCES - 1
 # -> sudo storreduce-monitor --initial_cluster_discovery_token="eyJDbHVzdGVySWQiOiJCREFBQzM1NC1GQ0MzLTQzNTgtQjY2MC02RjYwRUQwNDc4OEYiLCJFdGNkQ2xpZW50VXJsIjoiaHR0cDovLzEwLjAuMTQuMTc0OjIzNzkiLCJFdGNkQ2xpZW50UGFzc3dvcmQiOiIiLCJFdGNkQ2xpZW50VXNlcm5hbWUiOiIiLCJFeHRlcm5hbEV0Y2RTZXJ2ZXIiOmZhbHNlfQ=="
 monitor_instance = t.add_resource(ec2.Instance(
     "MonitorInstance",
-    # Gavin TODO: Depend on the base instance of StorReduce and make 2nd instance depend on monitor
     # Fix connect-srr.sh and init-srr.sh
     DependsOn = [base_instance.title, StorReduceHostProfile.title],
     KeyName=Ref(KeyPairNameParam),

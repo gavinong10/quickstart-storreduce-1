@@ -8,6 +8,24 @@
                 "us-gov-west-1"
             ]
         },
+        "InvokeSSLCert": {
+            "Fn::Equals": [
+                {
+                    "Ref": "InvokeSSLCert"
+                },
+                "Yes"
+            ]
+        },
+        "InvokeSSLCert&SSLCertificateIdIsUndefined": {
+            "Fn::And": [
+                {
+                    "Condition": "InvokeSSLCert"
+                },
+                {
+                    "Condition": "SSLCertificateIdIsUndefined"
+                }
+            ]
+        },
         "NumInstancesLessThanOrEqualTo10": {
             "Fn::Or": [
                 {
@@ -424,7 +442,7 @@
         "SSLCertificateIdIsUndefined": {
             "Fn::Equals": [
                 {
-                    "Ref": "SSLCertificateId"
+                    "Ref": "SSLCertificatewId"
                 },
                 ""
             ]
@@ -507,6 +525,7 @@
                         "BucketName",
                         "NumSRRHosts",
                         "StorReduceLicense",
+                        "InvokeSSLCert",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName"
@@ -550,6 +569,9 @@
                 },
                 "InstanceType": {
                     "default": "Instance Type"
+                },
+                "InvokeSSLCert": {
+                    "default": "Invoke SSL Cert"
                 },
                 "KeyPairName": {
                     "default": "Key Pair Name"
@@ -623,7 +645,7 @@
             "Type": "String"
         },
         "DomainName": {
-            "Description": "The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
         },
         "InstanceType": {
@@ -646,6 +668,14 @@
             "ConstraintDescription": "must be a valid EC2 instance type.",
             "Default": "i3.4xlarge",
             "Description": "StorReduce EC2 instance type",
+            "Type": "String"
+        },
+        "InvokeSSLCert": {
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ],
+            "Description": "Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
             "Type": "String"
         },
         "KeyPairName": {
@@ -724,8 +754,8 @@
             "MinValue": 0,
             "Type": "Number"
         },
-        "SSLCertificateId": {
-            "Description": "The SSL Certificate ID to use for the load balancer",
+        "SSLCertificatewId": {
+            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and Domain Name & Validation Domain Name are undefined) - The SSL Certificate ID to use for the load balancer",
             "Type": "String"
         },
         "ShardsNum": {
@@ -755,7 +785,7 @@
             "Type": "String"
         },
         "ValidationDomainName": {
-            "Description": "The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
+            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
         },
         "VpcId": {
@@ -889,21 +919,32 @@
                         "Protocol": "TCP"
                     },
                     {
-                        "InstancePort": "443",
-                        "InstanceProtocol": "SSL",
-                        "LoadBalancerPort": "443",
-                        "Protocol": "SSL",
-                        "SSLCertificateId": {
-                            "Fn::If": [
-                                "SSLCertificateIdIsUndefined",
-                                {
-                                    "Ref": "StorReduceSSLCertificate"
-                                },
-                                {
-                                    "Ref": "SSLCertificateId"
+                        "Fn::If": [
+                            "InvokeSSLCert",
+                            {
+                                "InstancePort": "443",
+                                "InstanceProtocol": "SSL",
+                                "LoadBalancerPort": "443",
+                                "Protocol": "SSL",
+                                "SSLCertificateId": {
+                                    "Fn::If": [
+                                        "SSLCertificateIdIsUndefined",
+                                        {
+                                            "Ref": "StorReduceSSLCertificate"
+                                        },
+                                        {
+                                            "Ref": "SSLCertificatewId"
+                                        }
+                                    ]
                                 }
-                            ]
-                        }
+                            },
+                            {
+                                "InstancePort": "443",
+                                "InstanceProtocol": "TCP",
+                                "LoadBalancerPort": "443",
+                                "Protocol": "TCP"
+                            }
+                        ]
                     }
                 ],
                 "SecurityGroups": [
@@ -6611,7 +6652,7 @@
             "Type": "AWS::EC2::Instance"
         },
         "StorReduceSSLCertificate": {
-            "Condition": "SSLCertificateIdIsUndefined",
+            "Condition": "InvokeSSLCert&SSLCertificateIdIsUndefined",
             "Properties": {
                 "DomainName": {
                     "Ref": "DomainName"

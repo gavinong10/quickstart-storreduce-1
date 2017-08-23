@@ -9,13 +9,15 @@
                         "default": "StorReduce Configuration"
                     },
                     "Parameters": [
-                        "KeyPairName",
                         "StorReducePassword",
+                        "NumSRRHosts",
+                        "ShardsNum",
+                        "ReplicaShardsNum",
                         "InstanceType",
                         "MonitorInstanceType",
                         "BucketName",
-                        "NumSRRHosts",
                         "StorReduceLicense",
+                        "StorReduceHostName",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName"                        
@@ -23,11 +25,12 @@
                 },
                 {
                     "Label": {
-                        "default": "Network Configuration"
+                        "default": "VPC Network Configuration"
                     },
                     "Parameters": [
                         "NumberOfAZs",
                         "AvailabilityZones",
+                        "RemoteAccessCIDR",
                         "VPCCIDR",
                         "PrivateSubnet1ACIDR",
                         "PrivateSubnet2ACIDR",
@@ -36,8 +39,7 @@
                         "PublicSubnet1CIDR",
                         "PublicSubnet2CIDR",
                         "PublicSubnet3CIDR",
-                        "PublicSubnet4CIDR",
-                        "RemoteAccessCIDR"
+                        "PublicSubnet4CIDR"
                     ]
                 },
                 {
@@ -45,6 +47,7 @@
                         "default": "Amazon EC2 Configuration"
                     },
                     "Parameters": [
+                        "KeyPairName",
                         "NATInstanceType"
                     ]
                 },
@@ -69,8 +72,20 @@
                 }
             ],
             "ParameterLabels": {
+                "NATInstanceType": {
+                    "default": "NAT Instance Type"
+                },
                 "StorReducePassword": {
                     "default": "StorReduce Password"
+                },
+                "ShardsNum": {
+                    "default": "Number of Shards"
+                },
+                "ReplicaShardsNum": {
+                    "default": "Number of Replica Shards"
+                },
+                "StorReduceHostName": {
+                    "default": "StorReduce Hostname"
                 },
                 "StorReduceLicense": {
                     "default": "StorReduce license"
@@ -145,7 +160,7 @@
                     "default": "Quick Start S3 Key Prefix"
                 },
                 "RemoteAccessCIDR": {
-                    "default": "Allowed Bastion External Access CIDR"
+                    "default": "External Allowed Access CIDR"
                 },
                 "VPCCIDR": {
                     "default": "VPC CIDR"
@@ -155,15 +170,24 @@
     },
     "Parameters": {
         "InstanceType" : {
-            "Description" : "EC2 instance type",
+            "Description" : "StorReduce EC2 instance type",
             "Type" : "String",
                 "Default" : "i3.4xlarge",
                 "AllowedValues":[
+                    "i3.large",
                     "i3.xlarge",
                     "i3.2xlarge",
                     "i3.4xlarge",
                     "i3.8xlarge",
-                    "i3.16xlarge"
+                    "i3.16xlarge",
+                    "i2.xlarge",
+                    "i2.2xlarge",
+                    "i2.4xlarge",
+                    "c3.large",
+                    "c3.xlarge",
+                    "c3.2xlarge",
+                    "c3.4xlarge",
+                    "c3.8xlarge"
                 ],
             "ConstraintDescription" : "must be a valid EC2 instance type."
         },
@@ -184,7 +208,7 @@
         "BucketName" : {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The bucket to which StorReduce will store data",
+            "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
             "Type": "String"
         },
         "StorReduceLicense": {
@@ -198,8 +222,24 @@
             "NoEcho": "True",
             "Type": "String"
         },
+        "ShardsNum": {
+            "Description": "The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 12 * number of servers)",
+            "Type": "Number",
+            "Default": 0,
+            "MinValue": 0
+        },
+        "ReplicaShardsNum": {
+            "Description": "The number of replica shards to use for the StorReduce cluster. Replicas create redundancy for higher resiliency but use extra CPU and disk space",
+            "Type": "Number",
+            "Default": 1,
+            "MinValue": 0
+        },
+        "StorReduceHostName": {
+            "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
+            "Type": "String"
+        },
         "AvailabilityZones": {
-            "Description": "List of Availability Zones to use for the subnets in the VPC. Note: The logical order is preserved and only 2 AZs are used for this deployment.",
+            "Description": "List of Availability Zones to use for the subnets in the VPC.",
             "Type": "List<AWS::EC2::AvailabilityZone::Name>"
         },
         "BastionAMIOS": {
@@ -242,7 +282,7 @@
             "Default": ""
         },
         "DomainName": {
-            "Description" : "The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+            "Description" : "The domain name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String",
             "Default": ""
         },
@@ -266,20 +306,20 @@
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "gong-cf-templates",
-            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
             "Type": "String"
         },
         "RemoteAccessCIDR": {
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
-            "Description": "Allowed CIDR block for bastion and load balancer access",
+            "Description": "Allowed CIDR block for bastion, StorReduce Monitor and load balancer access",
             "Type": "String"
         },
         "VPCCIDR": {
@@ -301,7 +341,7 @@
                 "m4.large"
             ],
             "Default": "t2.small",
-            "Description": "Amazon EC2 instance type for the NAT instances. This is used only if the region does not support NAT gateways.",
+            "Description": "Amazon EC2 instance type for the NAT instances. This is used only if the region does not support NAT gateways",
             "Type": "String"
         },
         "NumberOfAZs": {
@@ -311,7 +351,7 @@
                 "4"
             ],
             "Default": "3",
-            "Description": "Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter.",
+            "Description": "Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter",
             "Type": "String"
         },
         "PrivateSubnet1ACIDR": {
@@ -525,277 +565,9 @@
                 }
             }
         },
-        "LoadBalancerSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "GroupDescription": "Enables remote access to port 80 and 443",
-                "VpcId": {
-                    "Fn::GetAtt": [
-                        "VPCStack",
-                        "Outputs.VPCID"
-                    ]
-                },
-                "SecurityGroupIngress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 80,
-                        "ToPort": 80,
-                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 443,
-                        "ToPort": 443,
-                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
-                    }
-                ]
-            }
-        },
-        "MonitorSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "GroupDescription": "Enables remote access to port 3000 and 5601",
-                "VpcId": {
-                    "Fn::GetAtt": [
-                        "VPCStack",
-                        "Outputs.VPCID"
-                    ]
-                },
-                "SecurityGroupIngress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 3000,
-                        "ToPort": 3000,
-                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 5601,
-                        "ToPort": 5601,
-                        "CidrIp": { "Ref": "RemoteAccessCIDR" }
-                    }
-                ]
-            }
-        },
-        "AllInternalAccessSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "GroupDescription": "Enables StorReduce and SSH ports TCP access from within the VPC",
-                "VpcId": {
-                    "Fn::GetAtt": [
-                        "VPCStack",
-                        "Outputs.VPCID"
-                    ]
-                },
-                "SecurityGroupIngress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 22,
-                        "ToPort": 22,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 80,
-                        "ToPort": 80,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 443,
-                        "ToPort": 443,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 8095,
-                        "ToPort": 8099,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 2379,
-                        "ToPort": 2380,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 8080,
-                        "ToPort": 8080,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 5044,
-                        "ToPort": 5044,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": 9090,
-                        "ToPort": 9090,
-                        "CidrIp": { "Ref": "VPCCIDR" }
-                    }
-                ]
-            }
-        },
-        "StorReduceHostRole": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-                "Policies": [
-                    {
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "s3:GetObject"
-                                    ],
-                                    "Resource": {
-                                        "Fn::Sub": [
-                                            "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
-                                            {
-                                                "Partition": {
-                                                    "Fn::If": [
-                                                        "GovCloudCondition",
-                                                        "aws-us-gov",
-                                                        "aws"
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    "Effect": "Allow"
-                                }
-                            ]
-                        },
-                        "PolicyName": "aws-quick-start-s3-policy"
-                    },
-                    {
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "s3:ListBucket",
-                                        "s3:ListBucketMultipartUploads"
-                                    ],
-                                    "Resource": {
-                                        "Fn::Join": [
-                                            "",
-                                            [
-                                                "arn:aws:s3:::",
-                                                {
-                                                    "Ref": "BucketName"
-                                                }
-                                            ]
-                                        ]
-                                    },
-                                    "Effect": "Allow"
-                                }
-                            ]
-                        },
-                        "PolicyName": "srr-quick-start-s3-policy-bucket"
-                    },
-                    {
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "s3:PutObject",
-                                        "s3:GetObject",
-                                        "s3:DeleteObject",
-                                        "s3:ListMultipartUploadParts",
-                                        "s3:AbortMultipartUpload"
-                                    ],
-                                    "Resource": {
-                                        "Fn::Join": [
-                                            "",
-                                            [
-                                                "arn:aws:s3:::",
-                                                {
-                                                    "Ref": "BucketName"
-                                                },
-                                                "/*"
-                                            ]
-                                        ]
-                                    },
-                                    "Effect": "Allow"
-                                }
-                            ]
-                        },
-                        "PolicyName": "srr-quick-start-s3-policy-objects"
-                    },
-                    {
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "elasticloadbalancing:Describe*",
-                                        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-                                        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-                                        "autoscaling:Describe*",
-                                        "autoscaling:EnterStandby",
-                                        "autoscaling:ExitStandby",
-                                        "autoscaling:UpdateAutoScalingGroup",
-                                        "autoscaling:SuspendProcesses",
-                                        "autoscaling:ResumeProcesses"
-                                    ],
-                                    "Resource": "*",
-                                    "Effect": "Allow"
-                                }
-                            ]
-                        },
-                        "PolicyName": "elb-join-policy"
-                    }
-                ],
-                "Path": "/",
-                "AssumeRolePolicyDocument": {
-                    "Statement": [
-                        {
-                            "Action": [
-                                "sts:AssumeRole"
-                            ],
-                            "Principal": {
-                                "Service": [
-                                    "ec2.amazonaws.com"
-                                ]
-                            },
-                            "Effect": "Allow"
-                        }
-                    ],
-                    "Version": "2012-10-17"
-                }
-            }
-        },
-        "StorReduceHostProfile": {
-            "Type": "AWS::IAM::InstanceProfile",
-            "DependsOn": ["StorReduceHostRole"],
-            "Properties": {
-                "Roles": [
-                    {
-                        "Ref": "StorReduceHostRole"
-                    }
-                ],
-                "Path": "/"
-            }
-        },
-        "SrrBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-                "BucketName": {
-                    "Ref": "BucketName"
-                }
-            },
-            "DeletionPolicy" : "Retain"
-        },
-
         "SrrGroup": {
                 "DependsOn": [
                     "VPCStack",
-                    "StorReduceHostProfile"
                 ],
                 "Type": "AWS::CloudFormation::Stack",
                 "Properties": {
@@ -814,6 +586,27 @@
                         ]
                     },
                     "Parameters": {
+                        "RemoteAccessCIDR": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "ReplicaShardsNum": {
+                            "Ref": "ReplicaShardsNum"
+                        },
+                        "StorReduceHostName": {
+                            "Ref": "StorReduceHostName"
+                        },
+                        "ShardsNum": {
+                            "Ref": "ShardsNum"
+                        },
+                        "VPCCIDR": {
+                            "Ref": "VPCCIDR"
+                        },
+                        "VpcId": {
+                            "Fn::GetAtt": [
+                                "VPCStack",
+                                "Outputs.VPCID"
+                            ]
+                        },
                         "QSS3BucketName": {
                             "Ref": "QSS3BucketName"
                         },
@@ -822,12 +615,6 @@
                         },
                         "StorReducePassword": {
                             "Ref": "StorReducePassword"
-                        },
-                        "HostRole": {
-                            "Ref": "StorReduceHostRole"
-                        },
-                        "HostProfile": {
-                            "Ref": "StorReduceHostProfile"
                         },
                         "KeyPairName": {
                             "Ref": "KeyPairName"
@@ -840,16 +627,6 @@
                         },
                         "BucketName": {
                             "Ref": "BucketName"
-                        },
-                        "SecurityGroupIds": {
-                            "Fn::Join": [
-                                ",",
-                                [
-                                    {
-                                        "Ref": "AllInternalAccessSecurityGroup"
-                                    }
-                                ]
-                            ]
                         },
                         "PrivateSubnetsToSpan": {
                             "Fn::Join": [
@@ -946,14 +723,6 @@
                             ]
                         ]
                     },
-                        "AvailabilityZones": {
-                            "Fn::Join": [
-                                ",",
-                                {
-                                    "Ref": "AvailabilityZones"
-                                }
-                            ]
-                        },
                         "SSLCertificateId": {
                             "Ref": "SSLCertificateId"
                         },
@@ -963,14 +732,13 @@
                         "ValidationDomainName": {
                             "Ref": "ValidationDomainName"
                         },
-                        "LoadBalancerSecurityGroup": { "Ref": "LoadBalancerSecurityGroup" },
-                        "MonitorSecurityGroup": {"Ref": "MonitorSecurityGroup" },
                         "StorReduceLicense": {
                             "Ref": "StorReduceLicense"
                         }
                     }
                 }
             }
+        
     },
     "Mappings": {
     },

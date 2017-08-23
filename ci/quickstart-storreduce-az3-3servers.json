@@ -16,6 +16,14 @@
         "ParameterValue": "storreduce"
     },
     {
+        "ParameterKey": "ShardsNum",
+        "ParameterValue": "0"
+    },
+    {
+        "ParameterKey": "ReplicaShardsNum",
+        "ParameterValue": "1"
+    },
+    {
         "ParameterKey": "StorReduceLicense",
         "ParameterValue": "$[taskcat_url_https://s3-us-west-2.amazonaws.com/gong-private/developer_escaped_license.lic]"
     },

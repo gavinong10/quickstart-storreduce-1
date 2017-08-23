@@ -45,15 +45,15 @@
     },
     {
         "ParameterKey": "SSLCertificateId",
-        "ParameterValue": "arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988"
+        "ParameterValue": ""
     },
     {
         "ParameterKey": "DomainName",
-        "ParameterValue": ""
+        "ParameterValue": "quickstart-test3.srr-dev.com"
     },
     {
         "ParameterKey": "ValidationDomainName",
-        "ParameterValue": ""
+        "ParameterValue": "storreduce.com"
     },
     {
         "ParameterKey": "NumBastionHosts",

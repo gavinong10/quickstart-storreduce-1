@@ -4,9 +4,16 @@ sudo yum install -y jq
 # Define inputs here
 first_server_private_ip=$1
 srr_password="$2"
-load_balancer_name=$3
-region=$4
-monitor_vm_ip=$5
+shard_num=$3
+replica_shard_num=$4
+load_balancer_name=$5
+region=$6
+monitor_vm_ip=$7
+num_servers=$8
+
+if [ "$shard_num" -eq "0" ]; then
+   shard_num="$((12 * ${num_servers}))"
+fi
 
 # Reformed inputs
 first_server_public_sr_api="https://${first_server_private_ip}:8080/api"
@@ -38,7 +45,7 @@ put () { # sr_api_url, #json_doc
 
 configure_server () { # server_public_ip, cluster_token
     cluster_token=$1
-    sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=36        --http_port=80        --https_port=443        --n_shard_replicas=2        --force=true        --cluster_listen_interface=${ip}
+    sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=${shard_num}        --http_port=80        --https_port=443        --n_shard_replicas=${replica_shard_num}        --force=true        --cluster_listen_interface=${ip}
     while ! sudo storreducectl cluster join --token="${cluster_token}"; do sleep 1; done
     # Wait for StorReduce on server to be up
     while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done

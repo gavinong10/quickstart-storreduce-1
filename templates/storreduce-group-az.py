@@ -67,21 +67,28 @@ StorReduceHostNameParam = t.add_parameter(Parameter(
     Type="String",
 ))
 
+InvokeSSLCertParam = t.add_parameter(Parameter(
+    "InvokeSSLCert",
+    Description="Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
+    Type="String",
+    AllowedValues=["Yes", "No"]
+))
+
 SSLCertificateIdParam = t.add_parameter(Parameter(
-    "SSLCertificateId",
-    Description="The SSL Certificate ID to use for the load balancer",
+    "SSLCertificatewId",
+    Description="(Required if 'Invoke SSL Cert' is 'Yes' and Domain Name & Validation Domain Name are undefined) - The SSL Certificate ID to use for the load balancer",
     Type="String",
 ))
 
 DomainNameParam = t.add_parameter(Parameter(
     "DomainName",
-    Description="The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+    Description="(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
     Type="String",
 ))
 
 ValidationDomainNameParam = t.add_parameter(Parameter(
     "ValidationDomainName",
-    Description="The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
+    Description="(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
     Type="String",
 ))
 
@@ -218,6 +225,7 @@ t.add_metadata({
                         "BucketName",
                         "NumSRRHosts",
                         "StorReduceLicense",
+                        "InvokeSSLCert",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName",                     
@@ -267,6 +275,9 @@ t.add_metadata({
                 },
                 "StorReduceLicense": {
                     "default": "StorReduce license"
+                },
+                "InvokeSSLCert": {
+                    "default": "Invoke SSL Cert"
                 },
                 "SSLCertificateId": {
                     "default": "SSL Certificate ID"
@@ -576,28 +587,6 @@ StorReduceHostProfile = t.add_resource(InstanceProfile(
     Path="/"
 ))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 BASE_NAME = "StorReduceInstance"
 counter = 0
 
@@ -614,13 +603,17 @@ def create_conditions():
     t.add_condition("GovCloudCondition", Equals(Ref("AWS::Region"), "us-gov-west-1"))
 
     t.add_condition("SSLCertificateIdIsUndefined", Equals(Ref(SSLCertificateIdParam), ""))
+
+    t.add_condition("InvokeSSLCert", Equals(Ref(InvokeSSLCertParam), "Yes"))
+
+    t.add_condition("InvokeSSLCert&SSLCertificateIdIsUndefined", And(Condition("InvokeSSLCert"), Condition("SSLCertificateIdIsUndefined")))
         
 create_conditions()
 
 gen_SSL_certificate_resource = t.add_resource(
     Certificate(
         'StorReduceSSLCertificate',
-        Condition="SSLCertificateIdIsUndefined",
+        Condition="InvokeSSLCert&SSLCertificateIdIsUndefined",
         DomainName=Ref(DomainNameParam),
         DomainValidationOptions=[
             DomainValidationOption(
@@ -637,20 +630,27 @@ elasticLB = t.add_resource(elb.LoadBalancer(
         CrossZone=True,
         # Instances=[Ref(instances[i]) for i in range(MIN_INSTANCES)] + [If(CONDITION_COUNTER_PREFIX + str(i + 1), Ref(instances[i]), Ref("AWS::NoValue")) for i in range(MIN_INSTANCES, MAX_INSTANCES)],
         # DependsOn=[instances[i].title for i in range(MIN_INSTANCES)] + [If(CONDITION_COUNTER_PREFIX + str(i + 1), instances[i].title, Ref("AWS::NoValue")) for i in range(MIN_INSTANCES, MAX_INSTANCES)],
-        Listeners=[
-            elb.Listener(
-                LoadBalancerPort="80",
-                InstancePort="80",
-                Protocol="TCP",
-                InstanceProtocol="TCP"
-            ),
-            elb.Listener(
-                LoadBalancerPort="443",
-                InstancePort="443",
-                Protocol="SSL",
-                InstanceProtocol="SSL",
-                SSLCertificateId=If("SSLCertificateIdIsUndefined",Ref(gen_SSL_certificate_resource),Ref(SSLCertificateIdParam))
-            ),
+        Listeners=[elb.Listener(
+                    LoadBalancerPort="80",
+                    InstancePort="80",
+                    Protocol="TCP",
+                    InstanceProtocol="TCP"
+                ),
+                If("InvokeSSLCert", 
+                    elb.Listener(
+                        LoadBalancerPort="443",
+                        InstancePort="443",
+                        Protocol="SSL",
+                        InstanceProtocol="SSL",
+                        SSLCertificateId=If("SSLCertificateIdIsUndefined",Ref(gen_SSL_certificate_resource),Ref(SSLCertificateIdParam))
+                    ),
+                    elb.Listener(
+                        LoadBalancerPort="443",
+                        InstancePort="443",
+                        Protocol="TCP",
+                        InstanceProtocol="TCP"
+                    )
+                )
         ],
         HealthCheck=elb.HealthCheck(
             Target="HTTP:80/health_check",

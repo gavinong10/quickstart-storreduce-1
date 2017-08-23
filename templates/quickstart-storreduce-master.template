@@ -18,6 +18,7 @@
                         "BucketName",
                         "StorReduceLicense",
                         "StorReduceHostName",
+                        "InvokeSSLCert",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName"                        
@@ -89,6 +90,9 @@
                 },
                 "StorReduceLicense": {
                     "default": "StorReduce license"
+                },
+                "InvokeSSLCert": {
+                    "default": "Invoke SSL Cert"
                 },
                 "SSLCertificateId": {
                     "default": "SSL Certificate ID"
@@ -276,18 +280,26 @@
             "Description": "Public/private key pairs allow you to securely connect to your instance after it launches",
             "Type": "AWS::EC2::KeyPair::KeyName"
         },
+        "InvokeSSLCert": {
+            "Description": "Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
+            "Type": "String",
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "SSLCertificateId": {
-            "Description" : "The SSL Certificate ID to use for the Load Balancer. This is of the form \"arn:aws:acm:region:123456789012:certificate/12345678-1234-1234-1234-123456789012\"",
+            "Description" : "(Required if 'Invoke SSL Cert' is 'Yes' and 'Domain Name' & 'Validation Domain Name' are undefined) - The SSL Certificate ID to use for the Load Balancer. This is of the form \"arn:aws:acm:region:123456789012:certificate/12345678-1234-1234-1234-123456789012\"",
             "Type": "String",
             "Default": ""
         },
         "DomainName": {
-            "Description" : "The domain name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+            "Description" : "(Required if 'Invoke SSL Cert' is 'Yes' and 'SSL Certificate ID' is undefined) - The domain name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String",
             "Default": ""
         },
         "ValidationDomainName": {
-            "Description" : "The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
+            "Description" : "(Required if 'Invoke SSL Cert' is 'Yes' and 'SSL Certificate ID' is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String",
             "Default": ""
         },
@@ -723,6 +735,9 @@
                             ]
                         ]
                     },
+                        "InvokeSSLCert": {
+                            "Ref": "InvokeSSLCert"
+                        },
                         "SSLCertificateId": {
                             "Ref": "SSLCertificateId"
                         },

@@ -16,6 +16,7 @@
                         "BucketName",
                         "StorReduceLicense",
                         "StorReduceHostName",
+                        "InvokeSSLCert",
                         "SSLCertificateId",
                         "DomainName",
                         "ValidationDomainName"
@@ -104,6 +105,9 @@
                 "ReplicaShardsNum": {
                     "default": "Number of Replica Shards"
                 },
+                "InvokeSSLCert": {
+                    "default": "Invoke SSL Cert"
+                },
                 "SSLCertificateId": {
                     "default": "SSL Certificate ID"
                 },
@@ -156,7 +160,7 @@
             "Type": "String"
         },
         "DomainName": {
-            "Description": "The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
         },
         "InstanceType": {
@@ -261,8 +265,16 @@
             "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
             "Type": "String"
         },
+        "InvokeSSLCert": {
+            "Description": "Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
+            "Type": "String",
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "SSLCertificateId": {
-            "Description": "The SSL Certificate ID to use for the load balancer",
+            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and Domain Name & Validation Domain Name are undefined) - The SSL Certificate ID to use for the load balancer",
             "Type": "String"
         },
         "ShardsNum": {
@@ -288,7 +300,7 @@
             "Type": "String"
         },
         "ValidationDomainName": {
-            "Description": "The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
+            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
         },
         "VpcId": {
@@ -369,6 +381,9 @@
                             ",",
                             { "Ref": "PublicSubnetsToSpan"}
                         ]
+                    },
+                    "InvokeSSLCert": {
+                        "Ref": "InvokeSSLCert"
                     },
                     "SSLCertificateId": {
                         "Ref": "SSLCertificateId"

@@ -17,11 +17,7 @@
                         "MonitorInstanceType",
                         "BucketName",
                         "StorReduceLicense",
-                        "StorReduceHostName",
-                        "InvokeSSLCert",
-                        "SSLCertificateId",
-                        "DomainName",
-                        "ValidationDomainName"                        
+                        "StorReduceHostName"              
                     ]
                 },
                 {
@@ -90,18 +86,6 @@
                 },
                 "StorReduceLicense": {
                     "default": "StorReduce license"
-                },
-                "InvokeSSLCert": {
-                    "default": "Invoke SSL Cert"
-                },
-                "SSLCertificateId": {
-                    "default": "SSL Certificate ID"
-                },
-                "DomainName": {
-                    "default": "Domain Name"
-                },
-                "ValidationDomainName": {
-                    "default": "Validation Domain Name"
                 },
                 "NumSRRHosts": {
                     "default": "Number of StorReduce servers"
@@ -279,29 +263,6 @@
         "KeyPairName": {
             "Description": "Public/private key pairs allow you to securely connect to your instance after it launches",
             "Type": "AWS::EC2::KeyPair::KeyName"
-        },
-        "InvokeSSLCert": {
-            "Description": "Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
-            "Type": "String",
-            "AllowedValues": [
-                "Yes",
-                "No"
-            ]
-        },
-        "SSLCertificateId": {
-            "Description" : "(Required if 'Invoke SSL Cert' is 'Yes' and 'Domain Name' & 'Validation Domain Name' are undefined) - The SSL Certificate ID to use for the Load Balancer. This is of the form \"arn:aws:acm:region:123456789012:certificate/12345678-1234-1234-1234-123456789012\"",
-            "Type": "String",
-            "Default": ""
-        },
-        "DomainName": {
-            "Description" : "(Required if 'Invoke SSL Cert' is 'Yes' and 'SSL Certificate ID' is undefined) - The domain name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
-            "Type": "String",
-            "Default": ""
-        },
-        "ValidationDomainName": {
-            "Description" : "(Required if 'Invoke SSL Cert' is 'Yes' and 'SSL Certificate ID' is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
-            "Type": "String",
-            "Default": ""
         },
         "NumBastionHosts": {
             "AllowedValues": [
@@ -735,18 +696,6 @@
                             ]
                         ]
                     },
-                        "InvokeSSLCert": {
-                            "Ref": "InvokeSSLCert"
-                        },
-                        "SSLCertificateId": {
-                            "Ref": "SSLCertificateId"
-                        },
-                        "DomainName": {
-                            "Ref": "DomainName"
-                        },
-                        "ValidationDomainName": {
-                            "Ref": "ValidationDomainName"
-                        },
                         "StorReduceLicense": {
                             "Ref": "StorReduceLicense"
                         }
@@ -758,5 +707,23 @@
     "Mappings": {
     },
     "Outputs": {
+        "ElasticLoadBalancerID": {
+            "Description": "Elastic Load Balancer ID",
+            "Value": { 
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerID"
+                ]
+            }                
+        },
+        "ElasticLoadBalancerDNSName": {
+            "Description": "Elastic Load Balancer DNS Name",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerDNSName"
+                ]
+            }
+        }
     }
 }

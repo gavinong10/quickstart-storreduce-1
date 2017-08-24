@@ -15,11 +15,7 @@
                         "MonitorInstanceType",
                         "BucketName",
                         "StorReduceLicense",
-                        "StorReduceHostName",
-                        "InvokeSSLCert",
-                        "SSLCertificateId",
-                        "DomainName",
-                        "ValidationDomainName"
+                        "StorReduceHostName"
                     ]
                 },
                 {
@@ -63,9 +59,6 @@
                 "BucketName": {
                     "default": "Bucket Name"
                 },
-                "DomainName": {
-                    "default": "Domain Name"
-                },
                 "InstanceType": {
                     "default": "Instance Type"
                 },
@@ -105,12 +98,6 @@
                 "ReplicaShardsNum": {
                     "default": "Number of Replica Shards"
                 },
-                "InvokeSSLCert": {
-                    "default": "Invoke SSL Cert"
-                },
-                "SSLCertificateId": {
-                    "default": "SSL Certificate ID"
-                },
                 "ShardsNum": {
                     "default": "Number of Shards"
                 },
@@ -123,9 +110,6 @@
                 "VPCCIDR": {
                     "default": "VPC CIDR"
                 },
-                "ValidationDomainName": {
-                    "default": "Validation Domain Name"
-                },
                 "VpcId": {
                     "default": "VPC ID"
                 }
@@ -134,13 +118,22 @@
     },
     "Outputs": {
         "ElasticLoadBalancerID": {
-            "Description": "ElasticLoadBalancerID ID",
+            "Description": "Elastic Load Balancer ID",
             "Value": { 
                 "Fn::GetAtt": [
                     "SrrGroup",
                     "Outputs.ElasticLoadBalancerID"
                 ]
             }                
+        },
+        "ElasticLoadBalancerDNSName": {
+            "Description": "Elastic Load Balancer DNS Name",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerDNSName"
+                ]
+            }
         }
     },
     "Parameters": {
@@ -157,10 +150,6 @@
         "BucketName": {
             "ConstraintDescription": "must be a valid S3 bucket name.",
             "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
-            "Type": "String"
-        },
-        "DomainName": {
-            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
         },
         "InstanceType": {
@@ -265,18 +254,6 @@
             "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
             "Type": "String"
         },
-        "InvokeSSLCert": {
-            "Description": "Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
-            "Type": "String",
-            "AllowedValues": [
-                "Yes",
-                "No"
-            ]
-        },
-        "SSLCertificateId": {
-            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and Domain Name & Validation Domain Name are undefined) - The SSL Certificate ID to use for the load balancer",
-            "Type": "String"
-        },
         "ShardsNum": {
             "Description": "The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 12 * number of servers)",
             "MinValue": 0,
@@ -297,10 +274,6 @@
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default": "10.0.0.0/16",
             "Description": "CIDR Block for the VPC",
-            "Type": "String"
-        },
-        "ValidationDomainName": {
-            "Description": "(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
             "Type": "String"
         },
         "VpcId": {
@@ -381,18 +354,6 @@
                             ",",
                             { "Ref": "PublicSubnetsToSpan"}
                         ]
-                    },
-                    "InvokeSSLCert": {
-                        "Ref": "InvokeSSLCert"
-                    },
-                    "SSLCertificateId": {
-                        "Ref": "SSLCertificateId"
-                    },
-                    "DomainName": {
-                        "Ref": "DomainName"
-                    },
-                    "ValidationDomainName": {
-                        "Ref": "ValidationDomainName"
                     },
                     "StorReduceLicense": {
                         "Ref": "StorReduceLicense"

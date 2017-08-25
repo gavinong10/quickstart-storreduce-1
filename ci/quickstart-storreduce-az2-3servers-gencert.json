@@ -4,6 +4,10 @@
         "ParameterValue": "i3.xlarge"
     },
     {
+        "ParameterKey": "StorReduceHostName",
+        "ParameterValue": ""
+    },
+    {
         "ParameterKey": "MonitorInstanceType",
         "ParameterValue": "i3.large"
     },

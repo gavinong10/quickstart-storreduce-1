@@ -67,30 +67,30 @@ StorReduceHostNameParam = t.add_parameter(Parameter(
     Type="String",
 ))
 
-InvokeSSLCertParam = t.add_parameter(Parameter(
-    "InvokeSSLCert",
-    Description="Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
-    Type="String",
-    AllowedValues=["Yes", "No"]
-))
+# InvokeSSLCertParam = t.add_parameter(Parameter(
+#     "InvokeSSLCert",
+#     Description="Enables SSL on the load balancer with your own specified SSL certificate. If 'No' is selected, then SSLCertificateId, DomainName and ValidationDomainName do not need to be specified and StorReduce's self-signed certificate for HTTPS will be used.",
+#     Type="String",
+#     AllowedValues=["Yes", "No"]
+# ))
 
-SSLCertificateIdParam = t.add_parameter(Parameter(
-    "SSLCertificatewId",
-    Description="(Required if 'Invoke SSL Cert' is 'Yes' and Domain Name & Validation Domain Name are undefined) - The SSL Certificate ID to use for the load balancer",
-    Type="String",
-))
+# SSLCertificateIdParam = t.add_parameter(Parameter(
+#     "SSLCertificatewId",
+#     Description="(Required if 'Invoke SSL Cert' is 'Yes' and Domain Name & Validation Domain Name are undefined) - The SSL Certificate ID to use for the load balancer",
+#     Type="String",
+# ))
 
-DomainNameParam = t.add_parameter(Parameter(
-    "DomainName",
-    Description="(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
-    Type="String",
-))
+# DomainNameParam = t.add_parameter(Parameter(
+#     "DomainName",
+#     Description="(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The Domain Name to be used to generate an SSL certificate (not required if SSLCertificateId exists)",
+#     Type="String",
+# ))
 
-ValidationDomainNameParam = t.add_parameter(Parameter(
-    "ValidationDomainName",
-    Description="(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
-    Type="String",
-))
+# ValidationDomainNameParam = t.add_parameter(Parameter(
+#     "ValidationDomainName",
+#     Description="(Required if 'Invoke SSL Cert' is 'Yes' and SSL Certificate ID is undefined) - The validation domain name to be used to validate domain ownership for an SSL certificate (not required if SSLCertificateId exists)",
+#     Type="String",
+# ))
 
 RemoteAccessCIDRParam = t.add_parameter(Parameter(
     "RemoteAccessCIDR",
@@ -225,10 +225,10 @@ t.add_metadata({
                         "BucketName",
                         "NumSRRHosts",
                         "StorReduceLicense",
-                        "InvokeSSLCert",
-                        "SSLCertificateId",
-                        "DomainName",
-                        "ValidationDomainName",                     
+                        # "InvokeSSLCert",
+                        # "SSLCertificateId",
+                        # "DomainName",
+                        # "ValidationDomainName",                     
                     ]
                 },
                 {
@@ -276,18 +276,18 @@ t.add_metadata({
                 "StorReduceLicense": {
                     "default": "StorReduce license"
                 },
-                "InvokeSSLCert": {
-                    "default": "Invoke SSL Cert"
-                },
-                "SSLCertificateId": {
-                    "default": "SSL Certificate ID"
-                },
-                "DomainName": {
-                    "default": "Domain Name"
-                },
-                "ValidationDomainName": {
-                    "default": "Validation Domain Name"
-                },
+                # "InvokeSSLCert": {
+                #     "default": "Invoke SSL Cert"
+                # },
+                # "SSLCertificateId": {
+                #     "default": "SSL Certificate ID"
+                # },
+                # "DomainName": {
+                #     "default": "Domain Name"
+                # },
+                # "ValidationDomainName": {
+                #     "default": "Validation Domain Name"
+                # },
                 "NumSRRHosts": {
                     "default": "Number of StorReduce servers"
                 },
@@ -602,27 +602,27 @@ def create_conditions():
 
     t.add_condition("GovCloudCondition", Equals(Ref("AWS::Region"), "us-gov-west-1"))
 
-    t.add_condition("SSLCertificateIdIsUndefined", Equals(Ref(SSLCertificateIdParam), ""))
+    # t.add_condition("SSLCertificateIdIsUndefined", Equals(Ref(SSLCertificateIdParam), ""))
 
-    t.add_condition("InvokeSSLCert", Equals(Ref(InvokeSSLCertParam), "Yes"))
+    # t.add_condition("InvokeSSLCert", Equals(Ref(InvokeSSLCertParam), "Yes"))
 
-    t.add_condition("InvokeSSLCert&SSLCertificateIdIsUndefined", And(Condition("InvokeSSLCert"), Condition("SSLCertificateIdIsUndefined")))
+    # t.add_condition("InvokeSSLCert&SSLCertificateIdIsUndefined", And(Condition("InvokeSSLCert"), Condition("SSLCertificateIdIsUndefined")))
         
 create_conditions()
 
-gen_SSL_certificate_resource = t.add_resource(
-    Certificate(
-        'StorReduceSSLCertificate',
-        Condition="InvokeSSLCert&SSLCertificateIdIsUndefined",
-        DomainName=Ref(DomainNameParam),
-        DomainValidationOptions=[
-            DomainValidationOption(
-                DomainName=Ref(DomainNameParam),
-                ValidationDomain=Ref(ValidationDomainNameParam),
-            ),
-        ]
-    )
-)
+# gen_SSL_certificate_resource = t.add_resource(
+#     Certificate(
+#         'StorReduceSSLCertificate',
+#         Condition="InvokeSSLCert&SSLCertificateIdIsUndefined",
+#         DomainName=Ref(DomainNameParam),
+#         DomainValidationOptions=[
+#             DomainValidationOption(
+#                 DomainName=Ref(DomainNameParam),
+#                 ValidationDomain=Ref(ValidationDomainNameParam),
+#             ),
+#         ]
+#     )
+# )
 
 elasticLB = t.add_resource(elb.LoadBalancer(
         'ElasticLoadBalancer',
@@ -636,21 +636,27 @@ elasticLB = t.add_resource(elb.LoadBalancer(
                     Protocol="TCP",
                     InstanceProtocol="TCP"
                 ),
-                If("InvokeSSLCert", 
-                    elb.Listener(
-                        LoadBalancerPort="443",
-                        InstancePort="443",
-                        Protocol="SSL",
-                        InstanceProtocol="SSL",
-                        SSLCertificateId=If("SSLCertificateIdIsUndefined",Ref(gen_SSL_certificate_resource),Ref(SSLCertificateIdParam))
-                    ),
                     elb.Listener(
                         LoadBalancerPort="443",
                         InstancePort="443",
                         Protocol="TCP",
                         InstanceProtocol="TCP"
                     )
-                )
+                # If("InvokeSSLCert", 
+                #     elb.Listener(
+                #         LoadBalancerPort="443",
+                #         InstancePort="443",
+                #         Protocol="SSL",
+                #         InstanceProtocol="SSL",
+                #         SSLCertificateId=If("SSLCertificateIdIsUndefined",Ref(gen_SSL_certificate_resource),Ref(SSLCertificateIdParam))
+                #     ),
+                #     elb.Listener(
+                #         LoadBalancerPort="443",
+                #         InstancePort="443",
+                #         Protocol="TCP",
+                #         InstanceProtocol="TCP"
+                #     )
+                # )
         ],
         HealthCheck=elb.HealthCheck(
             Target="HTTP:80/health_check",
@@ -936,7 +942,15 @@ outputs.append(
     Output(
         "ElasticLoadBalancerID",
         Value=Ref(elasticLB),
-        Description="ElasticLoadBalancerID" + " ID"
+        Description="Elastic Load Balancer ID"
+    )
+)
+
+outputs.append(
+    Output(
+        "ElasticLoadBalancerDNSName",
+        Value=GetAtt(elasticLB.title, "DNSName"),
+        Description="Elastic Load Balancer DNS Name"
     )
 )
 # for i in range(MIN_INSTANCES):

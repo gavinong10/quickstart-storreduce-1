@@ -44,18 +44,6 @@
         "ParameterValue": "$[alfred_getkeypair]"
     },
     {
-        "ParameterKey": "SSLCertificateId",
-        "ParameterValue": "arn:aws:acm:us-west-2:296059593712:certificate/f534c0ea-8aae-4bdb-aae7-c4df99a11988"
-    },
-    {
-        "ParameterKey": "DomainName",
-        "ParameterValue": ""
-    },
-    {
-        "ParameterKey": "ValidationDomainName",
-        "ParameterValue": ""
-    },
-    {
         "ParameterKey": "NumBastionHosts",
         "ParameterValue": 1
     },

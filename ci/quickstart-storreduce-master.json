@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "BucketName",
-        "ParameterValue": "alfred-qs-$[alfred_gen_uuid]"
+        "ParameterValue": "alfred-develop-sr-$[alfred_genuuid]"
     },
     {
         "ParameterKey": "StorReducePassword",

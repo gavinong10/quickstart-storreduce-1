@@ -3,8 +3,7 @@
     "Description": "VPC StorReduce",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
-            "ParameterGroups": [
-                {
+            "ParameterGroups": [{
                     "Label": {
                         "default": "StorReduce Configuration"
                     },
@@ -17,7 +16,7 @@
                         "MonitorInstanceType",
                         "BucketName",
                         "StorReduceLicense",
-                        "StorReduceHostName"              
+                        "StorReduceHostName"
                     ]
                 },
                 {
@@ -57,7 +56,7 @@
                         "BastionAMIOS",
                         "BastionInstanceType"
                     ]
-                    },
+                },
                 {
                     "Label": {
                         "default": "AWS Quick Start Configuration"
@@ -157,52 +156,52 @@
         }
     },
     "Parameters": {
-        "InstanceType" : {
-            "Description" : "StorReduce EC2 instance type",
-            "Type" : "String",
-                "Default" : "i3.4xlarge",
-                "AllowedValues":[
-                    "i3.large",
-                    "i3.xlarge",
-                    "i3.2xlarge",
-                    "i3.4xlarge",
-                    "i3.8xlarge",
-                    "i3.16xlarge",
-                    "i2.xlarge",
-                    "i2.2xlarge",
-                    "i2.4xlarge",
-                    "c3.large",
-                    "c3.xlarge",
-                    "c3.2xlarge",
-                    "c3.4xlarge",
-                    "c3.8xlarge"
-                ],
-            "ConstraintDescription" : "must be a valid EC2 instance type."
+        "InstanceType": {
+            "Description": "StorReduce EC2 instance type",
+            "Type": "String",
+            "Default": "i3.4xlarge",
+            "AllowedValues": [
+                "i3.large",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge",
+                "i3.8xlarge",
+                "i3.16xlarge",
+                "i2.xlarge",
+                "i2.2xlarge",
+                "i2.4xlarge",
+                "c3.large",
+                "c3.xlarge",
+                "c3.2xlarge",
+                "c3.4xlarge",
+                "c3.8xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
         },
-        "MonitorInstanceType" : {
-            "Description" : "Monitor EC2 instance type",
-            "Type" : "String",
-                "Default" : "i3.large",
-                "AllowedValues":[
-                    "i3.large",
-                    "i3.xlarge",
-                    "i3.2xlarge",
-                    "i3.4xlarge",
-                    "i3.8xlarge",
-                    "i3.16xlarge"
-                ],
-            "ConstraintDescription" : "must be a valid EC2 instance type."
+        "MonitorInstanceType": {
+            "Description": "Monitor EC2 instance type",
+            "Type": "String",
+            "Default": "i3.large",
+            "AllowedValues": [
+                "i3.large",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge",
+                "i3.8xlarge",
+                "i3.16xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
         },
-        "BucketName" : {
+        "BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
             "Type": "String"
         },
         "StorReduceLicense": {
-            "Description" : "A valid StorReduce license",
-            "ConstraintDescription" : "Must be a current and valid StorReduce license.",
-            "Type" : "String",
+            "Description": "A valid StorReduce license",
+            "ConstraintDescription": "Must be a current and valid StorReduce license.",
+            "Type": "String",
             "Default": ""
         },
         "StorReducePassword": {
@@ -278,14 +277,14 @@
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Default": "gong-cf-templates",
+            "Default": "quickstart-reference",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "",
+            "Default": "storreduce/latest/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
             "Type": "String"
         },
@@ -407,15 +406,13 @@
             "Default": 3,
             "Type": "Number",
             "ConstraintDescription": "Number of StorReduce hosts must be an odd number between 3 and 31."
-        },
+        }
     },
     "Rules": {},
     "Conditions": {
         "3AZCondition": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumberOfAZs"
                         },
                         "3"
@@ -427,16 +424,14 @@
             ]
         },
         "4AZCondition": {
-            "Fn::Equals": [
-                {
+            "Fn::Equals": [{
                     "Ref": "NumberOfAZs"
                 },
                 "4"
             ]
         },
         "GovCloudCondition": {
-            "Fn::Equals": [
-                {
+            "Fn::Equals": [{
                     "Ref": "AWS::Region"
                 },
                 "us-gov-west-1"
@@ -451,16 +446,16 @@
                 "Parameters": {
                     "AvailabilityZones": {
                         "Fn::Join": [
-                        ",", {
-                            "Ref": "AvailabilityZones"
-                        }
+                            ",", {
+                                "Ref": "AvailabilityZones"
+                            }
                         ]
                     },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
 
-                     "PrivateSubnet1ACIDR": {
+                    "PrivateSubnet1ACIDR": {
                         "Ref": "PrivateSubnet1ACIDR"
                     },
                     "PrivateSubnet2ACIDR": {
@@ -539,121 +534,119 @@
             }
         },
         "SrrGroup": {
-                "DependsOn": [
-                    "VPCStack",
-                ],
-                "Type": "AWS::CloudFormation::Stack",
-                "Properties": {
-                    "TemplateURL": {
-                        "Fn::Sub": [
-                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/storreduce-group-az${NumberOfAZs}.template",
-                            {
-                                "QSS3Region": {
-                                    "Fn::If": [
-                                        "GovCloudCondition",
-                                        "s3-us-gov-west-1",
-                                        "s3"
-                                    ]
-                                }
+            "DependsOn": [
+                "VPCStack"
+            ],
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/storreduce-group-az${NumberOfAZs}.template",
+                        {
+                            "QSS3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
                             }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "RemoteAccessCIDR": {
+                        "Ref": "RemoteAccessCIDR"
+                    },
+                    "ReplicaShardsNum": {
+                        "Ref": "ReplicaShardsNum"
+                    },
+                    "StorReduceHostName": {
+                        "Ref": "StorReduceHostName"
+                    },
+                    "ShardsNum": {
+                        "Ref": "ShardsNum"
+                    },
+                    "VPCCIDR": {
+                        "Ref": "VPCCIDR"
+                    },
+                    "VpcId": {
+                        "Fn::GetAtt": [
+                            "VPCStack",
+                            "Outputs.VPCID"
                         ]
                     },
-                    "Parameters": {
-                        "RemoteAccessCIDR": {
-                            "Ref": "RemoteAccessCIDR"
-                        },
-                        "ReplicaShardsNum": {
-                            "Ref": "ReplicaShardsNum"
-                        },
-                        "StorReduceHostName": {
-                            "Ref": "StorReduceHostName"
-                        },
-                        "ShardsNum": {
-                            "Ref": "ShardsNum"
-                        },
-                        "VPCCIDR": {
-                            "Ref": "VPCCIDR"
-                        },
-                        "VpcId": {
-                            "Fn::GetAtt": [
-                                "VPCStack",
-                                "Outputs.VPCID"
-                            ]
-                        },
-                        "QSS3BucketName": {
-                            "Ref": "QSS3BucketName"
-                        },
-                        "QSS3KeyPrefix": {
-                            "Ref": "QSS3KeyPrefix"
-                        },
-                        "StorReducePassword": {
-                            "Ref": "StorReducePassword"
-                        },
-                        "KeyPairName": {
-                            "Ref": "KeyPairName"
-                        },
-                        "InstanceType": {
-                            "Ref": "InstanceType"
-                        },
-                        "MonitorInstanceType": {
-                            "Ref": "MonitorInstanceType"
-                        },
-                        "BucketName": {
-                            "Ref": "BucketName"
-                        },
-                        "PrivateSubnetsToSpan": {
-                            "Fn::Join": [
-                                ",",
-                                [
-                                    {
-                                        "Fn::GetAtt": [
-                                            "VPCStack",
-                                            "Outputs.PrivateSubnet1AID"
-                                        ]
-                                    },
-                                    {
-                                        "Fn::GetAtt": [
-                                            "VPCStack",
-                                            "Outputs.PrivateSubnet2AID"
-                                        ]
-                                    },
-                                    {
-                                        "Fn::If": [
-                                            "3AZCondition",
-                                            {
-                                                "Fn::GetAtt": [
-                                                    "VPCStack",
-                                                    "Outputs.PrivateSubnet3AID"
-                                                ]
-                                            },
-                                            {
-                                                "Ref": "AWS::NoValue"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "Fn::If": [
-                                            "4AZCondition",
-                                            {
-                                                "Fn::GetAtt": [
-                                                    "VPCStack",
-                                                    "Outputs.PrivateSubnet4AID"
-                                                ]
-                                            },
-                                            {
-                                                "Ref": "AWS::NoValue"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            ]
-                        },
-                        "NumSRRHosts": { "Ref": "NumSRRHosts" },
-                        "PublicSubnetsToSpan": {
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
+                    },
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
+                    },
+                    "StorReducePassword": {
+                        "Ref": "StorReducePassword"
+                    },
+                    "KeyPairName": {
+                        "Ref": "KeyPairName"
+                    },
+                    "InstanceType": {
+                        "Ref": "InstanceType"
+                    },
+                    "MonitorInstanceType": {
+                        "Ref": "MonitorInstanceType"
+                    },
+                    "BucketName": {
+                        "Ref": "BucketName"
+                    },
+                    "PrivateSubnetsToSpan": {
                         "Fn::Join": [
-                            ",",
-                            [
+                            ",", [{
+                                    "Fn::GetAtt": [
+                                        "VPCStack",
+                                        "Outputs.PrivateSubnet1AID"
+                                    ]
+                                },
                                 {
+                                    "Fn::GetAtt": [
+                                        "VPCStack",
+                                        "Outputs.PrivateSubnet2AID"
+                                    ]
+                                },
+                                {
+                                    "Fn::If": [
+                                        "3AZCondition",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "VPCStack",
+                                                "Outputs.PrivateSubnet3AID"
+                                            ]
+                                        },
+                                        {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::If": [
+                                        "4AZCondition",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "VPCStack",
+                                                "Outputs.PrivateSubnet4AID"
+                                            ]
+                                        },
+                                        {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    },
+                    "NumSRRHosts": {
+                        "Ref": "NumSRRHosts"
+                    },
+                    "PublicSubnetsToSpan": {
+                        "Fn::Join": [
+                            ",", [{
                                     "Fn::GetAtt": [
                                         "VPCStack",
                                         "Outputs.PublicSubnet1ID"
@@ -696,25 +689,24 @@
                             ]
                         ]
                     },
-                        "StorReduceLicense": {
-                            "Ref": "StorReduceLicense"
-                        }
+                    "StorReduceLicense": {
+                        "Ref": "StorReduceLicense"
                     }
                 }
             }
-        
+        }
+
     },
-    "Mappings": {
-    },
+    "Mappings": {},
     "Outputs": {
         "ElasticLoadBalancerID": {
             "Description": "Elastic Load Balancer ID",
-            "Value": { 
+            "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
                     "Outputs.ElasticLoadBalancerID"
                 ]
-            }                
+            }
         },
         "ElasticLoadBalancerDNSName": {
             "Description": "Elastic Load Balancer DNS Name",

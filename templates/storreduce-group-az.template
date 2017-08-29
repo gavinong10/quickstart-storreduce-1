@@ -1,8 +1,7 @@
 {
     "Metadata": {
         "AWS::CloudFormation::Interface": {
-            "ParameterGroups": [
-                {
+            "ParameterGroups": [{
                     "Label": {
                         "default": "StorReduce Configuration"
                     },
@@ -119,12 +118,12 @@
     "Outputs": {
         "ElasticLoadBalancerID": {
             "Description": "Elastic Load Balancer ID",
-            "Value": { 
+            "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
                     "Outputs.ElasticLoadBalancerID"
                 ]
-            }                
+            }
         },
         "ElasticLoadBalancerDNSName": {
             "Description": "Elastic Load Balancer DNS Name",
@@ -228,14 +227,14 @@
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Default": "gong-cf-templates",
+            "Default": "quickstart-reference",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z\\-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "",
+            "Default": "storreduce/latest/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
             "Type": "String"
         },
@@ -343,7 +342,9 @@
                     "PrivateSubnetsToSpan": {
                         "Fn::Join": [
                             ",",
-                            { "Ref": "PrivateSubnetsToSpan"}
+                            {
+                                "Ref": "PrivateSubnetsToSpan"
+                            }
                         ]
                     },
                     "NumSRRHosts": {
@@ -352,7 +353,9 @@
                     "PublicSubnetsToSpan": {
                         "Fn::Join": [
                             ",",
-                            { "Ref": "PublicSubnetsToSpan"}
+                            {
+                                "Ref": "PublicSubnetsToSpan"
+                            }
                         ]
                     },
                     "StorReduceLicense": {

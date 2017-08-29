@@ -1,18 +1,15 @@
 {
     "Conditions": {
         "GovCloudCondition": {
-            "Fn::Equals": [
-                {
+            "Fn::Equals": [{
                     "Ref": "AWS::Region"
                 },
                 "us-gov-west-1"
             ]
         },
         "NumInstancesLessThanOrEqualTo10": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         10
@@ -24,10 +21,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo11": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         11
@@ -39,10 +34,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo12": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         12
@@ -54,10 +47,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo13": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         13
@@ -69,10 +60,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo14": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         14
@@ -84,10 +73,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo15": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         15
@@ -99,10 +86,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo16": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         16
@@ -114,10 +99,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo17": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         17
@@ -129,10 +112,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo18": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         18
@@ -144,10 +125,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo19": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         19
@@ -159,10 +138,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo20": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         20
@@ -174,10 +151,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo21": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         21
@@ -189,10 +164,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo22": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         22
@@ -204,10 +177,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo23": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         23
@@ -219,10 +190,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo24": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         24
@@ -234,10 +203,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo25": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         25
@@ -249,10 +216,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo26": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         26
@@ -264,10 +229,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo27": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         27
@@ -279,10 +242,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo28": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         28
@@ -294,10 +255,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo29": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         29
@@ -309,10 +268,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo30": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         30
@@ -324,10 +281,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo31": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         31
@@ -339,18 +294,15 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo4": {
-            "Fn::Equals": [
-                {
+            "Fn::Equals": [{
                     "Ref": "NumSRRHosts"
                 },
                 4
             ]
         },
         "NumInstancesLessThanOrEqualTo5": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         5
@@ -362,10 +314,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo6": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         6
@@ -377,10 +327,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo7": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         7
@@ -392,10 +340,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo8": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         8
@@ -407,10 +353,8 @@
             ]
         },
         "NumInstancesLessThanOrEqualTo9": {
-            "Fn::Or": [
-                {
-                    "Fn::Equals": [
-                        {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
                             "Ref": "NumSRRHosts"
                         },
                         9
@@ -484,8 +428,7 @@
     },
     "Metadata": {
         "AWS::CloudFormation::Interface": {
-            "ParameterGroups": [
-                {
+            "ParameterGroups": [{
                     "Label": {
                         "default": "StorReduce Configuration"
                     },
@@ -687,14 +630,14 @@
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Default": "gong-cf-templates",
+            "Default": "quickstart-reference",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z\\-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "",
+            "Default": "storreduce/latest/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
             "Type": "String"
         },
@@ -745,8 +688,7 @@
         "AllInternalAccessSecurityGroup": {
             "Properties": {
                 "GroupDescription": "Enables StorReduce and SSH ports TCP access from within the VPC",
-                "SecurityGroupIngress": [
-                    {
+                "SecurityGroupIngress": [{
                         "CidrIp": {
                             "Ref": "VPCCIDR"
                         },
@@ -858,8 +800,7 @@
                     "Timeout": "5",
                     "UnhealthyThreshold": "5"
                 },
-                "Listeners": [
-                    {
+                "Listeners": [{
                         "InstancePort": "80",
                         "InstanceProtocol": "TCP",
                         "LoadBalancerPort": "80",
@@ -872,11 +813,9 @@
                         "Protocol": "TCP"
                     }
                 ],
-                "SecurityGroups": [
-                    {
-                        "Ref": "LoadBalancerSecurityGroup"
-                    }
-                ],
+                "SecurityGroups": [{
+                    "Ref": "LoadBalancerSecurityGroup"
+                }],
                 "Subnets": {
                     "Ref": "PublicSubnetsToSpan"
                 }
@@ -887,8 +826,7 @@
             "DependsOn": "AllInternalAccessSecurityGroup",
             "Properties": {
                 "Description": "eth0",
-                "GroupSet": [
-                    {
+                "GroupSet": [{
                         "Ref": "AllInternalAccessSecurityGroup"
                     },
                     {
@@ -903,8 +841,7 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
+                "Tags": [{
                         "Key": "Interface",
                         "Value": "eth0"
                     },
@@ -919,8 +856,7 @@
         "LoadBalancerSecurityGroup": {
             "Properties": {
                 "GroupDescription": "Enables remote access to port 80 and 443 for the StorReduce load balancer",
-                "SecurityGroupIngress": [
-                    {
+                "SecurityGroupIngress": [{
                         "CidrIp": {
                             "Ref": "RemoteAccessCIDR"
                         },
@@ -956,11 +892,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -973,8 +907,7 @@
                             "monitor-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/monitor-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -1035,25 +968,20 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "NetworkInterfaces": [
-                    {
-                        "DeviceIndex": "0",
-                        "NetworkInterfaceId": {
-                            "Ref": "Eth0"
-                        }
+                "NetworkInterfaces": [{
+                    "DeviceIndex": "0",
+                    "NetworkInterfaceId": {
+                        "Ref": "Eth0"
                     }
-                ],
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SRRMonitorVM"
-                    }
-                ],
+                }],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SRRMonitorVM"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -1081,8 +1009,7 @@
         "MonitorSecurityGroup": {
             "Properties": {
                 "GroupDescription": "Enables remote access to port 3000 and 5601 for StorReduce monitor",
-                "SecurityGroupIngress": [
-                    {
+                "SecurityGroupIngress": [{
                         "CidrIp": {
                             "Ref": "RemoteAccessCIDR"
                         },
@@ -1118,11 +1045,9 @@
             "DependsOn": "StorReduceHostRole",
             "Properties": {
                 "Path": "/",
-                "Roles": [
-                    {
-                        "Ref": "StorReduceHostRole"
-                    }
-                ]
+                "Roles": [{
+                    "Ref": "StorReduceHostRole"
+                }]
             },
             "Type": "AWS::IAM::InstanceProfile"
         },
@@ -1130,126 +1055,113 @@
             "DependsOn": "SrrBucket",
             "Properties": {
                 "AssumeRolePolicyDocument": {
-                    "Statement": [
-                        {
-                            "Action": [
-                                "sts:AssumeRole"
-                            ],
-                            "Effect": "Allow",
-                            "Principal": {
-                                "Service": [
-                                    "ec2.amazonaws.com"
-                                ]
-                            }
+                    "Statement": [{
+                        "Action": [
+                            "sts:AssumeRole"
+                        ],
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [
+                                "ec2.amazonaws.com"
+                            ]
                         }
-                    ],
+                    }],
                     "Version": "2012-10-17"
                 },
                 "Path": "/",
-                "Policies": [
-                    {
+                "Policies": [{
                         "PolicyDocument": {
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "s3:GetObject"
-                                    ],
-                                    "Effect": "Allow",
-                                    "Resource": {
-                                        "Fn::Sub": [
-                                            "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
-                                            {
-                                                "Partition": {
-                                                    "Fn::If": [
-                                                        "GovCloudCondition",
-                                                        "aws-us-gov",
-                                                        "aws"
-                                                    ]
-                                                }
+                            "Statement": [{
+                                "Action": [
+                                    "s3:GetObject"
+                                ],
+                                "Effect": "Allow",
+                                "Resource": {
+                                    "Fn::Sub": [
+                                        "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
+                                        {
+                                            "Partition": {
+                                                "Fn::If": [
+                                                    "GovCloudCondition",
+                                                    "aws-us-gov",
+                                                    "aws"
+                                                ]
                                             }
-                                        ]
-                                    }
+                                        }
+                                    ]
                                 }
-                            ],
+                            }],
                             "Version": "2012-10-17"
                         },
                         "PolicyName": "aws-quick-start-s3-policy"
                     },
                     {
                         "PolicyDocument": {
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "s3:ListBucket",
-                                        "s3:ListBucketMultipartUploads"
-                                    ],
-                                    "Effect": "Allow",
-                                    "Resource": {
-                                        "Fn::Join": [
-                                            "",
-                                            [
-                                                "arn:aws:s3:::",
-                                                {
-                                                    "Ref": "BucketName"
-                                                }
-                                            ]
+                            "Statement": [{
+                                "Action": [
+                                    "s3:ListBucket",
+                                    "s3:ListBucketMultipartUploads"
+                                ],
+                                "Effect": "Allow",
+                                "Resource": {
+                                    "Fn::Join": [
+                                        "", [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "BucketName"
+                                            }
                                         ]
-                                    }
+                                    ]
                                 }
-                            ],
+                            }],
                             "Version": "2012-10-17"
                         },
                         "PolicyName": "srr-quick-start-s3-policy-bucket"
                     },
                     {
                         "PolicyDocument": {
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "s3:PutObject",
-                                        "s3:GetObject",
-                                        "s3:DeleteObject",
-                                        "s3:ListMultipartUploadParts",
-                                        "s3:AbortMultipartUpload"
-                                    ],
-                                    "Effect": "Allow",
-                                    "Resource": {
-                                        "Fn::Join": [
-                                            "",
-                                            [
-                                                "arn:aws:s3:::",
-                                                {
-                                                    "Ref": "BucketName"
-                                                },
-                                                "/*"
-                                            ]
+                            "Statement": [{
+                                "Action": [
+                                    "s3:PutObject",
+                                    "s3:GetObject",
+                                    "s3:DeleteObject",
+                                    "s3:ListMultipartUploadParts",
+                                    "s3:AbortMultipartUpload"
+                                ],
+                                "Effect": "Allow",
+                                "Resource": {
+                                    "Fn::Join": [
+                                        "", [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "BucketName"
+                                            },
+                                            "/*"
                                         ]
-                                    }
+                                    ]
                                 }
-                            ],
+                            }],
                             "Version": "2012-10-17"
                         },
                         "PolicyName": "srr-quick-start-s3-policy-objects"
                     },
                     {
                         "PolicyDocument": {
-                            "Statement": [
-                                {
-                                    "Action": [
-                                        "elasticloadbalancing:Describe*",
-                                        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-                                        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-                                        "autoscaling:Describe*",
-                                        "autoscaling:EnterStandby",
-                                        "autoscaling:ExitStandby",
-                                        "autoscaling:UpdateAutoScalingGroup",
-                                        "autoscaling:SuspendProcesses",
-                                        "autoscaling:ResumeProcesses"
-                                    ],
-                                    "Effect": "Allow",
-                                    "Resource": "*"
-                                }
-                            ],
+                            "Statement": [{
+                                "Action": [
+                                    "elasticloadbalancing:Describe*",
+                                    "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                                    "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                                    "autoscaling:Describe*",
+                                    "autoscaling:EnterStandby",
+                                    "autoscaling:ExitStandby",
+                                    "autoscaling:UpdateAutoScalingGroup",
+                                    "autoscaling:SuspendProcesses",
+                                    "autoscaling:ResumeProcesses"
+                                ],
+                                "Effect": "Allow",
+                                "Resource": "*"
+                            }],
                             "Version": "2012-10-17"
                         },
                         "PolicyName": "elb-join-policy"
@@ -1273,11 +1185,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -1290,8 +1200,7 @@
                             "init-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/init-srr.sh \"",
                                             {
                                                 "Ref": "BucketName"
@@ -1400,11 +1309,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -1413,17 +1320,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrBaseHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrBaseHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -1458,11 +1362,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -1475,8 +1377,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -1570,11 +1471,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -1583,17 +1482,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -1629,11 +1525,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -1646,8 +1540,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -1741,11 +1634,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -1754,17 +1645,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -1800,11 +1688,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -1817,8 +1703,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -1912,11 +1797,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -1925,17 +1808,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -1971,11 +1851,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -1988,8 +1866,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -2083,11 +1960,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -2096,17 +1971,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -2142,11 +2014,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -2159,8 +2029,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -2254,11 +2123,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -2267,17 +2134,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -2313,11 +2177,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -2330,8 +2192,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -2425,11 +2286,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -2438,17 +2297,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -2484,11 +2340,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -2501,8 +2355,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -2596,11 +2449,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -2609,17 +2460,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -2655,11 +2503,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -2672,8 +2518,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -2767,11 +2612,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -2780,17 +2623,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -2826,11 +2666,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -2843,8 +2681,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -2938,11 +2775,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -2951,17 +2786,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -2997,11 +2829,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -3014,8 +2844,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -3109,11 +2938,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -3122,17 +2949,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -3168,11 +2992,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -3185,8 +3007,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -3280,11 +3101,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -3293,17 +3112,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -3338,11 +3154,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -3355,8 +3169,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -3450,11 +3263,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -3463,17 +3274,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -3509,11 +3317,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -3526,8 +3332,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -3621,11 +3426,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -3634,17 +3437,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -3680,11 +3480,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -3697,8 +3495,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -3792,11 +3589,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -3805,17 +3600,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -3851,11 +3643,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -3868,8 +3658,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -3963,11 +3752,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -3976,17 +3763,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -4022,11 +3806,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -4039,8 +3821,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -4134,11 +3915,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -4147,17 +3926,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -4193,11 +3969,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -4210,8 +3984,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -4305,11 +4078,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -4318,17 +4089,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -4364,11 +4132,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -4381,8 +4147,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -4476,11 +4241,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -4489,17 +4252,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -4535,11 +4295,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -4552,8 +4310,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -4647,11 +4404,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -4660,17 +4415,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -4706,11 +4458,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -4723,8 +4473,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -4818,11 +4567,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -4831,17 +4578,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -4877,11 +4621,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -4894,8 +4636,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -4989,11 +4730,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -5002,17 +4741,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -5048,11 +4784,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -5065,8 +4799,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -5160,11 +4893,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -5173,17 +4904,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -5219,11 +4947,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -5236,8 +4962,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -5331,11 +5056,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -5344,17 +5067,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -5390,11 +5110,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -5407,8 +5125,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -5502,11 +5219,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -5515,17 +5230,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -5561,11 +5273,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -5578,8 +5288,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -5673,11 +5382,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -5686,17 +5393,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -5732,11 +5436,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -5749,8 +5451,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -5844,11 +5545,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -5857,17 +5556,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -5903,11 +5599,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -5920,8 +5614,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -6015,11 +5708,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -6028,17 +5719,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -6074,11 +5762,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -6091,8 +5777,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -6186,11 +5871,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -6199,17 +5882,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -6245,11 +5925,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -6262,8 +5940,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -6357,11 +6034,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "0",
@@ -6370,17 +6045,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -6416,11 +6088,9 @@
             "Metadata": {
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
-                        "buckets": [
-                            {
-                                "Ref": "QSS3BucketName"
-                            }
-                        ],
+                        "buckets": [{
+                            "Ref": "QSS3BucketName"
+                        }],
                         "roleName": {
                             "Ref": "StorReduceHostRole"
                         },
@@ -6433,8 +6103,7 @@
                             "connect-srr": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "/home/ec2-user/connect-srr.sh \"",
                                             {
                                                 "Fn::GetAtt": [
@@ -6528,11 +6197,9 @@
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "AllInternalAccessSecurityGroup"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "AllInternalAccessSecurityGroup"
+                }],
                 "SubnetId": {
                     "Fn::Select": [
                         "1",
@@ -6541,17 +6208,14 @@
                         }
                     ]
                 },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "SrrHost"
-                    }
-                ],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "SrrHost"
+                }],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "\n    #!/bin/bash -xe\n    /opt/aws/bin/cfn-init -v --stack ",
                                 {
                                     "Ref": "AWS::StackName"

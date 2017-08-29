@@ -194,7 +194,7 @@ QSS3BucketNameParam = t.add_parameter(Parameter(
     "QSS3BucketName",
     Description="S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
     ConstraintDescription="Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-    Default="gong-cf-templates",
+    Default="quickstart-reference",
     Type="String",
     AllowedPattern="^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$"
 ))
@@ -202,7 +202,7 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
     "QSS3KeyPrefix",
     Description="S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
     ConstraintDescription="Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-    Default="",
+    Default="storreduce/latest/",
     Type="String",
     AllowedPattern="^[0-9a-zA-Z\\-/]*$",
 ))

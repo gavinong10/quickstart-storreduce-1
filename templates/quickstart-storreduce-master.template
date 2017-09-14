@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "VPC StorReduce",
+    "Description": "(qs-1nm7e113k) StorReduce, License: Apache 2.0(Please do not remove) September, 14, 2017",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [{

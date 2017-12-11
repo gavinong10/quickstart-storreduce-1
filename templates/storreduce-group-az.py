@@ -33,14 +33,14 @@ t = Template()
 
 StorReducePasswordParam = t.add_parameter(Parameter(
     "StorReducePassword",
-    Description="Password for the StorReduce admin root user",
+    Description="The password for the StorReduce admin root user. This password is used to configure the StorReduce admin web interface and admin account for Grafana on the StorReduce Monitor server. StorReduce Monitor access to Elasticsearch and Kibana are also secured using Basic Auth against the StorReduce user management system.",
     Type="String",
     NoEcho=True
 ))
 
 ShardsNumParam = t.add_parameter(Parameter(
     "ShardsNum",
-    Description="The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 12 * number of servers)",
+    Description="The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 8 * number of servers)",
     Type="Number",
     MinValue=0,
 ))
@@ -63,7 +63,7 @@ VPCCIDRParam = t.add_parameter(Parameter(
 
 StorReduceHostNameParam = t.add_parameter(Parameter(
     "StorReduceHostName",
-    Description="The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
+    Description="The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key. StorReduce settings will automatically be configured to add the AWS internal DNS values of the instances within the VPC and the AWS default public DNS name of the load balancer. This field can be populated as a comma-separated list of other DNS names corresponding to aliases for the load balancer, or else left blank",
     Type="String",
 ))
 
@@ -149,14 +149,22 @@ MonitorInstanceTypeParam = t.add_parameter(Parameter(
         "i3.2xlarge",
         "i3.4xlarge",
         "i3.8xlarge",
-        "i3.16xlarge"
+        "i3.16xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge"
     ],
     ConstraintDescription="must be a valid EC2 instance type."
 ))
 
 BucketNameParam = t.add_parameter(Parameter(
     "BucketName",
-    Description="The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
+    Description="The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket as a new bucket will be created",
     Type="String",
     ConstraintDescription="must be a valid S3 bucket name.",
 ))
@@ -335,24 +343,21 @@ t.add_metadata({
 })
 
 
-
-
-
 t.add_mapping('AWSAMIRegion', {
-    "ap-northeast-1": {"AMI": "ami-13b85075", "MonitorAMI": "ami-1bbd557d" },
-    "ap-northeast-2": {"AMI": "ami-1d0ed773", "MonitorAMI": "ami-bb0fd6d5" },
-    "ap-south-1": {"AMI": "ami-f584ff9a", "MonitorAMI": "ami-76fb8019" },
-    "ap-southeast-1": {"AMI": "ami-6e61ff0d", "MonitorAMI": "ami-8b60fee8" },
-    "ap-southeast-2": {"AMI": "ami-f4776e97", "MonitorAMI": "ami-07766f64" },
-    "ca-central-1": {"AMI": "ami-88e957ec", "MonitorAMI": "ami-93e856f7" },
-    "eu-central-1": {"AMI": "ami-32e9475d", "MonitorAMI": "ami-b0e846df" },
-    "eu-west-1": {"AMI": "ami-eadb2c93", "MonitorAMI": "ami-27da2d5e" },
-    "eu-west-2": {"AMI": "ami-e8d6c78c", "MonitorAMI": "ami-33dacb57" },
-    "sa-east-1": {"AMI": "ami-5f522433", "MonitorAMI": "ami-865422ea" },
-    "us-east-1": {"AMI": "ami-c5ae8dbe", "MonitorAMI": "ami-73b29108" },
-    "us-east-2": {"AMI": "ami-2afbdb4f", "MonitorAMI": "ami-11f8d874" },
-    "us-west-1": {"AMI": "ami-7e73581e", "MonitorAMI": "ami-7c73581c" },
-    "us-west-2": {"AMI": "ami-b88a6cc0", "MonitorAMI": "ami-b6886ece" }
+    "ap-northeast-1": {"AMI": "ami-349c1f52", "MonitorAMI": "ami-2d9c1f4b" },
+    "ap-northeast-2": {"AMI": "ami-077adc69", "MonitorAMI": "ami-187ddb76" },
+    "ap-south-1": {"AMI": "ami-777f3718", "MonitorAMI": "ami-4d713922" },
+    "ap-southeast-1": {"AMI": "ami-c23e5fbe", "MonitorAMI": "ami-123c5d6e" },
+    "ap-southeast-2": {"AMI": "ami-b50afdd7", "MonitorAMI": "ami-2e09fe4c" },
+    "ca-central-1": {"AMI": "ami-ace45ec8", "MonitorAMI": "ami-a9e55fcd" },
+    "eu-central-1": {"AMI": "ami-9a55ddf5", "MonitorAMI": "ami-5b55dd34" },
+    "eu-west-1": {"AMI": "ami-c54bf1bc", "MonitorAMI": "ami-754ff50c" },
+    "eu-west-2": {"AMI": "ami-22baa446", "MonitorAMI": "ami-eebca28a" },
+    "sa-east-1": {"AMI": "ami-803274ec", "MonitorAMI": "ami-853274e9" },
+    "us-east-1": {"AMI": "ami-1583ea6f", "MonitorAMI": "ami-2981e853" },
+    "us-east-2": {"AMI": "ami-1b8ba27e", "MonitorAMI": "ami-5288a137" },
+    "us-west-1": {"AMI": "ami-f1929791", "MonitorAMI": "ami-329c9952" },
+    "us-west-2": {"AMI": "ami-7d07dd05", "MonitorAMI": "ami-277add5f" }
 })
 
 LoadBalancerSecurityGroup = t.add_resource(ec2.SecurityGroup(
@@ -381,14 +386,26 @@ MonitorSecurityGroup = t.add_resource(ec2.SecurityGroup(
             SecurityGroupIngress=[
                 ec2.SecurityGroupRule(
                     IpProtocol="tcp",
-                    FromPort="5000",
-                    ToPort="5000",
+                    FromPort="3000",
+                    ToPort="3000",
                     CidrIp=Ref(RemoteAccessCIDRParam),
                 ),
                 ec2.SecurityGroupRule(
                     IpProtocol="tcp",
                     FromPort="5601",
                     ToPort="5601",
+                    CidrIp=Ref(RemoteAccessCIDRParam),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="9200",
+                    ToPort="9200",
+                    CidrIp=Ref(RemoteAccessCIDRParam),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="9988",
+                    ToPort="9989",
                     CidrIp=Ref(RemoteAccessCIDRParam),
                 ),
             ],
@@ -767,7 +784,7 @@ def generate_new_instance(counter):
     instance.Tags = [
         {
             "Key": "Name",
-            "Value": "SrrBaseHost"
+            "Value": "StorReduce-QS-Base-Host"
         }
     ]
 
@@ -798,7 +815,7 @@ monitor_instance = t.add_resource(ec2.Instance(
     ],
     InstanceType=Ref(MonitorInstanceTypeParam),
     ImageId=FindInMap("AWSAMIRegion", Ref("AWS::Region"), "MonitorAMI"),
-    Tags=Tags(Name="SRRMonitorVM",),
+    Tags=Tags(Name="StorReduce-QS-Monitor-Host",),
     IamInstanceProfile=Ref(StorReduceHostProfile)
 ))
 
@@ -833,7 +850,7 @@ monitor_instance.Metadata= cloudformation.Metadata(
                         ),
                         mode="000550",
                         owner="root",
-                        group="root")
+                        group="root"),
                 }),
                 commands={
                     "monitor-srr": {
@@ -900,7 +917,7 @@ def configure_for_follower(instance, counter):
     instance.Tags = [
         {
             "Key": "Name",
-            "Value": "SrrHost"
+            "Value": "StorReduce-QS-Host"
         }
     ]
 
@@ -953,6 +970,39 @@ outputs.append(
         Description="Elastic Load Balancer DNS Name"
     )
 )
+
+outputs.append(
+    Output(
+        "StorReduceMonitorPublicDNSName",
+        Value=GetAtt("MonitorInstance", "PublicDnsName"),
+        Description="StorReduce QS Monitor Public DNS Name"
+    )
+)
+
+outputs.append(
+    Output(
+        "StorReduceMonitorGrafanaDashboardAddress",
+        Value=Join("", ["http://", GetAtt("MonitorInstance", "PublicDnsName"), ":3000"]),
+        Description="Address for Grafana Dashboard on StorReduce Monitor"
+    )
+)
+
+outputs.append(
+    Output(
+        "StorReduceMonitorKibanaDashboardAddress",
+        Value=Join("", ["http://", GetAtt("MonitorInstance", "PublicDnsName"), ":9988"]),
+        Description="Address for Kibana Dashboard on StorReduce Monitor"
+    )
+)
+
+outputs.append(
+    Output(
+        "StorReduceMonitorElasticAddress",
+        Value=Join("", ["http://", GetAtt("MonitorInstance", "PublicDnsName"), ":9989"]),
+        Description="Address for Elasticsearch on StorReduce Monitor"
+    )
+)
+
 # for i in range(MIN_INSTANCES):
 #     outputs.append(generate_private_DNS_output(i))
 #     outputs.append(generate_private_IP_output(i))

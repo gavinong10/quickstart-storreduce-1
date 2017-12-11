@@ -14,7 +14,7 @@ monitor_vm_ip=${10}
 num_servers=${11}
 
 if [ "$shard_num" -eq "0" ]; then
-   shard_num="$((12 * ${num_servers}))"
+   shard_num="$((8 * ${num_servers}))"
 fi
 
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
@@ -33,6 +33,8 @@ put () { # sr_api_url, #json_doc
 get_local_srr_password () { # server_public_ip
   curl http://169.254.169.254/latest/meta-data/instance-id
 }
+
+sudo docker pull storreduce/storreduce:latest
 
 sudo storreducectl server init        --admin_port=8080        --cluster_listen_port=8095        --config_server_client_port=2379        --config_server_peer_port=2380        --dev_n_shards=${shard_num}        --http_port=80        --https_port=443        --n_shard_replicas=${replica_shard_num}        --force=true        --cluster_listen_interface=${ip}       ${cluster_token}
 
@@ -67,4 +69,5 @@ aws elb register-instances-with-load-balancer --load-balancer-name="$load_balanc
 #append at start and finish character "
 
 sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init.log
+sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init-cmd.log
 sudo rm -rf ${COOKIE_FILE}

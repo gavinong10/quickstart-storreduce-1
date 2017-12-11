@@ -135,7 +135,43 @@
                     "Outputs.ElasticLoadBalancerDNSName"
                 ]
             }
-        }
+        },
+        "StorReduceMonitorGrafanaDashboardAddress": {
+            "Description": "Elastic Load Balancer DNS Name",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerDNSName"
+                ]
+            }
+        },
+        "StorReduceMonitorGrafanaDashboardAddress": {
+            "Description": "Address for Grafana Dashboard on StorReduce Monitor",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerDNSName"
+                ]
+            }
+        },
+        "StorReduceMonitorKibanaDashboardAddress": {
+            "Description": "Address for Kibana Dashboard on StorReduce Monitor",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerDNSName"
+                ]
+            }
+        },
+        "StorReduceMonitorElasticAddress": {
+            "Description": "Address for Elasticsearch on StorReduce Monitor",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.ElasticLoadBalancerDNSName"
+                ]
+            }
+        },
     },
     "Parameters": {
         "NumberOfAZs": {
@@ -150,7 +186,7 @@
         },
         "BucketName": {
             "ConstraintDescription": "must be a valid S3 bucket name.",
-            "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket",
+            "Description": "The bucket to which StorReduce will store data. This should be a unique name, not an existing bucket as a new bucket will be created",
             "Type": "String"
         },
         "InstanceType": {
@@ -230,14 +266,14 @@
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "quickstart-reference",
-            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
+            "Description": "S3 bucket name for the Quick Start assets - by default references the official AWS quickstart resources and can be left unmodified. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z\\-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "storreduce/latest/",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
+            "Description": "S3 key prefix for the Quick Start assets - by default references the official AWS quickstart resources and can be left unmodified. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
             "Type": "String"
         },
         "RemoteAccessCIDR": {
@@ -247,16 +283,16 @@
             "Type": "String"
         },
         "ReplicaShardsNum": {
-            "Description": "The number of replica shards to use for the StorReduce cluster. Replicas create redundancy for higher resiliency but use extra CPU and disk space",
+            "Description": "The number of replica shards to use for the StorReduce cluster. Replicas create redundancy for higher resiliency but will result in using more SSD space and higher IOPS. Usage will be scaled by a factor of (1 + # of replicas)",
             "MinValue": 0,
             "Type": "Number"
         },
         "StorReduceHostName": {
-            "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key",
+            "Description": "The hostname to be used to address StorReduce. Objects stored on StorReduce will be addressed http://hostname/bucket/key or http://bucket.hostname/key. StorReduce settings will automatically be configured to add the AWS internal DNS values of the instances within the VPC and the AWS default public DNS name of the load balancer. This field can be populated as a comma-separated list of other DNS names corresponding to aliases for the load balancer, or else left blank",
             "Type": "String"
         },
         "ShardsNum": {
-            "Description": "The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 12 * number of servers)",
+            "Description": "The number of shards to use for StorReduce. Set to 0 for automatic configuration (i.e. 8 * number of servers)",
             "MinValue": 0,
             "Type": "Number"
         },
@@ -266,7 +302,7 @@
             "Type": "String"
         },
         "StorReducePassword": {
-            "Description": "Password for the StorReduce admin root user",
+            "Description": "The password for the StorReduce admin root user. This password is used to configure the StorReduce admin web interface and admin account for Grafana on the StorReduce Monitor server. StorReduce Monitor access to Elasticsearch and Kibana are also secured using Basic Auth against the StorReduce user management system.",
             "NoEcho": true,
             "Type": "String"
         },

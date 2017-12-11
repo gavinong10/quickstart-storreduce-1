@@ -7,3 +7,6 @@ echo https://gong-cf-templates.s3.amazonaws.com/templates/storreduce-group-az3.t
 echo https://gong-cf-templates.s3.amazonaws.com/templates/storreduce-group-az4.template
 echo https://gong-cf-templates.s3.amazonaws.com/templates/storreduce-group-az.template
 echo https://gong-cf-templates.s3.amazonaws.com/templates/quickstart-storreduce-master.template
+
+aws s3 sync . s3://gong-cf-templates-magic --profile=magic
+echo https://gong-cf-templates-magic.s3.amazonaws.com/templates/quickstart-storreduce-master.template

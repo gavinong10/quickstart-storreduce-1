@@ -171,7 +171,7 @@
                     "Outputs.ElasticLoadBalancerDNSName"
                 ]
             }
-        },
+        }
     },
     "Parameters": {
         "NumberOfAZs": {

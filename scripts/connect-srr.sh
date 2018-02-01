@@ -15,6 +15,8 @@ if [ "$shard_num" -eq "0" ]; then
    shard_num="$((8 * ${num_servers}))"
 fi
 
+sudo storreducectl server update
+
 # Reformed inputs
 first_server_public_sr_api="https://${first_server_private_ip}:8080/api"
 

@@ -17,6 +17,8 @@ if [ "$shard_num" -eq "0" ]; then
    shard_num="$((8 * ${num_servers}))"
 fi
 
+sudo storreducectl server update
+
 CURL_ARGS="--fail --insecure --retry 10 --retry-delay 30"
 COOKIE_FILE="/tmp/cookie.txt"
 

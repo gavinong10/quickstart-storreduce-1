@@ -344,20 +344,21 @@ t.add_metadata({
 
 
 t.add_mapping('AWSAMIRegion', {
-    "ap-northeast-1": {"AMI": "ami-349c1f52", "MonitorAMI": "ami-2d9c1f4b" },
-    "ap-northeast-2": {"AMI": "ami-077adc69", "MonitorAMI": "ami-187ddb76" },
-    "ap-south-1": {"AMI": "ami-777f3718", "MonitorAMI": "ami-4d713922" },
-    "ap-southeast-1": {"AMI": "ami-c23e5fbe", "MonitorAMI": "ami-123c5d6e" },
-    "ap-southeast-2": {"AMI": "ami-b50afdd7", "MonitorAMI": "ami-2e09fe4c" },
-    "ca-central-1": {"AMI": "ami-ace45ec8", "MonitorAMI": "ami-a9e55fcd" },
-    "eu-central-1": {"AMI": "ami-9a55ddf5", "MonitorAMI": "ami-5b55dd34" },
-    "eu-west-1": {"AMI": "ami-c54bf1bc", "MonitorAMI": "ami-754ff50c" },
-    "eu-west-2": {"AMI": "ami-22baa446", "MonitorAMI": "ami-eebca28a" },
-    "sa-east-1": {"AMI": "ami-803274ec", "MonitorAMI": "ami-853274e9" },
-    "us-east-1": {"AMI": "ami-1583ea6f", "MonitorAMI": "ami-2981e853" },
-    "us-east-2": {"AMI": "ami-1b8ba27e", "MonitorAMI": "ami-5288a137" },
-    "us-west-1": {"AMI": "ami-f1929791", "MonitorAMI": "ami-329c9952" },
-    "us-west-2": {"AMI": "ami-7d07dd05", "MonitorAMI": "ami-277add5f" }
+    "ap-northeast-1": {"AMI": "ami-07583061", "MonitorAMI": "ami-ee5d3588" },
+    "ap-northeast-2": {"AMI": "ami-f12c8f9f", "MonitorAMI": "ami-6531920b" },
+    "ap-southeast-1": {"AMI": "ami-d4c88da8", "MonitorAMI": "ami-e8cb8e94" },
+    "ap-southeast-2": {"AMI": "ami-a35ca5c1", "MonitorAMI": "ami-8c5fa6ee" },
+    "ap-south-1": {"AMI": "ami-9d84d4f2", "MonitorAMI": "ami-7884d417" },
+    "eu-west-1": {"AMI": "ami-fc4d2f85", "MonitorAMI": "ami-3c533145" },
+    "sa-east-1": {"AMI": "ami-472d622b", "MonitorAMI": "ami-132f607f" },
+    "us-east-1": {"AMI": "ami-2084be5a", "MonitorAMI": "ami-5742472d" },
+    "us-west-1": {"AMI": "ami-57f3ff37", "MonitorAMI": "ami-568d8136" },
+    "us-west-2": {"AMI": "ami-dbf249a3", "MonitorAMI": "ami-0949f171" },
+    "eu-central-1": {"AMI": "ami-613ca70e", "MonitorAMI": "ami-b032a9df" },
+    "us-east-2": {"AMI": "ami-dd0431b8", "MonitorAMI": "ami-8a0431ef" },
+    "eu-west-2": {"AMI": "ami-86d1cbe2", "MonitorAMI": "ami-45d1cb21" },
+    "ca-central-1": {"AMI": "ami-1dde5a79", "MonitorAMI": "ami-ddd256b9" },
+    "eu-west-3": {"AMI": "ami-55b40228", "MonitorAMI": "ami-fbb40286" },
 })
 
 LoadBalancerSecurityGroup = t.add_resource(ec2.SecurityGroup(
@@ -1055,4 +1056,5 @@ print(t.to_json())
 #                     }
 #                 ]
 #             }
+
 #         }

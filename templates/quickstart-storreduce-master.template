@@ -4,67 +4,67 @@
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [{
-                    "Label": {
-                        "default": "StorReduce Configuration"
-                    },
-                    "Parameters": [
-                        "StorReducePassword",
-                        "NumSRRHosts",
-                        "ShardsNum",
-                        "ReplicaShardsNum",
-                        "InstanceType",
-                        "MonitorInstanceType",
-                        "BucketName",
-                        "StorReduceLicense",
-                        "StorReduceHostName"
-                    ]
+                "Label": {
+                    "default": "StorReduce Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "VPC Network Configuration"
-                    },
-                    "Parameters": [
-                        "NumberOfAZs",
-                        "AvailabilityZones",
-                        "RemoteAccessCIDR",
-                        "VPCCIDR",
-                        "PrivateSubnet1ACIDR",
-                        "PrivateSubnet2ACIDR",
-                        "PrivateSubnet3ACIDR",
-                        "PrivateSubnet4ACIDR",
-                        "PublicSubnet1CIDR",
-                        "PublicSubnet2CIDR",
-                        "PublicSubnet3CIDR",
-                        "PublicSubnet4CIDR"
-                    ]
+                "Parameters": [
+                    "StorReducePassword",
+                    "NumSRRHosts",
+                    "ShardsNum",
+                    "ReplicaShardsNum",
+                    "InstanceType",
+                    "MonitorInstanceType",
+                    "BucketName",
+                    "StorReduceLicense",
+                    "StorReduceHostName"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "VPC Network Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "Amazon EC2 Configuration"
-                    },
-                    "Parameters": [
-                        "KeyPairName"
-                    ]
+                "Parameters": [
+                    "NumberOfAZs",
+                    "AvailabilityZones",
+                    "RemoteAccessCIDR",
+                    "VPCCIDR",
+                    "PrivateSubnet1ACIDR",
+                    "PrivateSubnet2ACIDR",
+                    "PrivateSubnet3ACIDR",
+                    "PrivateSubnet4ACIDR",
+                    "PublicSubnet1CIDR",
+                    "PublicSubnet2CIDR",
+                    "PublicSubnet3CIDR",
+                    "PublicSubnet4CIDR"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "Amazon EC2 Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "Linux Bastion Configuration"
-                    },
-                    "Parameters": [
-                        "NumBastionHosts",
-                        "BastionAMIOS",
-                        "BastionInstanceType"
-                    ]
+                "Parameters": [
+                    "KeyPairName"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "Linux Bastion Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "AWS Quick Start Configuration"
-                    },
-                    "Parameters": [
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix"
-                    ]
-                }
+                "Parameters": [
+                    "NumBastionHosts",
+                    "BastionAMIOS",
+                    "BastionInstanceType"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "AWS Quick Start Configuration"
+                },
+                "Parameters": [
+                    "QSS3BucketName",
+                    "QSS3KeyPrefix"
+                ]
+            }
             ],
             "ParameterLabels": {
                 "StorReducePassword": {
@@ -401,29 +401,29 @@
     "Conditions": {
         "3AZCondition": {
             "Fn::Or": [{
-                    "Fn::Equals": [{
-                            "Ref": "NumberOfAZs"
-                        },
-                        "3"
-                    ]
+                "Fn::Equals": [{
+                    "Ref": "NumberOfAZs"
                 },
-                {
-                    "Condition": "4AZCondition"
-                }
+                "3"
+                ]
+            },
+            {
+                "Condition": "4AZCondition"
+            }
             ]
         },
         "4AZCondition": {
             "Fn::Equals": [{
-                    "Ref": "NumberOfAZs"
-                },
-                "4"
+                "Ref": "NumberOfAZs"
+            },
+            "4"
             ]
         },
         "GovCloudCondition": {
             "Fn::Equals": [{
-                    "Ref": "AWS::Region"
-                },
-                "us-gov-west-1"
+                "Ref": "AWS::Region"
+            },
+            "us-gov-west-1"
             ]
         }
     },
@@ -588,45 +588,45 @@
                     "PrivateSubnetsToSpan": {
                         "Fn::Join": [
                             ",", [{
-                                    "Fn::GetAtt": [
-                                        "VPCStack",
-                                        "Outputs.PrivateSubnet1AID"
-                                    ]
-                                },
-                                {
-                                    "Fn::GetAtt": [
-                                        "VPCStack",
-                                        "Outputs.PrivateSubnet2AID"
-                                    ]
-                                },
-                                {
-                                    "Fn::If": [
-                                        "3AZCondition",
-                                        {
-                                            "Fn::GetAtt": [
-                                                "VPCStack",
-                                                "Outputs.PrivateSubnet3AID"
-                                            ]
-                                        },
-                                        {
-                                            "Ref": "AWS::NoValue"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "Fn::If": [
-                                        "4AZCondition",
-                                        {
-                                            "Fn::GetAtt": [
-                                                "VPCStack",
-                                                "Outputs.PrivateSubnet4AID"
-                                            ]
-                                        },
-                                        {
-                                            "Ref": "AWS::NoValue"
-                                        }
-                                    ]
-                                }
+                                "Fn::GetAtt": [
+                                    "VPCStack",
+                                    "Outputs.PrivateSubnet1AID"
+                                ]
+                            },
+                            {
+                                "Fn::GetAtt": [
+                                    "VPCStack",
+                                    "Outputs.PrivateSubnet2AID"
+                                ]
+                            },
+                            {
+                                "Fn::If": [
+                                    "3AZCondition",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PrivateSubnet3AID"
+                                        ]
+                                    },
+                                    {
+                                        "Ref": "AWS::NoValue"
+                                    }
+                                ]
+                            },
+                            {
+                                "Fn::If": [
+                                    "4AZCondition",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PrivateSubnet4AID"
+                                        ]
+                                    },
+                                    {
+                                        "Ref": "AWS::NoValue"
+                                    }
+                                ]
+                            }
                             ]
                         ]
                     },
@@ -636,45 +636,45 @@
                     "PublicSubnetsToSpan": {
                         "Fn::Join": [
                             ",", [{
-                                    "Fn::GetAtt": [
-                                        "VPCStack",
-                                        "Outputs.PublicSubnet1ID"
-                                    ]
-                                },
-                                {
-                                    "Fn::GetAtt": [
-                                        "VPCStack",
-                                        "Outputs.PublicSubnet2ID"
-                                    ]
-                                },
-                                {
-                                    "Fn::If": [
-                                        "3AZCondition",
-                                        {
-                                            "Fn::GetAtt": [
-                                                "VPCStack",
-                                                "Outputs.PublicSubnet3ID"
-                                            ]
-                                        },
-                                        {
-                                            "Ref": "AWS::NoValue"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "Fn::If": [
-                                        "4AZCondition",
-                                        {
-                                            "Fn::GetAtt": [
-                                                "VPCStack",
-                                                "Outputs.PublicSubnet4ID"
-                                            ]
-                                        },
-                                        {
-                                            "Ref": "AWS::NoValue"
-                                        }
-                                    ]
-                                }
+                                "Fn::GetAtt": [
+                                    "VPCStack",
+                                    "Outputs.PublicSubnet1ID"
+                                ]
+                            },
+                            {
+                                "Fn::GetAtt": [
+                                    "VPCStack",
+                                    "Outputs.PublicSubnet2ID"
+                                ]
+                            },
+                            {
+                                "Fn::If": [
+                                    "3AZCondition",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PublicSubnet3ID"
+                                        ]
+                                    },
+                                    {
+                                        "Ref": "AWS::NoValue"
+                                    }
+                                ]
+                            },
+                            {
+                                "Fn::If": [
+                                    "4AZCondition",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "VPCStack",
+                                            "Outputs.PublicSubnet4ID"
+                                        ]
+                                    },
+                                    {
+                                        "Ref": "AWS::NoValue"
+                                    }
+                                ]
+                            }
                             ]
                         ]
                     },

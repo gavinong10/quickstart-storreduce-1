@@ -4,51 +4,51 @@
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [{
-                    "Label": {
-                        "default": "StorReduce Configuration"
-                    },
-                    "Parameters": [
-                        "StorReducePassword",
-                        "NumSRRHosts",
-                        "ShardsNum",
-                        "ReplicaShardsNum",
-                        "InstanceType",
-                        "MonitorInstanceType",
-                        "BucketName",
-                        "StorReduceLicense",
-                        "StorReduceHostName"
-                    ]
+                "Label": {
+                    "default": "StorReduce Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "VPC Network Configuration"
-                    },
-                    "Parameters": [
-                        "NumberOfAZs",
-                        "VpcId",
-                        "RemoteAccessCIDR",
-                        "VPCCIDR",
-                        "PrivateSubnetsToSpan",
-                        "PublicSubnetsToSpan"
-                    ]
+                "Parameters": [
+                    "StorReducePassword",
+                    "NumSRRHosts",
+                    "ShardsNum",
+                    "ReplicaShardsNum",
+                    "InstanceType",
+                    "MonitorInstanceType",
+                    "BucketName",
+                    "StorReduceLicense",
+                    "StorReduceHostName"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "VPC Network Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "Amazon EC2 Configuration"
-                    },
-                    "Parameters": [
-                        "KeyPairName"
-                    ]
+                "Parameters": [
+                    "NumberOfAZs",
+                    "VpcId",
+                    "RemoteAccessCIDR",
+                    "VPCCIDR",
+                    "PrivateSubnetsToSpan",
+                    "PublicSubnetsToSpan"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "Amazon EC2 Configuration"
                 },
-                {
-                    "Label": {
-                        "default": "AWS Quick Start Configuration"
-                    },
-                    "Parameters": [
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix"
-                    ]
-                }
+                "Parameters": [
+                    "KeyPairName"
+                ]
+            },
+            {
+                "Label": {
+                    "default": "AWS Quick Start Configuration"
+                },
+                "Parameters": [
+                    "QSS3BucketName",
+                    "QSS3KeyPrefix"
+                ]
+            }
             ],
             "ParameterLabels": {
                 "BastionAMIOS": {

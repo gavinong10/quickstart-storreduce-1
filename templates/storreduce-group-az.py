@@ -202,7 +202,7 @@ QSS3BucketNameParam = t.add_parameter(Parameter(
     "QSS3BucketName",
     Description="S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)",
     ConstraintDescription="Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-    Default="quickstart-reference",
+    Default="aws-quickstart",
     Type="String",
     AllowedPattern="^[0-9a-zA-Z]+([0-9a-zA-Z\\-]*[0-9a-zA-Z])*$"
 ))

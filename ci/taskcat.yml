@@ -17,28 +17,9 @@ global:
     - us-west-1
     - us-west-2
   reporting: true
- 
 tests:
-  quickstart-storreducet1:
-    parameter_input: quickstart-storreduce-az3-3servers.json
+  storreduce:
+    parameter_input: storreduce-az3-3servers.json
     template_file: quickstart-storreduce-master.template
     regions:
     - eu-west-1
-    # - ap-southeast-2
-    # - eu-central-1
-    # - eu-west-1
-    # - us-east-1
-    # - us-east-2
-    #
-    # parameter_input: quickstart-storreduce-az2-3servers.json
-    # template_file: quickstart-storreduce-master.template
-    # 
-    # parameter_input: quickstart-storreduce-az31-3servers.json
-    # template_file: quickstart-storreduce-master.template
-    # regions:
-    # - us-west-2
-    # # - ap-southeast-2
-    # # - eu-central-1
-    # # - eu-west-1
-    # # - us-east-1
-    # # - us-east-2

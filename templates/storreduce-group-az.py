@@ -210,7 +210,7 @@ QSS3KeyPrefixParam = t.add_parameter(Parameter(
     "QSS3KeyPrefix",
     Description="S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)",
     ConstraintDescription="Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-    Default="storreduce/latest/",
+    Default="quickstart-storreduce/",
     Type="String",
     AllowedPattern="^[0-9a-zA-Z\\-/]*$",
 ))

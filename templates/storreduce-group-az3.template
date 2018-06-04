@@ -481,8 +481,8 @@
                 "MonitorAMI": "ami-568d8136"
             },
             "us-west-2": {
-                "AMI": "ami-dbf249a3",
-                "MonitorAMI": "ami-0949f171"
+                "AMI": "ami-aee2a6d6",
+                "MonitorAMI": "ami-4793253f"
             }
         }
     },

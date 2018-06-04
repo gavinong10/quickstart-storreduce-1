@@ -353,7 +353,7 @@ t.add_mapping('AWSAMIRegion', {
     "sa-east-1": {"AMI": "ami-472d622b", "MonitorAMI": "ami-132f607f" },
     "us-east-1": {"AMI": "ami-2084be5a", "MonitorAMI": "ami-5742472d" },
     "us-west-1": {"AMI": "ami-57f3ff37", "MonitorAMI": "ami-568d8136" },
-    "us-west-2": {"AMI": "ami-dbf249a3", "MonitorAMI": "ami-0949f171" },
+    "us-west-2": {"AMI": "ami-aee2a6d6", "MonitorAMI": "ami-4793253f" },
     "eu-central-1": {"AMI": "ami-613ca70e", "MonitorAMI": "ami-b032a9df" },
     "us-east-2": {"AMI": "ami-dd0431b8", "MonitorAMI": "ami-8a0431ef" },
     "eu-west-2": {"AMI": "ami-86d1cbe2", "MonitorAMI": "ami-45d1cb21" },

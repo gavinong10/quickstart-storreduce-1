@@ -137,20 +137,11 @@
             }
         },
         "StorReduceMonitorGrafanaDashboardAddress": {
-            "Description": "Elastic Load Balancer DNS Name",
-            "Value": {
-                "Fn::GetAtt": [
-                    "SrrGroup",
-                    "Outputs.ElasticLoadBalancerDNSName"
-                ]
-            }
-        },
-        "StorReduceMonitorGrafanaDashboardAddress": {
             "Description": "Address for Grafana Dashboard on StorReduce Monitor",
             "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
-                    "Outputs.ElasticLoadBalancerDNSName"
+                    "Outputs.StorReduceMonitorGrafanaDashboardAddress"
                 ]
             }
         },
@@ -159,7 +150,7 @@
             "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
-                    "Outputs.ElasticLoadBalancerDNSName"
+                    "Outputs.StorReduceMonitorKibanaDashboardAddress"
                 ]
             }
         },
@@ -168,7 +159,7 @@
             "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
-                    "Outputs.ElasticLoadBalancerDNSName"
+                    "Outputs.StorReduceMonitorElasticAddress"
                 ]
             }
         }
@@ -317,6 +308,35 @@
             "ConstraintDescription": "Your VPC-ID must be in the form vpc-xxxxxxxx where 'x' can be a number or a letter.",
             "Description": "VPC-ID of your existing Virtual Private Cloud (VPC) where you want to deploy a StorReduce cluster",
             "Type": "AWS::EC2::VPC::Id"
+        }
+    },
+    "Conditions": {
+        "3AZCondition": {
+            "Fn::Or": [{
+                    "Fn::Equals": [{
+                            "Ref": "NumberOfAZs"
+                        },
+                        "3"
+                    ]
+                },
+                {
+                    "Condition": "4AZCondition"
+                }
+            ]
+        },
+        "4AZCondition": {
+            "Fn::Equals": [{
+                    "Ref": "NumberOfAZs"
+                },
+                "4"
+            ]
+        },
+        "GovCloudCondition": {
+            "Fn::Equals": [{
+                    "Ref": "AWS::Region"
+                },
+                "us-gov-west-1"
+            ]
         }
     },
     "Resources": {

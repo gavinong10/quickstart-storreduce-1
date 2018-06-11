@@ -6,10 +6,9 @@ first_server_private_ip=$1
 srr_password="$2"
 shard_num=$3
 replica_shard_num=$4
-load_balancer_name=$5
-region=$6
-monitor_vm_ip=$7
-num_servers=$8
+region=$5
+monitor_vm_ip=$6
+num_servers=$7
 
 if [ "$shard_num" -eq "0" ]; then
    shard_num="$((8 * ${num_servers}))"
@@ -75,8 +74,6 @@ sudo storreducectl server restart
 
 # Wait for StorReduce on server to be up
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
-
-aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
 
 sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init.log
 sudo sed -i s/${srr_password}/xxxxx/g /var/log/cfn-init-cmd.log

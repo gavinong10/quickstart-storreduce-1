@@ -8,10 +8,9 @@ shard_num=$4
 replica_shard_num=$5
 hostname=$6
 load_balancer_DNS=$7
-load_balancer_name=$8
-region=$9
-monitor_vm_ip=${10}
-num_servers=${11}
+region=$8
+monitor_vm_ip=${9}
+num_servers=${10}
 
 if [ "$shard_num" -eq "0" ]; then
    shard_num="$((8 * ${num_servers}))"
@@ -62,8 +61,6 @@ sudo storreducectl server restart
 
 # Wait for StorReduce on server to be up
 while ! curl --insecure --fail https://${ip}:8080 > /dev/null 2>&1; do sleep 1; done
-
-aws elb register-instances-with-load-balancer --load-balancer-name="$load_balancer_name" --instances=`curl http://169.254.169.254/latest/meta-data/instance-id` --region="$region"
 
 #trim
 #replace " with \\"

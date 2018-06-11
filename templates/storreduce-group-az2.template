@@ -593,19 +593,73 @@
         }
     },
     "Outputs": {
-        "ElasticLoadBalancerDNSName": {
-            "Description": "Elastic Load Balancer DNS Name",
+        "NetworkLoadBalancerDNSName": {
+            "Description": "Network Load Balancer DNS Name",
             "Value": {
                 "Fn::GetAtt": [
-                    "ElasticLoadBalancer",
+                    "NetworkLoadBalancer",
                     "DNSName"
                 ]
             }
         },
-        "ElasticLoadBalancerID": {
-            "Description": "Elastic Load Balancer ID",
+        "NetworkLoadBalancerID": {
+            "Description": "Network Load Balancer ID",
             "Value": {
-                "Ref": "ElasticLoadBalancer"
+                "Ref": "NetworkLoadBalancer"
+            }
+        },
+        "StorReduceAdminUIAddress": {
+            "Description": "Address for StorReduce Administration",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "http://",
+                        {
+                            "Fn::GetAtt": [
+                                "NetworkLoadBalancer",
+                                "DNSName"
+                            ]
+                        },
+                        ":8080"
+                    ]
+                ]
+            }
+        },
+        "StorReduceHTTPEndpoint": {
+            "Description": "StorReduce S3 Endpoint over HTTP",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "http://",
+                        {
+                            "Fn::GetAtt": [
+                                "NetworkLoadBalancer",
+                                "DNSName"
+                            ]
+                        },
+                        ":80"
+                    ]
+                ]
+            }
+        },
+        "StorReduceHTTPSEndpoint": {
+            "Description": "StorReduce S3 Endpoint over HTTPS",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "http://",
+                        {
+                            "Fn::GetAtt": [
+                                "NetworkLoadBalancer",
+                                "DNSName"
+                            ]
+                        },
+                        ":443"
+                    ]
+                ]
             }
         },
         "StorReduceMonitorElasticAddress": {
@@ -617,11 +671,11 @@
                         "http://",
                         {
                             "Fn::GetAtt": [
-                                "MonitorInstance",
-                                "PublicDnsName"
+                                "NetworkLoadBalancer",
+                                "DNSName"
                             ]
                         },
-                        ":9989"
+                        ":9200"
                     ]
                 ]
             }
@@ -635,8 +689,8 @@
                         "http://",
                         {
                             "Fn::GetAtt": [
-                                "MonitorInstance",
-                                "PublicDnsName"
+                                "NetworkLoadBalancer",
+                                "DNSName"
                             ]
                         },
                         ":3000"
@@ -653,21 +707,12 @@
                         "http://",
                         {
                             "Fn::GetAtt": [
-                                "MonitorInstance",
-                                "PublicDnsName"
+                                "NetworkLoadBalancer",
+                                "DNSName"
                             ]
                         },
-                        ":9988"
+                        ":5601"
                     ]
-                ]
-            }
-        },
-        "StorReduceMonitorPublicDNSName": {
-            "Description": "StorReduce QS Monitor Public DNS Name",
-            "Value": {
-                "Fn::GetAtt": [
-                    "MonitorInstance",
-                    "PublicDnsName"
                 ]
             }
         }
@@ -884,6 +929,30 @@
                         "FromPort": "9090",
                         "IpProtocol": "tcp",
                         "ToPort": "9090"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "80",
+                        "IpProtocol": "tcp",
+                        "ToPort": "80"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "443",
+                        "IpProtocol": "tcp",
+                        "ToPort": "443"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "8080",
+                        "IpProtocol": "tcp",
+                        "ToPort": "8080"
                     }
                 ],
                 "VpcId": {
@@ -891,72 +960,6 @@
                 }
             },
             "Type": "AWS::EC2::SecurityGroup"
-        },
-        "EIPAssoc1": {
-            "Properties": {
-                "AllocationId": {
-                    "Fn::GetAtt": [
-                        "EIPMonitor",
-                        "AllocationId"
-                    ]
-                },
-                "NetworkInterfaceId": {
-                    "Ref": "Eth0"
-                },
-                "PrivateIpAddress": {
-                    "Fn::GetAtt": [
-                        "Eth0",
-                        "PrimaryPrivateIpAddress"
-                    ]
-                }
-            },
-            "Type": "AWS::EC2::EIPAssociation"
-        },
-        "EIPMonitor": {
-            "Properties": {
-                "Domain": "vpc"
-            },
-            "Type": "AWS::EC2::EIP"
-        },
-        "ElasticLoadBalancer": {
-            "CreationPolicy": {
-                "ResourceSignal": {
-                    "Timeout": "PT15M"
-                }
-            },
-            "Properties": {
-                "CrossZone": "true",
-                "HealthCheck": {
-                    "HealthyThreshold": "3",
-                    "Interval": "30",
-                    "Target": "HTTP:80/health_check",
-                    "Timeout": "5",
-                    "UnhealthyThreshold": "5"
-                },
-                "Listeners": [
-                    {
-                        "InstancePort": "80",
-                        "InstanceProtocol": "TCP",
-                        "LoadBalancerPort": "80",
-                        "Protocol": "TCP"
-                    },
-                    {
-                        "InstancePort": "443",
-                        "InstanceProtocol": "TCP",
-                        "LoadBalancerPort": "443",
-                        "Protocol": "TCP"
-                    }
-                ],
-                "SecurityGroups": [
-                    {
-                        "Ref": "LoadBalancerSecurityGroup"
-                    }
-                ],
-                "Subnets": {
-                    "Ref": "PublicSubnetsToSpan"
-                }
-            },
-            "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
         },
         "Eth0": {
             "DependsOn": "AllInternalAccessSecurityGroup",
@@ -990,33 +993,6 @@
                 ]
             },
             "Type": "AWS::EC2::NetworkInterface"
-        },
-        "LoadBalancerSecurityGroup": {
-            "Properties": {
-                "GroupDescription": "Enables remote access to port 80 and 443 for the StorReduce load balancer",
-                "SecurityGroupIngress": [
-                    {
-                        "CidrIp": {
-                            "Ref": "RemoteAccessCIDR"
-                        },
-                        "FromPort": "80",
-                        "IpProtocol": "tcp",
-                        "ToPort": "80"
-                    },
-                    {
-                        "CidrIp": {
-                            "Ref": "RemoteAccessCIDR"
-                        },
-                        "FromPort": "443",
-                        "IpProtocol": "tcp",
-                        "ToPort": "443"
-                    }
-                ],
-                "VpcId": {
-                    "Ref": "VpcId"
-                }
-            },
-            "Type": "AWS::EC2::SecurityGroup"
         },
         "MonitorInstance": {
             "CreationPolicy": {
@@ -1180,14 +1156,6 @@
                         "FromPort": "9200",
                         "IpProtocol": "tcp",
                         "ToPort": "9200"
-                    },
-                    {
-                        "CidrIp": {
-                            "Ref": "RemoteAccessCIDR"
-                        },
-                        "FromPort": "9988",
-                        "IpProtocol": "tcp",
-                        "ToPort": "9989"
                     }
                 ],
                 "VpcId": {
@@ -1195,6 +1163,22 @@
                 }
             },
             "Type": "AWS::EC2::SecurityGroup"
+        },
+        "NetworkLoadBalancer": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT15M"
+                }
+            },
+            "Properties": {
+                "Name": "NetworkLoadBalancer",
+                "Scheme": "internet-facing",
+                "Subnets": {
+                    "Ref": "PublicSubnetsToSpan"
+                },
+                "Type": "network"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer"
         },
         "SrrBucket": {
             "DeletionPolicy": "Retain",
@@ -1356,7 +1340,6 @@
                 }
             },
             "DependsOn": [
-                "ElasticLoadBalancer",
                 "SrrBucket",
                 "StorReduceHostProfile",
                 "AllInternalAccessSecurityGroup"
@@ -1415,14 +1398,9 @@
                                             "\"",
                                             {
                                                 "Fn::GetAtt": [
-                                                    "ElasticLoadBalancer",
+                                                    "NetworkLoadBalancer",
                                                     "DNSName"
                                                 ]
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
-                                                "Ref": "ElasticLoadBalancer"
                                             },
                                             "\" ",
                                             "\"",
@@ -1494,6 +1472,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -1592,11 +1573,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -1664,6 +1640,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -1763,11 +1742,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -1835,6 +1809,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -1934,11 +1911,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -2006,6 +1978,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -2105,11 +2080,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -2177,6 +2147,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -2276,11 +2249,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -2348,6 +2316,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -2447,11 +2418,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -2519,6 +2485,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -2618,11 +2587,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -2690,6 +2654,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -2789,11 +2756,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -2861,6 +2823,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -2960,11 +2925,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -3032,6 +2992,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -3131,11 +3094,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -3203,6 +3161,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -3302,11 +3263,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -3374,6 +3330,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -3472,11 +3431,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -3544,6 +3498,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -3643,11 +3600,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -3715,6 +3667,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -3814,11 +3769,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -3886,6 +3836,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -3985,11 +3938,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -4057,6 +4005,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -4156,11 +4107,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -4228,6 +4174,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -4327,11 +4276,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -4399,6 +4343,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -4498,11 +4445,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -4570,6 +4512,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -4669,11 +4614,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -4741,6 +4681,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -4840,11 +4783,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -4912,6 +4850,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -5011,11 +4952,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -5083,6 +5019,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -5182,11 +5121,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -5254,6 +5188,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -5353,11 +5290,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -5425,6 +5357,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -5524,11 +5459,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -5596,6 +5526,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -5695,11 +5628,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -5767,6 +5695,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -5866,11 +5797,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -5938,6 +5864,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -6037,11 +5966,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -6109,6 +6033,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -6208,11 +6135,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -6280,6 +6202,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -6379,11 +6304,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -6451,6 +6371,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -6550,11 +6473,6 @@
                                             "\" ",
                                             "\"",
                                             {
-                                                "Ref": "ElasticLoadBalancer"
-                                            },
-                                            "\" ",
-                                            "\"",
-                                            {
                                                 "Ref": "AWS::Region"
                                             },
                                             "\" ",
@@ -6622,6 +6540,9 @@
                 "SecurityGroupIds": [
                     {
                         "Ref": "AllInternalAccessSecurityGroup"
+                    },
+                    {
+                        "Ref": "StorReduceWebSecurityGroup"
                     }
                 ],
                 "SubnetId": {
@@ -6666,6 +6587,1475 @@
                 }
             },
             "Type": "AWS::EC2::Instance"
+        },
+        "StorReduceNLBPort3000Listener": {
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "StorReduceNLBTargetsPort3000"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "NetworkLoadBalancer"
+                },
+                "Port": "3000",
+                "Protocol": "TCP"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::Listener"
+        },
+        "StorReduceNLBPort443Listener": {
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "StorReduceNLBTargetsPort443"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "NetworkLoadBalancer"
+                },
+                "Port": "443",
+                "Protocol": "TCP"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::Listener"
+        },
+        "StorReduceNLBPort5601Listener": {
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "StorReduceNLBTargetsPort5601"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "NetworkLoadBalancer"
+                },
+                "Port": "5601",
+                "Protocol": "TCP"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::Listener"
+        },
+        "StorReduceNLBPort8080Listener": {
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "StorReduceNLBTargetsPort8080"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "NetworkLoadBalancer"
+                },
+                "Port": "8080",
+                "Protocol": "TCP"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::Listener"
+        },
+        "StorReduceNLBPort80Listener": {
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "StorReduceNLBTargetsPort80"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "NetworkLoadBalancer"
+                },
+                "Port": "80",
+                "Protocol": "TCP"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::Listener"
+        },
+        "StorReduceNLBPort9200Listener": {
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "StorReduceNLBTargetsPort9200"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "NetworkLoadBalancer"
+                },
+                "Port": "9200",
+                "Protocol": "TCP"
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::Listener"
+        },
+        "StorReduceNLBTargetsPort3000": {
+            "Properties": {
+                "Name": "StorReduceNLBTargetsPort3000",
+                "Port": 3000,
+                "Protocol": "TCP",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "MonitorInstance"
+                        },
+                        "Port": 3000
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+        },
+        "StorReduceNLBTargetsPort443": {
+            "Properties": {
+                "Name": "StorReduceNLBTargetsPort443",
+                "Port": 443,
+                "Protocol": "TCP",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance0"
+                        },
+                        "Port": 443
+                    },
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance1"
+                        },
+                        "Port": 443
+                    },
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance2"
+                        },
+                        "Port": 443
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo4",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance3"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo5",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance4"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo6",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance5"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo7",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance6"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo8",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance7"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo9",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance8"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo10",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance9"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo11",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance10"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo12",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance11"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo13",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance12"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo14",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance13"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo15",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance14"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo16",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance15"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo17",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance16"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo18",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance17"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo19",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance18"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo20",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance19"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo21",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance20"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo22",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance21"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo23",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance22"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo24",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance23"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo25",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance24"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo26",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance25"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo27",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance26"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo28",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance27"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo29",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance28"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo30",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance29"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo31",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance30"
+                                },
+                                "Port": 443
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+        },
+        "StorReduceNLBTargetsPort5601": {
+            "Properties": {
+                "Name": "StorReduceNLBTargetsPort5601",
+                "Port": 5601,
+                "Protocol": "TCP",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "MonitorInstance"
+                        },
+                        "Port": 5601
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+        },
+        "StorReduceNLBTargetsPort80": {
+            "Properties": {
+                "Name": "StorReduceNLBTargetsPort80",
+                "Port": 80,
+                "Protocol": "TCP",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance0"
+                        },
+                        "Port": 80
+                    },
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance1"
+                        },
+                        "Port": 80
+                    },
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance2"
+                        },
+                        "Port": 80
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo4",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance3"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo5",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance4"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo6",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance5"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo7",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance6"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo8",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance7"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo9",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance8"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo10",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance9"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo11",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance10"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo12",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance11"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo13",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance12"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo14",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance13"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo15",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance14"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo16",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance15"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo17",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance16"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo18",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance17"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo19",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance18"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo20",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance19"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo21",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance20"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo22",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance21"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo23",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance22"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo24",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance23"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo25",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance24"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo26",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance25"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo27",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance26"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo28",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance27"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo29",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance28"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo30",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance29"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo31",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance30"
+                                },
+                                "Port": 80
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+        },
+        "StorReduceNLBTargetsPort8080": {
+            "Properties": {
+                "Name": "StorReduceNLBTargetsPort8080",
+                "Port": 8080,
+                "Protocol": "TCP",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance0"
+                        },
+                        "Port": 8080
+                    },
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance1"
+                        },
+                        "Port": 8080
+                    },
+                    {
+                        "Id": {
+                            "Ref": "StorReduceInstance2"
+                        },
+                        "Port": 8080
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo4",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance3"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo5",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance4"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo6",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance5"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo7",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance6"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo8",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance7"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo9",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance8"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo10",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance9"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo11",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance10"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo12",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance11"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo13",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance12"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo14",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance13"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo15",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance14"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo16",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance15"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo17",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance16"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo18",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance17"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo19",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance18"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo20",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance19"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo21",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance20"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo22",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance21"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo23",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance22"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo24",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance23"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo25",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance24"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo26",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance25"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo27",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance26"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo28",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance27"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo29",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance28"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo30",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance29"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::If": [
+                            "NumInstancesLessThanOrEqualTo31",
+                            {
+                                "Id": {
+                                    "Ref": "StorReduceInstance30"
+                                },
+                                "Port": 8080
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+        },
+        "StorReduceNLBTargetsPort9200": {
+            "Properties": {
+                "Name": "StorReduceNLBTargetsPort9200",
+                "Port": 9200,
+                "Protocol": "TCP",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "MonitorInstance"
+                        },
+                        "Port": 9200
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+        },
+        "StorReduceWebSecurityGroup": {
+            "Properties": {
+                "GroupDescription": "Enables remote access to port 80 and 443 for the StorReduce load balancer",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "80",
+                        "IpProtocol": "tcp",
+                        "ToPort": "80"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "443",
+                        "IpProtocol": "tcp",
+                        "ToPort": "443"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        },
+                        "FromPort": "8080",
+                        "IpProtocol": "tcp",
+                        "ToPort": "8080"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
         }
     }
 }

@@ -712,30 +712,48 @@
     },
     "Mappings": {},
     "Outputs": {
-        "ElasticLoadBalancerID": {
-            "Description": "Elastic Load Balancer ID",
+        "NetworkLoadBalancerID": {
+            "Description": "Network Load Balancer ID",
             "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
-                    "Outputs.ElasticLoadBalancerID"
+                    "Outputs.NetworkLoadBalancerID"
                 ]
             }
         },
-        "ElasticLoadBalancerDNSName": {
-            "Description": "Elastic Load Balancer Public DNS Name",
+        "NetworkLoadBalancerDNSName": {
+            "Description": "Network Load Balancer Public DNS Name",
             "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
-                    "Outputs.ElasticLoadBalancerDNSName"
+                    "Outputs.NetworkLoadBalancerDNSName"
                 ]
             }
         },
-        "StorReduceMonitorPublicDNSName": {
-            "Description": "StorReduce Monitor Public DNS Name",
+        "StorReduceAdminUIAddress": {
+            "Description": "Address for StorReduce Administration",
             "Value": {
                 "Fn::GetAtt": [
                     "SrrGroup",
-                    "Outputs.StorReduceMonitorPublicDNSName"
+                    "Outputs.StorReduceAdminUIAddress"
+                ]
+            }
+        },
+        "StorReduceHTTPEndpoint": {
+            "Description": "StorReduce S3 Endpoint over HTTP",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.StorReduceHTTPEndpoint"
+                ]
+            }
+        },
+        "StorReduceHTTPSEndpoint": {
+            "Description": "StorReduce S3 Endpoint over HTTPS",
+            "Value": {
+                "Fn::GetAtt": [
+                    "SrrGroup",
+                    "Outputs.StorReduceHTTPSEndpoint"
                 ]
             }
         },

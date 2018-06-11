@@ -11,7 +11,7 @@ from troposphere.iam import Role, Policy, InstanceProfile
 
 import sys
 
-import troposphere.elasticloadbalancing as elb
+import troposphere.elasticloadbalancingv2 as elb
 
 # // Gavin TODO: Fix TaskCat
 
@@ -361,8 +361,8 @@ t.add_mapping('AWSAMIRegion', {
     "eu-west-3": {"AMI": "ami-55b40228", "MonitorAMI": "ami-fbb40286" },
 })
 
-LoadBalancerSecurityGroup = t.add_resource(ec2.SecurityGroup(
-            "LoadBalancerSecurityGroup",
+StorReduceWebSecurityGroup = t.add_resource(ec2.SecurityGroup(
+            "StorReduceWebSecurityGroup",
             GroupDescription="Enables remote access to port 80 and 443 for the StorReduce load balancer",
             SecurityGroupIngress=[
                 ec2.SecurityGroupRule(
@@ -375,6 +375,12 @@ LoadBalancerSecurityGroup = t.add_resource(ec2.SecurityGroup(
                     IpProtocol="tcp",
                     FromPort="443",
                     ToPort="443",
+                    CidrIp=Ref(RemoteAccessCIDRParam),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="8080",
+                    ToPort="8080",
                     CidrIp=Ref(RemoteAccessCIDRParam),
                 ),
             ],
@@ -401,12 +407,6 @@ MonitorSecurityGroup = t.add_resource(ec2.SecurityGroup(
                     IpProtocol="tcp",
                     FromPort="9200",
                     ToPort="9200",
-                    CidrIp=Ref(RemoteAccessCIDRParam),
-                ),
-                ec2.SecurityGroupRule(
-                    IpProtocol="tcp",
-                    FromPort="9988",
-                    ToPort="9989",
                     CidrIp=Ref(RemoteAccessCIDRParam),
                 ),
             ],
@@ -464,6 +464,24 @@ AllInternalAccessSecurityGroup = t.add_resource(ec2.SecurityGroup(
                     FromPort="9090",
                     ToPort="9090",
                     CidrIp=Ref(VPCCIDRParam),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="80",
+                    ToPort="80",
+                    CidrIp=Ref(RemoteAccessCIDRParam),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="443",
+                    ToPort="443",
+                    CidrIp=Ref(RemoteAccessCIDRParam),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="8080",
+                    ToPort="8080",
+                    CidrIp=Ref(RemoteAccessCIDRParam),
                 ),
             ],
             VpcId=Ref(VpcIdParam)
@@ -642,58 +660,18 @@ create_conditions()
 #     )
 # )
 
-elasticLB = t.add_resource(elb.LoadBalancer(
-        'ElasticLoadBalancer',
+NetworkLB = t.add_resource(elb.LoadBalancer(
+        "NetworkLoadBalancer",
+        Name="NetworkLoadBalancer",
+        Scheme="internet-facing",
         Subnets=Ref(PublicSubnetsToSpanParam),
-        CrossZone=True,
-        # Instances=[Ref(instances[i]) for i in range(MIN_INSTANCES)] + [If(CONDITION_COUNTER_PREFIX + str(i + 1), Ref(instances[i]), Ref("AWS::NoValue")) for i in range(MIN_INSTANCES, MAX_INSTANCES)],
-        # DependsOn=[instances[i].title for i in range(MIN_INSTANCES)] + [If(CONDITION_COUNTER_PREFIX + str(i + 1), instances[i].title, Ref("AWS::NoValue")) for i in range(MIN_INSTANCES, MAX_INSTANCES)],
-        Listeners=[elb.Listener(
-                    LoadBalancerPort="80",
-                    InstancePort="80",
-                    Protocol="TCP",
-                    InstanceProtocol="TCP"
-                ),
-                    elb.Listener(
-                        LoadBalancerPort="443",
-                        InstancePort="443",
-                        Protocol="TCP",
-                        InstanceProtocol="TCP"
-                    )
-                # If("InvokeSSLCert", 
-                #     elb.Listener(
-                #         LoadBalancerPort="443",
-                #         InstancePort="443",
-                #         Protocol="SSL",
-                #         InstanceProtocol="SSL",
-                #         SSLCertificateId=If("SSLCertificateIdIsUndefined",Ref(gen_SSL_certificate_resource),Ref(SSLCertificateIdParam))
-                #     ),
-                #     elb.Listener(
-                #         LoadBalancerPort="443",
-                #         InstancePort="443",
-                #         Protocol="TCP",
-                #         InstanceProtocol="TCP"
-                #     )
-                # )
-        ],
-        HealthCheck=elb.HealthCheck(
-            Target="HTTP:80/health_check",
-            HealthyThreshold="3",
-            UnhealthyThreshold="5",
-            Interval="30",
-            Timeout="5",
-        ),
-        SecurityGroups=[Ref(LoadBalancerSecurityGroup)],
-        CreationPolicy=CreationPolicy(
-            ResourceSignal=ResourceSignal(Timeout='PT15M')
-            )
+        Type='network',
+         CreationPolicy=CreationPolicy(
+           ResourceSignal=ResourceSignal(Timeout='PT15M')
+        )
     ))
 
 ######### Monitor VM Pre-setup ###########
-eip1 = t.add_resource(ec2.EIP(
-    "EIPMonitor",
-    Domain="vpc",
-))
 
 eth0 = t.add_resource(ec2.NetworkInterface(
     "Eth0",
@@ -708,26 +686,22 @@ eth0 = t.add_resource(ec2.NetworkInterface(
     ),
 ))
 
-eipassoc1 = t.add_resource(ec2.EIPAssociation(
-    "EIPAssoc1",
-    NetworkInterfaceId=Ref(eth0),
-    AllocationId=GetAtt("EIPMonitor", "AllocationId"),
-    PrivateIpAddress=GetAtt("Eth0", "PrimaryPrivateIpAddress"),
-))
-
 ######### End Monitor VM Pre-setup #######
+srr_targets_80 = []
+srr_targets_443 = []
+srr_targets_8080 = []
 
 def generate_new_instance(counter):
     # Create base StorReduce instance
     instance = ec2.Instance(BASE_NAME + str(counter))
-    instance.DependsOn=[elasticLB.title, SrrBucket.title, StorReduceHostProfile.title, AllInternalAccessSecurityGroup.title]
+    instance.DependsOn=[SrrBucket.title, StorReduceHostProfile.title, AllInternalAccessSecurityGroup.title]
     instance.ImageId = FindInMap("AWSAMIRegion", Ref("AWS::Region"), "AMI")
     instance.IamInstanceProfile = Ref(StorReduceHostProfile)
     # instance.AvailabilityZone = Select("0", Ref(AvailabilityZonesParam))
     instance.InstanceType = Ref(InstanceTypeParam)
     instance.KeyName = Ref(KeyPairNameParam)
     #instance.SecurityGroupIds = Ref(SecurityGroupIdsParam)
-    instance.SecurityGroupIds=[Ref(AllInternalAccessSecurityGroup)]
+    instance.SecurityGroupIds=[Ref(AllInternalAccessSecurityGroup), Ref(StorReduceWebSecurityGroup)]
 
     instance.SubnetId = Select("0", Ref(PrivateSubnetsToSpanParam))
     instance.UserData = Base64(Join("", [
@@ -772,8 +746,7 @@ def generate_new_instance(counter):
                                 "\'",Ref(ShardsNumParam), "\' ",
                                 "\'",Ref(ReplicaShardsNumParam), "\' ",
                                 "\"", Ref(StorReduceHostNameParam), "\" ",
-                                "\"", GetAtt(elasticLB, "DNSName"), "\" ",
-                                "\"", Ref(elasticLB), "\" ",
+                                "\"", GetAtt(NetworkLB, "DNSName"), "\" ", 
                                 "\"", Ref("AWS::Region"), "\" ",
                                 "\"", GetAtt("Eth0", "PrimaryPrivateIpAddress"), "\" ",
                                 "\"", Ref(NumSRRHostsParam), "\""])
@@ -792,11 +765,22 @@ def generate_new_instance(counter):
     instance.CreationPolicy=CreationPolicy(
             ResourceSignal=ResourceSignal(Timeout='PT15M')
             )
+
     return instance
 
 base_instance = generate_new_instance(counter)
 t.add_resource(base_instance)
 instances.append(base_instance)
+srr_targets_80.append(elb.TargetDescription(
+            Id=Ref(base_instance),
+            Port=80))
+srr_targets_443.append(elb.TargetDescription(
+        Id=Ref(base_instance),
+        Port=443))
+srr_targets_8080.append(elb.TargetDescription(
+        Id=Ref(base_instance),
+        Port=8080))
+
 counter += 1
 
 num_mandatory_instances = MIN_INSTANCES - 1
@@ -906,8 +890,7 @@ def configure_for_follower(instance, counter):
                     "command": Join("", ["/home/ec2-user/connect-srr.sh \"", GetAtt(base_instance, "PrivateDnsName"), "\" \'", 
                     Ref(StorReducePasswordParam), "\' ",
                     "\"", Ref(ShardsNumParam), "\" ",
-                    "\"", Ref(ReplicaShardsNumParam), "\" ",
-                    "\"", Ref(elasticLB), "\" ",
+                    "\"", Ref(ReplicaShardsNumParam), "\" ", 
                     "\"", Ref("AWS::Region"), "\" ",
                     "\"", GetAtt("Eth0", "PrimaryPrivateIpAddress"), "\" ",
                     "\"", Ref(NumSRRHostsParam), "\""])
@@ -926,11 +909,25 @@ def add_conditional(instance, counter):
     instance.Condition=CONDITION_COUNTER_PREFIX + str(counter + 1)
     return instance
 
+def wrap_conditional(item, counter):
+    return If(CONDITION_COUNTER_PREFIX + str(counter + 1),
+                                                item,
+                                                Ref("AWS::NoValue"))
+
 for i in range(num_mandatory_instances):
     instance = generate_new_instance(counter)
     configure_for_follower(instance, counter)
     t.add_resource(instance)
     instances.append(instance)
+    srr_targets_80.append(elb.TargetDescription(
+            Id=Ref(instance),
+            Port=80))
+    srr_targets_443.append(elb.TargetDescription(
+            Id=Ref(instance),
+            Port=443))
+    srr_targets_8080.append(elb.TargetDescription(
+            Id=Ref(instance),
+            Port=8080))
     counter += 1
 
 for i in range(MAX_INSTANCES - MIN_INSTANCES):
@@ -939,7 +936,151 @@ for i in range(MAX_INSTANCES - MIN_INSTANCES):
     add_conditional(instance, counter)
     t.add_resource(instance)
     instances.append(instance)
+
+    srr_target_80 = wrap_conditional(elb.TargetDescription(
+            Id=Ref(instance),
+            Port=80), counter)
+    srr_target_443 = wrap_conditional(elb.TargetDescription(
+            Id=Ref(instance),
+            Port=443), counter)
+    srr_target_8080 = wrap_conditional(elb.TargetDescription(
+            Id=Ref(instance),
+            Port=8080), counter)
+
+    srr_targets_80.append(srr_target_80)
+    srr_targets_443.append(srr_target_443)
+    srr_targets_8080.append(srr_target_8080)
+
     counter += 1
+
+StorReduceNLBTargetsPort80 = t.add_resource(elb.TargetGroup(
+        "StorReduceNLBTargetsPort80",
+        Name="StorReduceNLBTargetsPort80",
+        Port=80,
+        Protocol="TCP",
+        Targets=srr_targets_80,
+        VpcId=Ref(VpcIdParam)
+    ))
+
+StorReduceNLBTargetsPort443 = t.add_resource(elb.TargetGroup(
+        "StorReduceNLBTargetsPort443",
+        Name="StorReduceNLBTargetsPort443",
+        Port=443,
+        Protocol="TCP",
+        Targets=srr_targets_443,
+        VpcId=Ref(VpcIdParam)
+    ))
+
+StorReduceNLBTargetsPort8080 = t.add_resource(elb.TargetGroup(
+        "StorReduceNLBTargetsPort8080",
+        Name="StorReduceNLBTargetsPort8080",
+        Port=8080,
+        Protocol="TCP",
+        Targets=srr_targets_8080,
+        VpcId=Ref(VpcIdParam)
+    ))
+
+StorReduceNLBTargetsPort3000 = t.add_resource(elb.TargetGroup(
+        "StorReduceNLBTargetsPort3000",
+        Name="StorReduceNLBTargetsPort3000",
+        Port=3000,
+        Protocol="TCP",
+        Targets=[elb.TargetDescription(
+                    Id=Ref(monitor_instance),
+                    Port=3000)
+                ],
+        VpcId=Ref(VpcIdParam)
+    ))
+
+StorReduceNLBTargetsPort5601 = t.add_resource(elb.TargetGroup(
+        "StorReduceNLBTargetsPort5601",
+        Name="StorReduceNLBTargetsPort5601",
+        Port=5601,
+        Protocol="TCP",
+        Targets=[elb.TargetDescription(
+                    Id=Ref(monitor_instance),
+                    Port=5601)
+                ],
+        VpcId=Ref(VpcIdParam)
+    ))
+
+StorReduceNLBTargetsPort9200 = t.add_resource(elb.TargetGroup(
+        "StorReduceNLBTargetsPort9200",
+        Name="StorReduceNLBTargetsPort9200",
+        Port=9200,
+        Protocol="TCP",
+        Targets=[elb.TargetDescription(
+                    Id=Ref(monitor_instance),
+                    Port=9200)
+                ],
+        VpcId=Ref(VpcIdParam)
+    ))
+
+t.add_resource(elb.Listener(
+        "StorReduceNLBPort80Listener",
+        Port="80",
+        Protocol="TCP",
+        LoadBalancerArn=Ref(NetworkLB),
+        DefaultActions=[elb.Action(
+            Type="forward",
+            TargetGroupArn=Ref(StorReduceNLBTargetsPort80)
+        )]
+    ))
+
+t.add_resource(elb.Listener(
+        "StorReduceNLBPort443Listener",
+        Port="443",
+        Protocol="TCP",
+        LoadBalancerArn=Ref(NetworkLB),
+        DefaultActions=[elb.Action(
+            Type="forward",
+            TargetGroupArn=Ref(StorReduceNLBTargetsPort443)
+        )]
+    ))
+
+t.add_resource(elb.Listener(
+        "StorReduceNLBPort8080Listener",
+        Port="8080",
+        Protocol="TCP",
+        LoadBalancerArn=Ref(NetworkLB),
+        DefaultActions=[elb.Action(
+            Type="forward",
+            TargetGroupArn=Ref(StorReduceNLBTargetsPort8080)
+        )]
+    ))
+
+t.add_resource(elb.Listener(
+        "StorReduceNLBPort3000Listener",
+        Port="3000",
+        Protocol="TCP",
+        LoadBalancerArn=Ref(NetworkLB),
+        DefaultActions=[elb.Action(
+            Type="forward",
+            TargetGroupArn=Ref(StorReduceNLBTargetsPort3000)
+        )]
+    ))
+
+t.add_resource(elb.Listener(
+        "StorReduceNLBPort5601Listener",
+        Port="5601",
+        Protocol="TCP",
+        LoadBalancerArn=Ref(NetworkLB),
+        DefaultActions=[elb.Action(
+            Type="forward",
+            TargetGroupArn=Ref(StorReduceNLBTargetsPort5601)
+        )]
+    ))
+
+t.add_resource(elb.Listener(
+        "StorReduceNLBPort9200Listener",
+        Port="9200",
+        Protocol="TCP",
+        LoadBalancerArn=Ref(NetworkLB),
+        DefaultActions=[elb.Action(
+            Type="forward",
+            TargetGroupArn=Ref(StorReduceNLBTargetsPort9200)
+        )]
+    ))
 
 def generate_private_DNS_output(counter):
     return Output(
@@ -958,32 +1099,48 @@ def generate_private_IP_output(counter):
 outputs = []
 outputs.append(
     Output(
-        "ElasticLoadBalancerID",
-        Value=Ref(elasticLB),
-        Description="Elastic Load Balancer ID"
+        "NetworkLoadBalancerID",
+        Value=Ref(NetworkLB),
+        Description="Network Load Balancer ID"
     )
 )
 
 outputs.append(
     Output(
-        "ElasticLoadBalancerDNSName",
-        Value=GetAtt(elasticLB.title, "DNSName"),
-        Description="Elastic Load Balancer DNS Name"
+        "NetworkLoadBalancerDNSName",
+        Value=GetAtt(NetworkLB.title, "DNSName"),
+        Description="Network Load Balancer DNS Name"
     )
 )
 
 outputs.append(
     Output(
-        "StorReduceMonitorPublicDNSName",
-        Value=GetAtt("MonitorInstance", "PublicDnsName"),
-        Description="StorReduce QS Monitor Public DNS Name"
+        "StorReduceAdminUIAddress",
+        Value=Join("", ["http://", GetAtt(NetworkLB.title, "DNSName"), ":8080"]),
+        Description="Address for StorReduce Administration"
+    )
+)
+
+outputs.append(
+    Output(
+        "StorReduceHTTPEndpoint",
+        Value=Join("", ["http://", GetAtt(NetworkLB.title, "DNSName"), ":80"]),
+        Description="StorReduce S3 Endpoint over HTTP"
+    )
+)
+
+outputs.append(
+    Output(
+        "StorReduceHTTPSEndpoint",
+        Value=Join("", ["http://", GetAtt(NetworkLB.title, "DNSName"), ":443"]),
+        Description="StorReduce S3 Endpoint over HTTPS"
     )
 )
 
 outputs.append(
     Output(
         "StorReduceMonitorGrafanaDashboardAddress",
-        Value=Join("", ["http://", GetAtt("MonitorInstance", "PublicDnsName"), ":3000"]),
+        Value=Join("", ["http://", GetAtt(NetworkLB.title, "DNSName"), ":3000"]),
         Description="Address for Grafana Dashboard on StorReduce Monitor"
     )
 )
@@ -991,7 +1148,7 @@ outputs.append(
 outputs.append(
     Output(
         "StorReduceMonitorKibanaDashboardAddress",
-        Value=Join("", ["http://", GetAtt("MonitorInstance", "PublicDnsName"), ":9988"]),
+        Value=Join("", ["http://", GetAtt(NetworkLB.title, "DNSName"), ":5601"]),
         Description="Address for Kibana Dashboard on StorReduce Monitor"
     )
 )
@@ -999,7 +1156,7 @@ outputs.append(
 outputs.append(
     Output(
         "StorReduceMonitorElasticAddress",
-        Value=Join("", ["http://", GetAtt("MonitorInstance", "PublicDnsName"), ":9989"]),
+        Value=Join("", ["http://", GetAtt(NetworkLB.title, "DNSName"), ":9200"]),
         Description="Address for Elasticsearch on StorReduce Monitor"
     )
 )

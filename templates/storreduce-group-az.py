@@ -344,21 +344,21 @@ t.add_metadata({
 
 
 t.add_mapping('AWSAMIRegion', {
-    "ap-northeast-1": {"AMI": "ami-07583061", "MonitorAMI": "ami-ee5d3588" },
-    "ap-northeast-2": {"AMI": "ami-f12c8f9f", "MonitorAMI": "ami-6531920b" },
-    "ap-southeast-1": {"AMI": "ami-d4c88da8", "MonitorAMI": "ami-e8cb8e94" },
-    "ap-southeast-2": {"AMI": "ami-a35ca5c1", "MonitorAMI": "ami-8c5fa6ee" },
-    "ap-south-1": {"AMI": "ami-9d84d4f2", "MonitorAMI": "ami-7884d417" },
-    "eu-west-1": {"AMI": "ami-fc4d2f85", "MonitorAMI": "ami-3c533145" },
-    "sa-east-1": {"AMI": "ami-472d622b", "MonitorAMI": "ami-132f607f" },
-    "us-east-1": {"AMI": "ami-2084be5a", "MonitorAMI": "ami-5742472d" },
-    "us-west-1": {"AMI": "ami-57f3ff37", "MonitorAMI": "ami-568d8136" },
-    "us-west-2": {"AMI": "ami-aee2a6d6", "MonitorAMI": "ami-4793253f" },
-    "eu-central-1": {"AMI": "ami-613ca70e", "MonitorAMI": "ami-b032a9df" },
-    "us-east-2": {"AMI": "ami-dd0431b8", "MonitorAMI": "ami-8a0431ef" },
-    "eu-west-2": {"AMI": "ami-86d1cbe2", "MonitorAMI": "ami-45d1cb21" },
-    "ca-central-1": {"AMI": "ami-1dde5a79", "MonitorAMI": "ami-ddd256b9" },
-    "eu-west-3": {"AMI": "ami-55b40228", "MonitorAMI": "ami-fbb40286" },
+    "ap-northeast-1": {"AMI": "ami-07583061", "MonitorAMI": "ami-203df15f" },
+    "ap-northeast-2": {"AMI": "ami-f12c8f9f", "MonitorAMI": "ami-5d832933" },
+    "ap-southeast-1": {"AMI": "ami-d4c88da8", "MonitorAMI": "ami-92ada9ee" },
+    "ap-southeast-2": {"AMI": "ami-a35ca5c1", "MonitorAMI": "ami-00b76862" },
+    "ap-south-1": {"AMI": "ami-9d84d4f2", "MonitorAMI": "ami-70ac841f" },
+    "eu-west-1": {"AMI": "ami-fc4d2f85", "MonitorAMI": "ami-a3272ada" },
+    "sa-east-1": {"AMI": "ami-472d622b", "MonitorAMI": "ami-a65f04ca" },
+    "us-east-1": {"AMI": "ami-2084be5a", "MonitorAMI": "ami-d70640a8" },
+    "us-west-1": {"AMI": "ami-57f3ff37", "MonitorAMI": "ami-c8fe1aab" },
+    "us-west-2": {"AMI": "ami-aee2a6d6", "MonitorAMI": "ami-7e571406" },
+    "eu-central-1": {"AMI": "ami-613ca70e", "MonitorAMI": "ami-a88cbc43" },
+    "us-east-2": {"AMI": "ami-dd0431b8", "MonitorAMI": "ami-0e1e206b" },
+    "eu-west-2": {"AMI": "ami-86d1cbe2", "MonitorAMI": "ami-c5bd53a2" },
+    "ca-central-1": {"AMI": "ami-1dde5a79", "MonitorAMI": "ami-9678fbf2" },
+    "eu-west-3": {"AMI": "ami-55b40228", "MonitorAMI": "ami-fa2b9a87" },
 })
 
 StorReduceWebSecurityGroup = t.add_resource(ec2.SecurityGroup(

@@ -426,63 +426,63 @@
         "AWSAMIRegion": {
             "ap-northeast-1": {
                 "AMI": "ami-07583061",
-                "MonitorAMI": "ami-ee5d3588"
+                "MonitorAMI": "ami-203df15f"
             },
             "ap-northeast-2": {
                 "AMI": "ami-f12c8f9f",
-                "MonitorAMI": "ami-6531920b"
+                "MonitorAMI": "ami-5d832933"
             },
             "ap-south-1": {
                 "AMI": "ami-9d84d4f2",
-                "MonitorAMI": "ami-7884d417"
+                "MonitorAMI": "ami-70ac841f"
             },
             "ap-southeast-1": {
                 "AMI": "ami-d4c88da8",
-                "MonitorAMI": "ami-e8cb8e94"
+                "MonitorAMI": "ami-92ada9ee"
             },
             "ap-southeast-2": {
                 "AMI": "ami-a35ca5c1",
-                "MonitorAMI": "ami-8c5fa6ee"
+                "MonitorAMI": "ami-00b76862"
             },
             "ca-central-1": {
                 "AMI": "ami-1dde5a79",
-                "MonitorAMI": "ami-ddd256b9"
+                "MonitorAMI": "ami-9678fbf2"
             },
             "eu-central-1": {
                 "AMI": "ami-613ca70e",
-                "MonitorAMI": "ami-b032a9df"
+                "MonitorAMI": "ami-a88cbc43"
             },
             "eu-west-1": {
                 "AMI": "ami-fc4d2f85",
-                "MonitorAMI": "ami-3c533145"
+                "MonitorAMI": "ami-a3272ada"
             },
             "eu-west-2": {
                 "AMI": "ami-86d1cbe2",
-                "MonitorAMI": "ami-45d1cb21"
+                "MonitorAMI": "ami-c5bd53a2"
             },
             "eu-west-3": {
                 "AMI": "ami-55b40228",
-                "MonitorAMI": "ami-fbb40286"
+                "MonitorAMI": "ami-fa2b9a87"
             },
             "sa-east-1": {
                 "AMI": "ami-472d622b",
-                "MonitorAMI": "ami-132f607f"
+                "MonitorAMI": "ami-a65f04ca"
             },
             "us-east-1": {
                 "AMI": "ami-2084be5a",
-                "MonitorAMI": "ami-5742472d"
+                "MonitorAMI": "ami-d70640a8"
             },
             "us-east-2": {
                 "AMI": "ami-dd0431b8",
-                "MonitorAMI": "ami-8a0431ef"
+                "MonitorAMI": "ami-0e1e206b"
             },
             "us-west-1": {
                 "AMI": "ami-57f3ff37",
-                "MonitorAMI": "ami-568d8136"
+                "MonitorAMI": "ami-c8fe1aab"
             },
             "us-west-2": {
                 "AMI": "ami-aee2a6d6",
-                "MonitorAMI": "ami-4793253f"
+                "MonitorAMI": "ami-7e571406"
             }
         }
     },

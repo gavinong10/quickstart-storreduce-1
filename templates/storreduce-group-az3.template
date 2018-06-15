@@ -1160,7 +1160,6 @@
                 },
                 "NetworkInterfaces": [
                     {
-                        "AssociatePublicIpAddress": "false",
                         "DeviceIndex": "0",
                         "NetworkInterfaceId": {
                             "Ref": "Eth0"

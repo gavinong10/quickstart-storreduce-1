@@ -866,7 +866,7 @@ monitor_instance = t.add_resource(ec2.Instance(
     KeyName=Ref(KeyPairNameParam),
     NetworkInterfaces=[
         ec2.NetworkInterfaceProperty(
-            AssociatePublicIpAddress=False,
+            #AssociatePublicIpAddress=False,
             NetworkInterfaceId=Ref(eth0),
             DeviceIndex="0",
         ),

@@ -1049,7 +1049,7 @@
                     "Fn::Select": [
                         "0",
                         {
-                            "Ref": "PublicSubnetsToSpan"
+                            "Ref": "PrivateSubnetsToSpan"
                         }
                     ]
                 },
